@@ -1,7 +1,9 @@
 <!doctype html>
-<html lang="es">
+<html lang="es" data-theme="dark">
 <head>
 <meta charset="utf-8">
+<script>try{var th=localStorage.getItem("tema");if(th)document.documentElement.setAttribute("data-theme",th)}catch(e){}</script>
+<meta name="theme-color" content="#0E161B">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Banco CONAREM</title>
 <meta name="robots" content="noindex">
@@ -128,10 +130,15 @@ h2{font-family:var(--display);font-weight:600;font-size:1.2rem;margin:0}
 .linkbtn{background:none;border:0;color:var(--accent);font:600 .92rem var(--body);cursor:pointer;padding:4px 0;text-decoration:underline;text-underline-offset:3px}
 .acctbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 </style>
+<style>
+body{padding-top:54px!important}
+.themebtn{position:absolute;top:10px;right:10px;z-index:30;font:600 .82rem var(--body);color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 12px;cursor:pointer}
+</style>
 
 </head>
 <body>
 
+<button class="themebtn" id="themeBtn" type="button"></button>
 <div class="gate" id="gate">
   <div class="brand"><h1>Banco CONAREM</h1><p class="sub">Troncales · preguntas de exámenes 2021–2026 y propias, con explicaciones</p></div>
 
@@ -437,6 +444,8 @@ setSync('Progreso guardado en este dispositivo.');
 (function(){
 const $=id=>document.getElementById(id);
 const C=window.CONFIG||{};
+(function(){const b=$('themeBtn'),r=document.documentElement;function lab(){b.textContent=r.getAttribute('data-theme')==='dark'?'☀ Modo claro':'☾ Modo oscuro'}lab();
+b.onclick=()=>{const n=r.getAttribute('data-theme')==='dark'?'light':'dark';r.setAttribute('data-theme',n);try{localStorage.setItem('tema',n)}catch(e){}lab()}})();
 function show(id){['fLogin','fCode','fNewPass','loading'].forEach(x=>$(x).hidden=(x!==id))}
 function msg(id,t,ok){const m=$(id);m.textContent=t||'';m.className='msg'+(t?(ok?' ok':' err'):'')}
 if(!C.SUPABASE_URL||!C.SUPABASE_ANON_KEY){show('fLogin');msg('lMsg','La web todavía no está conectada a la base de datos (falta completar config.js).');$('bMain').disabled=true;return}
