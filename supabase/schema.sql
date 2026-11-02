@@ -136,6 +136,10 @@ drop policy if exists "progreso propio" on public.progress;
 create policy "progreso propio" on public.progress
   for all using (user_id = auth.uid()) with check (user_id = auth.uid());
 
+revoke execute on function public.redeem_code(text) from public, anon;
+revoke execute on function public.admin_create_codes(integer, integer, text) from public, anon;
+revoke execute on function public.admin_set_access(text, timestamptz) from public, anon;
+revoke execute on function public.handle_new_user() from public, anon, authenticated;
 grant execute on function public.redeem_code(text) to authenticated;
 grant execute on function public.admin_create_codes(integer, integer, text) to authenticated;
 grant execute on function public.admin_set_access(text, timestamptz) to authenticated;
