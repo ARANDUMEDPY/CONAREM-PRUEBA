@@ -29,6 +29,7 @@ code,.mono{font-family:ui-monospace,Menlo,monospace;letter-spacing:.04em}
 .codes{display:flex;flex-wrap:wrap;gap:8px}
 .codes span{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px 10px}
 .muted{color:var(--muted);font-size:.88rem;margin:0}
+.danger{color:var(--bad)!important;border-color:var(--bad)!important}
 </style>
 </head>
 <body>
@@ -65,7 +66,8 @@ code,.mono{font-family:ui-monospace,Menlo,monospace;letter-spacing:.04em}
 
       <section class="card">
         <h2>Usuarios</h2>
-        <div class="scroll"><table><thead><tr><th>Correo</th><th>Acceso hasta</th><th>Alta</th></tr></thead><tbody id="uBody"></tbody></table></div>
+        <p class="msg" id="uMsg"></p>
+        <div class="scroll"><table><thead><tr><th>Correo</th><th>Acceso hasta</th><th>Alta</th><th>Acción</th></tr></thead><tbody id="uBody"></tbody></table></div>
         <h2 style="margin-top:10px">Dar o cambiar acceso manualmente</h2>
         <div class="row"><label style="flex:2">Correo del usuario<input id="aEmail" type="email"></label><label>Hasta (fecha)<input id="aDate" type="date"></label><button id="aGo" type="button">Guardar</button></div>
         <p class="msg" id="aMsg"></p>
@@ -112,8 +114,18 @@ async function loadCodes(){
 }
 async function loadUsers(){
   const {data,error}=await sb.from('profiles').select('email,access_until,created_at,is_admin').order('created_at',{ascending:false}).limit(500);
-  if(error){$('uBody').innerHTML='<tr><td colspan="3">'+esc(error.message)+'</td></tr>';return}
-  $('uBody').innerHTML=data.map(r=>'<tr><td>'+esc(r.email)+(r.is_admin?' (admin)':'')+'</td><td>'+fd(r.access_until)+'</td><td>'+fd(r.created_at)+'</td></tr>').join('');
+  if(error){$('uBody').innerHTML='<tr><td colspan="4">'+esc(error.message)+'</td></tr>';return}
+  const now=new Date();
+  $('uBody').innerHTML=data.map(r=>{const on=r.access_until&&new Date(r.access_until)>now;
+    const act=r.is_admin?'—':on?'<button class="ghost" type="button" data-rev="'+esc(r.email)+'">Quitar acceso</button>':'<span class="muted">Sin acceso</span> <button class="ghost" type="button" data-give="'+esc(r.email)+'">Dar acceso</button>';
+    return '<tr><td>'+esc(r.email)+(r.is_admin?' (admin)':'')+'</td><td>'+fd(r.access_until)+'</td><td>'+fd(r.created_at)+'</td><td>'+act+'</td></tr>'}).join('')||'<tr><td colspan="4">Sin usuarios.</td></tr>';
+  $('uBody').querySelectorAll('[data-rev]').forEach(b=>b.onclick=async()=>{
+    if(!b.dataset.ok){b.dataset.ok=1;b.textContent='¿Seguro? Tocá de nuevo';b.classList.add('danger');setTimeout(()=>{if(b.isConnected){delete b.dataset.ok;b.textContent='Quitar acceso';b.classList.remove('danger')}},4000);return}
+    b.disabled=true;b.textContent='Quitando…';
+    const {error}=await sb.rpc('admin_set_access',{p_email:b.dataset.rev,p_until:new Date(Date.now()-60000).toISOString()});
+    if(error){b.disabled=false;b.textContent='Error: '+error.message;return}
+    msg('uMsg','Acceso quitado a '+b.dataset.rev+'. Su progreso queda guardado por si vuelve.',true);loadUsers()});
+  $('uBody').querySelectorAll('[data-give]').forEach(b=>b.onclick=()=>{$('aEmail').value=b.dataset.give;$('aDate').focus();$('aEmail').scrollIntoView({behavior:'smooth',block:'center'});msg('aMsg','Elegí hasta qué fecha y tocá el botón.',true)});
 }
 $('cRef').onclick=loadCodes;$('cFilter').onchange=loadCodes;
 $('gGo').onclick=async()=>{
