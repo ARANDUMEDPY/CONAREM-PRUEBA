@@ -4,6 +4,12 @@
 <meta charset="utf-8">
 <script>try{var th=localStorage.getItem("tema");if(th)document.documentElement.setAttribute("data-theme",th)}catch(e){}</script>
 <meta name="theme-color" content="#0E161B">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AranduMed">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>AranduMed · Asegurá tu plaza</title>
 <meta name="robots" content="noindex">
@@ -158,6 +164,7 @@ body{letter-spacing:-.005em}
 <style>
 body{padding-top:54px!important}
 .themebtn{position:absolute;top:10px;right:10px;z-index:30;font:600 .82rem var(--body);color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 12px;cursor:pointer}
+.pbar{height:6px;border-radius:99px;background:var(--line);overflow:hidden}.pbar i{display:block;height:100%;width:2%;background:var(--accent);transition:width .3s}.iosHint{font-size:.85rem;color:var(--muted)}
 </style>
 
 </head>
@@ -198,7 +205,7 @@ body{padding-top:54px!important}
     <div class="row" style="justify-content:flex-start"><button class="btn" type="submit">Guardar</button></div>
   </form>
 
-  <div class="card" id="loading" hidden><p style="margin:0">Cargando preguntas…</p></div>
+  <div class="card" id="loading" hidden><p style="margin:0" id="loadTxt">Cargando preguntas…</p><div class="pbar"><i id="loadBar"></i></div></div>
 </div>
 
 
@@ -595,8 +602,33 @@ $('fCode').onsubmit=async ev=>{ev.preventDefault();msg('cMsg','');
 $('outCode').onclick=()=>sb.auth.signOut();
 $('fNewPass').onsubmit=async ev=>{ev.preventDefault();const {error}=await sb.auth.updateUser({password:$('newpass').value});if(error){msg('nMsg',tr(error));return}msg('nMsg','Contraseña actualizada.',true);setTimeout(()=>route(),800)};
 
-async function loadBank(){const all=[];const step=500;for(let from=0;;from+=step){const {data,error}=await sb.from('questions').select('data').order('id').range(from,from+step-1);if(error)throw error;data.forEach(r=>all.push(r.data));if(data.length<step)break}return all}
+// ---- Banco guardado en el dispositivo (IndexedDB): solo se descarga si hay cambios ----
+function idb(){return new Promise((res,rej)=>{const r=indexedDB.open('arandumed',1);r.onupgradeneeded=()=>r.result.createObjectStore('kv');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
+async function cacheGet(k){try{const db=await idb();return await new Promise(res=>{const q=db.transaction('kv').objectStore('kv').get(k);q.onsuccess=()=>res(q.result);q.onerror=()=>res(null)})}catch(e){return null}}
+async function cacheSet(k,v){try{const db=await idb();await new Promise(res=>{const tx=db.transaction('kv','readwrite');tx.objectStore('kv').put(v,k);tx.oncomplete=res;tx.onerror=res})}catch(e){}}
+function prog(t,p){$('loadTxt').textContent=t;$('loadBar').style.width=(p||0)+'%'}
+async function loadBank(){
+  const cached=await cacheGet('bank');
+  let ver=null,total=0;
+  try{const {data,count,error}=await sb.from('questions').select('updated_at',{count:'exact'}).order('updated_at',{ascending:false}).limit(1);if(error)throw error;total=count||0;ver=total+'|'+(data&&data[0]?data[0].updated_at:'')}
+  catch(e){if(cached&&cached.data)return cached.data;throw e}
+  if(cached&&cached.ver===ver&&cached.data&&cached.data.length)return cached.data;
+  const all=[];const step=500;prog('Descargando preguntas… 0 de '+total,2);
+  for(let from=0;;from+=step){const {data,error}=await sb.from('questions').select('data').order('id').range(from,from+step-1);if(error){if(cached&&cached.data)return cached.data;throw error}
+    data.forEach(r=>all.push(r.data));prog('Descargando preguntas… '+all.length+' de '+total,Math.round(100*all.length/Math.max(1,total)));if(data.length<step)break}
+  prog('Guardando en tu dispositivo para que la próxima vez abra al instante…',100);
+  await cacheSet('bank',{ver,data:all});return all}
 
+// ---- App instalable (PWA) ----
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}
+let installEvt=null;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvt=e;const b=document.getElementById('installBtn');if(b)b.hidden=false});
+function isIOS(){return /iphone|ipad|ipod/i.test(navigator.userAgent)&&!window.MSStream}
+function standalone(){return window.matchMedia('(display-mode: standalone)').matches||navigator.standalone}
+function installUI(){
+  if(standalone())return '';
+  if(isIOS())return ' <span class="iosHint">📲 Para instalar la app: tocá <b>Compartir</b> y luego <b>Agregar a inicio</b>.</span>';
+  return ' <button class="linkbtn" id="installBtn"'+(installEvt?'':' hidden')+'>📲 Instalar app</button>';
+}
 async function route(){
   const {data:{session}}=await sb.auth.getSession();
   if(!session){$('app').hidden=true;$('gate').hidden=false;show('fLogin');return}
@@ -616,7 +648,8 @@ async function route(){
     $('gate').hidden=true;$('app').hidden=false;
     window.startApp(bank);
     const until=prof.is_admin?'administrador':'acceso hasta el '+new Date(prof.access_until).toLocaleDateString('es-PY',{day:'numeric',month:'long',year:'numeric'});
-    $('acct').innerHTML='<span class="acctbar">'+prof.email+' · '+until+(prof.is_admin?' · <a href="admin.html">Panel de administración</a>':'')+' <button class="linkbtn" id="logout">Cerrar sesión</button></span>';
+    $('acct').innerHTML='<span class="acctbar">'+prof.email+' · '+until+(prof.is_admin?' · <a href="admin.html">Panel de administración</a>':'')+' <button class="linkbtn" id="logout">Cerrar sesión</button>'+installUI()+'</span>';
+    const ib=document.getElementById('installBtn');if(ib)ib.onclick=async()=>{if(!installEvt)return;installEvt.prompt();await installEvt.userChoice;installEvt=null;ib.hidden=true};
     $('logout').onclick=()=>sb.auth.signOut();
   }catch(e){started=false;show('fLogin');msg('lMsg','No se pudieron cargar las preguntas: '+tr(e))}
 }
