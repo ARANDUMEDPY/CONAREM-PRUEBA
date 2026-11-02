@@ -242,11 +242,11 @@ function roundR(n){return n<20?n:Math.round(n/10)*10}
 function proj(){const a=Object.values(S.ans).filter(x=>x&&x.d).sort((x,y)=>y.d.localeCompare(x.d)).slice(0,100);if(a.length<30)return {need:30-a.length};const ok=a.filter(x=>x.ok).length;return {n:a.length,pc:Math.round(100*ok/a.length)}}
 const RTIERS=[
  [85,'¡Purete, nivel podio!','Estarías cerca del puesto ~{N}. Elegís primero: hasta las plazas más difíciles, como Neurocirugía u Otorrino, que tienen 3 en todo el país.'],
- [80,'¡Tuicha!','Rondarías el puesto ~{N}. Seguís en carrera por Oftalmo, Urología, Imágenes o Psiquiatría.'],
+ [80,'¡Cráneo 💀!','Rondarías el puesto ~{N}. Seguís en carrera por Oftalmo, Urología, Imágenes o Psiquiatría.'],
  [75,'¡Mbarete!','Puesto ~{N}: te alcanza para Anestesia, Trauma o Emergentología, y para elegir sede en las grandes.'],
- [70,'¡Iporã!','Puesto ~{N}: entrás cómodo a Medicina Interna, Pediatría, Gineco o Cirugía, y elegís dónde.'],
+ [70,'¡Máquina 🏎️!','Puesto ~{N}: entrás cómodo a Medicina Interna, Pediatría, Gineco o Cirugía, y elegís dónde.'],
  [65,'Vas adentro, che','Puesto ~{N}: las troncales grandes te esperan, quizá no en tu sede favorita. Unos puntitos más y elegís vos.'],
- [60,'Raspando, pero adentro','Puesto ~{N}: pasás el mínimo y Medicina Familiar tiene 214 plazas. Con los repasos subís puestos rápido.'],
+ [60,'¡Hendy 🐴🔥!','Raspando, pero adentro. Puesto ~{N}: pasás el mínimo y Medicina Familiar tiene 214 plazas. Con los repasos subís puestos rápido.'],
  [0,'¿Medio vai?','Todavía no llegás al mínimo de 60, pero nadie aprende sin errar. Las que fallaste vuelven y les ganás.']];
 const TERERE=[[85,'Merecés un tereré bien helado: hoy descansá tranqui.'],[80,'Cebate un tereré con yuyos y desconectá un rato.'],[75,'Pausa de tereré y a disfrutar el resto del día.'],[70,'Tereré, una vueltita y mañana seguimos sumando.'],[65,'Un tereré bien frío y mañana subimos unos puestos.'],[60,'Relajá con un tereré: con constancia esto sube solo.'],[0,'Cebate un tereré, despejá la mente y mañana jaha.']];
 function terere(pc){return '<p class="terere">'+TERERE.find(x=>pc>=x[0])[1]+'</p>'}
@@ -269,9 +269,9 @@ let view='hoy', cur=0, picked=null, reviewIds=null, rcur=0, rpicked=null, pIds=n
 // Mensajes al terminar una tanda, según el porcentaje de aciertos
 const CHEERS=[
  [100,[['¡Purete!','Purete = de lo mejor. Sos un crack, che ra\'a (amigo).'],['¡Iñarandu!','Iñarandu = sabio, como en AranduMed. Sos un crack, che.'],['¡Ndera, pleno!','Así nomás se gana una plaza. Hoy toca tereré de premio.']]],
- [90,[['¡Tuicha!','Tuicha = grande. Casi pleno, che: fijate la que se escapó y listo.'],['¡Mbarete!','Mbarete = fuerte. Nivel jefe de residentes, seguí así.']]],
- [70,[['¡Iporã!','Iporã = bien. Vas por buen camino nomás; mañana vuelven las que fallaste.'],['¡Crack!','Arriba del 60 y subiendo. ¿Viste que podías? Ahora a pulir detalles.']]],
- [60,[['Raspando, pero adentro','Pasaste el 60. Con los repasos agarrás margen, tranqui.'],['Vamos que vamos','Cada error de hoy es un punto ganado el día del examen.']]],
+ [90,[['¡Cráneo 💀!','Casi pleno, che: fijate la que se escapó y listo.'],['¡Mbarete!','Mbarete = fuerte. Nivel jefe de residentes, seguí así.']]],
+ [70,[['¡Máquina 🏎️!','Vas por buen camino nomás; mañana vuelven las que fallaste.'],['¡Crack!','Arriba del 60 y subiendo. ¿Viste que podías? Ahora a pulir detalles.']]],
+ [60,[['¡Hendy 🐴🔥!','Raspando, pero adentro: pasaste el 60. Con los repasos agarrás margen, tranqui.'],['Vamos que vamos','Cada error de hoy es un punto ganado el día del examen.']]],
  [40,[['¿Medio vai hoy?','Vai = feo. Pasa nomás: leíste las explicaciones y eso es lo que queda.'],['Ndaipóri problema','No hay problema. Mañana estas mismas vuelven y les ganás.']]],
  [0,[['¿Kaigue hoy?','Kaigue = sin ganas. A todos nos pasa: un tereré y mañana jaha (¡vamos!).'],['¡Hendy hoy!','Se puso difícil, pasa. Las que fallaste vuelven mañana y las vas a reconocer.']]]];
 function cheer(ok,n,seed){const pc=n?Math.round(100*ok/n):0;const tier=CHEERS.find(c=>pc>=c[0]);let h=0;for(const ch of seed)h=(h*31+ch.charCodeAt(0))>>>0;const m=tier[1][h%tier[1].length];return '<p class="cheer">'+m[0]+'</p><p class="cheer-t">'+m[1]+' <span class="sub">('+pc+'% de aciertos)</span></p>'}
