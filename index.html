@@ -103,6 +103,27 @@ nav button:focus-visible,.opt:focus-visible,.btn:focus-visible{outline:2px solid
 .simhist .sh{display:grid;grid-template-columns:minmax(0,1fr) auto 7.5em;gap:10px;align-items:center;font-size:.92rem;border-bottom:1px solid var(--line);padding-bottom:6px}
 .simhist .sh .sub{text-align:right}
 .danger{color:var(--bad)!important;border-color:var(--bad)!important}
+.gsec summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.gsec summary::-webkit-details-marker{display:none}
+.gsec summary::after{content:"＋";color:var(--accent);font-weight:700}
+.gsec[open] summary::after{content:"−"}
+.gsec summary h2{font-size:1.05rem}
+.gul{margin:0;padding-left:1.15em;display:flex;flex-direction:column;gap:8px;line-height:1.55}
+.gul li::marker{color:var(--accent)}
+.gchk{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.gchk label{display:flex;gap:12px;align-items:flex-start;padding:10px 8px;border-radius:10px;cursor:pointer;min-height:44px}
+.gchk label:hover{background:var(--accent-soft)}
+.gchk input{width:20px;height:20px;margin-top:2px;accent-color:var(--accent);flex-shrink:0}
+.gchk label>span{display:flex;flex-direction:column;gap:2px}
+.gchk input:checked+span b{text-decoration:line-through;text-decoration-color:var(--muted);color:var(--muted)}
+.gcal{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.gcal li{display:grid;grid-template-columns:7.2em minmax(0,1fr);gap:12px;padding:9px 0;border-bottom:1px solid var(--line);font-size:.95rem;line-height:1.45}
+.gcal li b{font-family:var(--mono);font-size:.8rem;font-weight:600;color:var(--muted);padding-top:2px}
+.gcal li.ex{background:var(--accent-soft);border-radius:8px;padding:9px 8px;border-bottom:0;margin:2px 0}
+.gcal li.ex span{font-weight:700}
+.gk{display:inline-block;font-size:.68rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:99px;vertical-align:middle}
+.gk.dl{background:var(--bad-soft);color:var(--bad)}
+.mono{font-family:var(--mono);font-size:.88em}
 .key{padding:14px 16px;gap:8px}
 .key .klist,.key .ksub{margin:0;padding-left:1.15em;display:flex;flex-direction:column;gap:7px;font-size:1rem;line-height:1.55}
 .key .ksub{margin-top:5px;gap:4px;list-style:"– "}
@@ -248,6 +269,7 @@ body{padding-top:54px!important}
       <button role="tab" id="tab-sim" aria-selected="false" data-v="sim">Simulacro</button>
       <button role="tab" id="tab-prog" aria-selected="false" data-v="prog">Progreso</button>
       <button role="tab" id="tab-err" aria-selected="false" data-v="err">Errores</button>
+      <button role="tab" id="tab-guia" aria-selected="false" data-v="guia">Guía</button>
     </nav>
   </header>
   <main id="view"></main>
@@ -315,7 +337,7 @@ function todayKey(){return dkey(new Date())}
 function addDays(k,n){const p=k.split('-');const d=new Date(+p[0],+p[1]-1,+p[2]);d.setDate(d.getDate()+n);return dkey(d)}
 function lsGet(){try{const t=localStorage.getItem('conarem2027:'+(window.__uid||''));return t?JSON.parse(t):null}catch(e){return null}}
 function lsSet(){try{localStorage.setItem('conarem2027:'+(window.__uid||''),JSON.stringify(S))}catch(e){}}
-function persist(now){lsSet();if(!docRef)return;clearTimeout(saveTimer);saveTimer=setTimeout(()=>{docRef.set({ans:S.ans,today:S.today,pref:S.pref||'ALL',flt:S.flt||null,srs:S.srs||{},rate:S.rate||'auto',sims:S.sims||[],simCfg:S.simCfg||null,v:3}).then(()=>setSync('Progreso guardado en tu cuenta.')).catch(()=>setSync('Progreso guardado solo en este dispositivo.'))},now?0:600)}
+function persist(now){lsSet();if(!docRef)return;clearTimeout(saveTimer);saveTimer=setTimeout(()=>{docRef.set({ans:S.ans,today:S.today,pref:S.pref||'ALL',flt:S.flt||null,srs:S.srs||{},rate:S.rate||'auto',sims:S.sims||[],simCfg:S.simCfg||null,docs:S.docs||{},v:3}).then(()=>setSync('Progreso guardado en tu cuenta.')).catch(()=>setSync('Progreso guardado solo en este dispositivo.'))},now?0:600)}
 function setSync(t){document.getElementById('sync').textContent=t}
 
 function ensureToday(){
@@ -655,7 +677,41 @@ function renderSim(){const v=document.getElementById('view');const r=S.simRun;
   document.getElementById('sSec').onchange=e=>{c.sec=+e.target.value;persist();render()};
   document.getElementById('sGo').onclick=()=>simStart(Object.assign({},c));
 }
-function render(){header();if(view==='hoy')renderHoy();else if(view==='prog')renderProg();else if(view==='prac')renderPrac();else if(view==='sim')renderSim();else renderErr()}
+// ---------- Guía del examen (fuente: Reglamento Res. S.G. N.º 885/2025 y cronograma 2026, INS) ----------
+const GDOC=[
+ ['a','Formato A · Formulario de postulación','Se genera en el sistema en línea del INS.'],
+ ['b','Formato B · Currículum','También se genera en el sistema en línea.'],
+ ['c','Formato C · Certificado médico','En el formulario aprobado por la CONAREM. Lo firma un especialista en Medicina Interna o Medicina Familiar (con visado profesional) y debe decir APTO física y mentalmente.'],
+ ['d','Comprobante de pago del arancel del examen',''],
+ ['e','Comprobante de pago del arancel de corrección','Se paga al proveedor que indique la Comisión de Selección.'],
+ ['f','Cédula de identidad vigente','Extranjeros: documento de residencia permanente de Migraciones.'],
+ ['g','Certificado de estudios completos de Medicina',''],
+ ['h','Certificado de promedio de las materias troncales','Pediatría, Gineco-Obstetricia, Medicina Interna, Cirugía y Salud Pública, firmado por la universidad. Se usa para desempatar.'],
+ ['i','Título de médico legalizado y registrado en el MEC','O constancia original de que el título está en trámite.'],
+ ['j','Registro profesional vigente','Para quienes ya tienen el título o se recibieron hace más de un año.']];
+const GPLAZA=[
+ ['p1','Formatos A, B y C firmados',''],['p2','4 copias autenticadas de la cédula',''],
+ ['p3','Antecedente judicial','Por la plataforma de Identidad Electrónica.'],['p4','Antecedente policial vigente','Original o por Identidad Electrónica.'],
+ ['p5','Copias autenticadas del certificado de estudios, del certificado de promedios, del título y del registro profesional','Si te formaste en el exterior: también el reconocimiento y la homologación del título.']];
+const GCAL=[['26 ene – 2 feb','Publicación de la convocatoria'],['26 ene – 8 feb','Pago de aranceles'],['2 – 8 feb','Postulación en línea y cambio de documentos','dl'],['16 feb','Lista larga de admitidos y no admitidos'],['17 – 18 feb','Reclamos sobre las listas','dl'],['20 feb','Publicación de plazas a ofertar'],['23 feb','Lista definitiva de admitidos'],['27 feb','Información del examen para postulantes'],['7 mar','EXAMEN · respuestas correctas, reclamos y puntajes el mismo día','ex'],['9 mar','Puntajes finales con desempates'],['10 – 11 mar','Pedidos de reconsideración','dl'],['16 mar','Lista final ordenada para elegir plazas'],['21 mar','Selección de plazas y entrega de documentos en persona','ex'],['1 abr','Inicio de las residencias'],['30 abr, 15:00','Fecha límite para renunciar (dentro del primer mes)','dl'],['7 may','Segunda convocatoria: selección de plazas que quedaron libres']];
+function gList(items){const d=S.docs||{};return '<ul class="gchk">'+items.map(([id,t,n])=>'<li><label><input type="checkbox" data-doc="'+id+'"'+(d[id]?' checked':'')+'><span><b>'+t+'</b>'+(n?'<span class="sub">'+n+'</span>':'')+'</span></label></li>').join('')+'</ul>'}
+function gSec(t,body,open){return '<details class="card gsec"'+(open?' open':'')+'><summary><h2>'+t+'</h2></summary>'+body+'</details>'}
+function renderGuia(){const v=document.getElementById('view');const d=S.docs||{};const nd=GDOC.filter(x=>d[x[0]]).length,np=GPLAZA.filter(x=>d[x[0]]).length;
+  let h='<div style="display:flex;flex-direction:column;gap:14px">';
+  h+='<div class="card"><p class="sub">Faltan</p><p class="big" style="margin:0">'+daysLeft()+' días</p><p class="note">Fecha estimada del examen 2027. El INS todavía no publicó la convocatoria ni el cronograma 2027: en 2026 la convocatoria salió el 26 de enero y el examen fue el 7 de marzo. Cuando salga el oficial, actualizamos todo acá.</p></div>';
+  h+=gSec('📅 Fechas clave (referencia: CONAREM 2026)','<p class="note">Así fue el cronograma 2026. El de 2027 suele seguir un patrón parecido. <span class="gk dl">Plazo</span> = fecha límite que no se puede pasar.</p><ol class="gcal">'+GCAL.map(([f,t,k])=>'<li class="'+(k||'')+'"><b>'+f+'</b><span>'+t+(k==='dl'?' <span class="gk dl">Plazo</span>':'')+'</span></li>').join('')+'</ol><p class="note">Las postulaciones duraron solo <b>una semana</b> (2 al 8 de febrero). Tené los documentos listos desde enero.</p>',true);
+  h+=gSec('📄 Documentos para postularte <span class="sub">· '+nd+'/'+GDOC.length+' listos</span>','<p class="note">Se suben al sistema en línea. Todos son obligatorios. Marcá los que ya tenés: queda guardado en tu cuenta.</p>'+gList(GDOC)+'<p class="note">Los originales del título, certificados y registro se presentan autenticados solo si aprobás y llegás a elegir plaza.</p>');
+  h+=gSec('🏥 Documentos para elegir plaza <span class="sub">· '+np+'/'+GPLAZA.length+' listos</span>','<p class="note">Se entregan en persona el día de la selección de plazas.</p>'+gList(GPLAZA));
+  h+=gSec('✅ Quién puede postularse','<ul class="gul"><li>Médicos de nacionalidad paraguaya.</li><li>Extranjeros con residencia permanente que hicieron toda la carrera en Paraguay, en una universidad habilitada por el CONES y acreditada por la ANEAES.</li><li>Egresados de una carrera de Medicina <b>acreditada por la ANEAES</b> (hay excepciones para quienes empezaron antes de la Ley 4995/2013).</li><li>Ex residentes que renunciaron por fuerza mayor solo si la CONAREM lo autorizó <b>antes</b> del concurso.</li><li>No cumplir un requisito significa exclusión automática, sin apelación.</li></ul>');
+  h+=gSec('📝 Cómo es el examen','<ul class="gul"><li><b>140 preguntas</b> de opción múltiple, de 4 o 5 opciones, en un solo día.</li><li><b>Dos bloques.</b> En 2026: Bloque I con 30 de Cirugía, 30 de Medicina Interna y 20 de Salud Pública en 1 h 20 min; Bloque II con 30 de Pediatría y 30 de Gineco-Obstetricia en 1 h. Es <b>1 minuto por pregunta</b>.</li><li><b>No se descuenta por error:</b> respondé todas, aunque sea al azar.</li><li>Marcar <b>dos opciones</b> en una misma pregunta la anula.</li><li>Equivocarte al marcar tu cédula o tus datos puede <b>anular todo el examen</b>. Una vez empezado, no se cambia la hoja de respuestas.</li><li>Las respuestas correctas se publican el mismo día. Hay <b>1 hora</b> para reclamar desde que se exponen.</li></ul>');
+  h+=gSec('🎒 El día del examen','<ul class="gul"><li>Llevá la <b>cédula vigente</b> (o su versión digital oficial). Sin ella quedás <b>descalificado</b>.</li><li><b>Prohibido:</b> celular, cámara, reloj inteligente, agenda y cualquier aparato electrónico. Se considera fraude y te pueden excluir.</li><li>Faltar al examen es descalificación automática.</li><li>Antes de empezar hay unos minutos solo para verificar tus datos: revisá bien la cédula que marcás.</li></ul>');
+  h+=gSec('🏆 Cómo se calcula tu puntaje','<ul class="gul"><li>Cada pregunta vale 1 punto (140 en total).</li><li>La <b>mediana de los 10 mejores</b> puntajes pasa a valer 100. El resto se calcula por regla de tres: <span class="mono">tu nota = tus puntos × 100 ÷ esa mediana</span>.</li><li>Para quedar preseleccionado necesitás <b>60 o más</b> en esa escala de 100.</li><li><b>Desempate</b>, en este orden: 1) puntaje del examen, 2) puntaje por área (Medicina Interna, Pediatría, Cirugía, Gineco-Obstetricia y Salud Pública), 3) promedio de la carrera, 4) nota de la carrera en esas materias.</li></ul><p class="note">Por eso conviene cuidar Medicina Interna: además de sus 30 puntos, es la primera área que define un empate.</p>');
+  h+=gSec('🩺 Elegir plaza','<ul class="gul"><li>Se elige en orden de puntaje, de mayor a menor, según las plazas que queden.</li><li>Si tu carrera no está acreditada, no podés tomar plazas de especialidades que lo exigen.</li><li>Una declaración falsa te excluye, o rescinde el contrato-beca si ya lo firmaste.</li><li>Si renunciás, tiene que ser dentro del primer mes (en 2026, hasta el 30 de abril a las 15:00). Las plazas libres van a la segunda convocatoria.</li></ul>');
+  h+='<p class="note">Información orientativa, resumida del Reglamento General de Concurso CONAREM (Res. S.G. N.º 885/2025) y del cronograma oficial 2026 del INS. Si hay dudas, siempre prevalece el reglamento oficial vigente. Consultas al INS: +595 21 294482.</p></div>';
+  v.innerHTML=h;
+  v.querySelectorAll('[data-doc]').forEach(c=>c.onchange=()=>{S.docs=S.docs||{};if(c.checked)S.docs[c.dataset.doc]=1;else delete S.docs[c.dataset.doc];persist();const sec=c.closest('details');const open=[...v.querySelectorAll('details')].map(x=>x.open);render();[...document.querySelectorAll('#view details')].forEach((x,i)=>x.open=open[i])});
+}
+function render(){header();if(view==='hoy')renderHoy();else if(view==='prog')renderProg();else if(view==='prac')renderPrac();else if(view==='sim')renderSim();else if(view==='guia')renderGuia();else renderErr()}
 function go(v){if(v!==view)simRev=null;view=v;document.querySelectorAll('nav button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.v===v)));render()}
 document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>go(b.dataset.v));
 
@@ -671,7 +727,7 @@ setSync('Progreso guardado en este dispositivo.');
     if(snap.exists){
       const d=snap.data()||{};const remote=d.ans||{};
       S.ans=Object.assign({},remote,S.ans);
-      if(d.pref&&(!S.pref||S.pref==='ALL'))S.pref=d.pref;if(d.flt&&!S.flt)S.flt=d.flt;if(d.rate&&(!S.rate||S.rate==='auto'))S.rate=d.rate;if(d.simCfg&&!S.simCfg)S.simCfg=d.simCfg;{const m={};(S.sims||[]).concat(d.sims||[]).forEach(s=>{m[s.ts||s.date]=s});S.sims=Object.values(m).sort((a,b)=>(a.ts||0)-(b.ts||0)).slice(-30)}
+      if(d.pref&&(!S.pref||S.pref==='ALL'))S.pref=d.pref;if(d.flt&&!S.flt)S.flt=d.flt;if(d.rate&&(!S.rate||S.rate==='auto'))S.rate=d.rate;if(d.simCfg&&!S.simCfg)S.simCfg=d.simCfg;if(d.docs)S.docs=Object.assign({},d.docs,S.docs||{});{const m={};(S.sims||[]).concat(d.sims||[]).forEach(s=>{m[s.ts||s.date]=s});S.sims=Object.values(m).sort((a,b)=>(a.ts||0)-(b.ts||0)).slice(-30)}
       const rt=d.today,lt=S.today;
       const rs=d.srs||{};S.srs=S.srs||{};for(const id in rs){const l=S.srs[id];if(!l||l.m&&!rs[id].m||(rs[id].last||'')>(l.last||''))S.srs[id]=rs[id]}
       if(rt&&rt.ids){if(!lt||!lt.ids||rt.date>lt.date)S.today=rt;else if(rt.date===lt.date){const seen=new Set(lt.ids);const rv=new Set((lt.rev||[]).concat(rt.rev||[]));S.today={date:lt.date,ids:lt.ids.concat(rt.ids.filter(x=>!seen.has(x))),rev:(lt.rev||rt.rev)?[...rv]:undefined}}}
