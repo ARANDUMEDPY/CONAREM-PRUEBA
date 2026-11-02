@@ -236,12 +236,12 @@ const REV_MAX=20;
 let view='hoy', cur=0, picked=null, reviewIds=null, rcur=0, rpicked=null, pIds=null, pcur=0, ppicked=null, pRes=null;
 // Mensajes al terminar una tanda, según el porcentaje de aciertos
 const CHEERS=[
- [100,[['¡Perfecto!','Iporãite (muy bien, en guaraní). Así se asegura una plaza.'],['¡Pleno!','El CONAREM debería tenerte miedo.'],['¡Impecable!','Hoy te ganaste un tereré de premio.']]],
- [90,[['¡Mbarete!','Fuerte, en guaraní. Casi perfecto: mirá bien la que se escapó.'],['¡Nivel jefe de residentes!','Seguí así y la plaza es tuya.']]],
- [70,[['¡Muy bien!','Estás por encima del mínimo de 60. Mañana vuelven las que fallaste para que las fijes.'],['¡Buen ritmo!','Con esto entrás. Ahora a pulir los detalles.']]],
- [60,[['¡Aprobado!','El mínimo es 60 y ya lo pasás; los repasos te van a dar el margen.'],['Vas bien','Cada error de hoy es un punto ganado el día del examen.']]],
- [40,[['Día difícil, pasa','Lo importante es que leíste las explicaciones: eso es lo que queda.'],['Ndaipóri problema','No hay problema, en guaraní. Mañana estas mismas vuelven y les vas a ganar.']]],
- [0,[['Hoy tocó lo difícil','Nadie aprende sin equivocarse: las que fallaste vuelven mañana y las vas a reconocer.'],['Respirá','Tomá un tereré y mañana seguimos. Jaha (¡vamos!, en guaraní).']]]];
+ [100,[['¡Purete!','Purete = de lo mejor. Sos un crack, che ra\'a (amigo).'],['¡Hendy!','Estás que ardés. Iñarandu de verdad (sabio, como en AranduMed).'],['¡Ndera, pleno!','Así nomás se gana una plaza. Hoy toca tereré de premio.']]],
+ [90,[['¡Tuicha!','Tuicha = grande. Casi pleno, che: fijate la que se escapó y listo.'],['¡Mbarete!','Mbarete = fuerte. Nivel jefe de residentes, seguí así.']]],
+ [70,[['¡Iporã!','Iporã = bien. Vas por buen camino nomás; mañana vuelven las que fallaste.'],['¡Crack!','Arriba del 60 y subiendo. ¿Viste que podías? Ahora a pulir detalles.']]],
+ [60,[['Raspando, pero adentro','Pasaste el 60. Con los repasos agarrás margen, tranqui.'],['Vamos que vamos','Cada error de hoy es un punto ganado el día del examen.']]],
+ [40,[['¿Medio vai hoy?','Vai = feo. Pasa nomás: leíste las explicaciones y eso es lo que queda.'],['Ndaipóri problema','No hay problema. Mañana estas mismas vuelven y les ganás.']]],
+ [0,[['¿Kaigue hoy?','Kaigue = sin ganas. A todos nos pasa: un tereré y mañana jaha (¡vamos!).'],['Hoy pegó duro','Nadie aprende sin errar. Las que fallaste vuelven mañana y las vas a reconocer.']]]];
 function cheer(ok,n,seed){const pc=n?Math.round(100*ok/n):0;const tier=CHEERS.find(c=>pc>=c[0]);let h=0;for(const ch of seed)h=(h*31+ch.charCodeAt(0))>>>0;const m=tier[1][h%tier[1].length];return '<p class="cheer">'+m[0]+'</p><p class="cheer-t">'+m[1]+' <span class="sub">('+pc+'% de aciertos)</span></p>'}
 function pool(){const p=S.pref||'ALL';return p==='ALL'?ORDER:ORDER.filter(q=>q.area===p)}
 let docRef=null, saveTimer=null;
