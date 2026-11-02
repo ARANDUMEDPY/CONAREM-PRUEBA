@@ -30,6 +30,7 @@ code,.mono{font-family:ui-monospace,Menlo,monospace;letter-spacing:.04em}
 .codes span{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px 10px}
 .muted{color:var(--muted);font-size:.88rem;margin:0}
 .danger{color:var(--bad)!important;border-color:var(--bad)!important}
+.qk{display:inline-flex;gap:6px;flex-wrap:wrap;margin-top:4px}
 </style>
 </head>
 <body>
@@ -66,7 +67,7 @@ code,.mono{font-family:ui-monospace,Menlo,monospace;letter-spacing:.04em}
 
       <section class="card">
         <h2>Usuarios</h2>
-        <p class="muted">Cada cuenta puede estar abierta en un solo dispositivo a la vez. "Cambios" = veces que se cerró la sesión en un dispositivo por entrar desde otro. Es normal que alguien que alterna celular y compu sume varios; muchísimos cambios en poco tiempo suelen indicar cuenta compartida.</p>
+        <p class="muted">Para activar un plan pagado sin código, tocá "Completo" (hasta el examen) o "+30 días" (mensual, se suma a lo que le quede). Cada cuenta puede estar abierta en un solo dispositivo a la vez. "Cambios" = veces que se cerró la sesión en un dispositivo por entrar desde otro. Es normal que alguien que alterna celular y compu sume varios; muchísimos cambios en poco tiempo suelen indicar cuenta compartida.</p>
         <p class="msg" id="uMsg"></p>
         <div class="scroll"><table><thead><tr><th>Correo</th><th>Acceso hasta</th><th>Alta</th><th>Dispositivos</th><th>Acción</th></tr></thead><tbody id="uBody"></tbody></table></div>
         <h2 style="margin-top:10px">Dar o cambiar acceso manualmente</h2>
@@ -93,6 +94,8 @@ const $=id=>document.getElementById(id);
 const C=window.CONFIG||{};
 function msg(id,t,ok){const m=$(id);m.textContent=t||'';m.className='msg '+(t?(ok?'ok':'err'):'')}
 function esc(s){const d=document.createElement('div');d.textContent=s==null?'':String(s);return d.innerHTML}
+// Fin del plan Completo: día del examen (estimado). Actualizar cuando el INS publique la fecha oficial.
+const EXAM_END='2027-03-06T23:59:59-03:00';
 const fd=d=>d?new Date(d).toLocaleDateString('es-PY'):'—';
 if(!C.SUPABASE_URL){$('fLogin').hidden=false;msg('lMsg','Falta completar config.js.');return}
 const sb=window.supabase.createClient(C.SUPABASE_URL,C.SUPABASE_ANON_KEY);
@@ -119,7 +122,8 @@ async function loadUsers(){
   const now=new Date();const DS={};try{const {data:st}=await sb.rpc('admin_device_stats');(st||[]).forEach(s=>DS[s.email]=s)}catch(e){}
   const dv=e=>{const s=DS[e];if(!s)return '—';return s.devices+(s.kicks?' <span class="'+(s.kicks>=15?'err':'muted')+'" title="Veces que se cerró la sesión en un dispositivo por entrar desde uno nuevo">· '+s.kicks+' cambio'+(s.kicks===1?'':'s')+(s.kicks>=15?' ⚠':'')+'</span>':'')};
   $('uBody').innerHTML=data.map(r=>{const on=r.access_until&&new Date(r.access_until)>now;
-    const act=r.is_admin?'—':on?'<button class="ghost" type="button" data-rev="'+esc(r.email)+'">Quitar acceso</button>':'<span class="muted">Sin acceso</span> <button class="ghost" type="button" data-give="'+esc(r.email)+'">Dar acceso</button>';
+    const quick='<button class="ghost" type="button" data-plan="full" data-em="'+esc(r.email)+'" data-cur="'+(r.access_until||'')+'">Completo</button> <button class="ghost" type="button" data-plan="month" data-em="'+esc(r.email)+'" data-cur="'+(r.access_until||'')+'">+30 días</button>';
+    const act=r.is_admin?'—':(on?'<button class="ghost" type="button" data-rev="'+esc(r.email)+'">Quitar acceso</button> ':'<span class="muted">Sin acceso</span> <button class="ghost" type="button" data-give="'+esc(r.email)+'">Dar acceso</button> ')+'<span class="qk">'+quick+'</span>';
     return '<tr><td>'+esc(r.email)+(r.is_admin?' (admin)':'')+'</td><td>'+fd(r.access_until)+(r.trial_started&&r.access_until&&(new Date(r.access_until)-new Date(r.trial_started))<=3*864e5+36e5?' <span class="muted">· prueba gratis</span>':'')+'</td><td>'+fd(r.created_at)+'</td><td>'+dv(r.email)+'</td><td>'+act+'</td></tr>'}).join('')||'<tr><td colspan="5">Sin usuarios.</td></tr>';
   $('uBody').querySelectorAll('[data-rev]').forEach(b=>b.onclick=async()=>{
     if(!b.dataset.ok){b.dataset.ok=1;b.textContent='¿Seguro? Tocá de nuevo';b.classList.add('danger');setTimeout(()=>{if(b.isConnected){delete b.dataset.ok;b.textContent='Quitar acceso';b.classList.remove('danger')}},4000);return}
@@ -127,6 +131,14 @@ async function loadUsers(){
     const {error}=await sb.rpc('admin_set_access',{p_email:b.dataset.rev,p_until:new Date(Date.now()-60000).toISOString()});
     if(error){b.disabled=false;b.textContent='Error: '+error.message;return}
     msg('uMsg','Acceso quitado a '+b.dataset.rev+'. Su progreso queda guardado por si vuelve.',true);loadUsers()});
+  $('uBody').querySelectorAll('[data-plan]').forEach(b=>b.onclick=async()=>{
+    const cur=b.dataset.cur?new Date(b.dataset.cur):null;const base=cur&&cur>new Date()?cur:new Date();let until;
+    if(b.dataset.plan==='full'){until=new Date(EXAM_END);if(base>until)until=new Date(base.getTime()+30*864e5)}else until=new Date(base.getTime()+30*864e5);
+    const lab=(b.dataset.plan==='full'?'Completo':'+30 días')+' → hasta '+until.toLocaleDateString('es-PY');
+    if(!b.dataset.ok){b.dataset.ok=1;b.textContent='¿'+lab+'? Tocá de nuevo';setTimeout(()=>{if(b.isConnected){delete b.dataset.ok;b.textContent=b.dataset.plan==='full'?'Completo':'+30 días'}},4000);return}
+    b.disabled=true;const {error}=await sb.rpc('admin_set_access',{p_email:b.dataset.em,p_until:until.toISOString()});
+    if(error){b.disabled=false;b.textContent='Error: '+error.message;return}
+    msg('uMsg','Listo: '+b.dataset.em+' tiene acceso '+lab+'. Ya puede entrar, no necesita código.',true);loadUsers()});
   $('uBody').querySelectorAll('[data-give]').forEach(b=>b.onclick=()=>{$('aEmail').value=b.dataset.give;$('aDate').focus();$('aEmail').scrollIntoView({behavior:'smooth',block:'center'});msg('aMsg','Elegí hasta qué fecha y tocá el botón.',true)});
 }
 $('cRef').onclick=loadCodes;$('cFilter').onchange=loadCodes;
