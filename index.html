@@ -20,7 +20,7 @@
 /* Layout: una columna tipo cuaderno de guardia; barra de cuenta regresiva arriba, tarjeta de pregunta al centro, pestañas abajo del encabezado */
 :root{
   --bg:#F2F5F6; --surface:#FFFFFF; --fg:#13222C; --muted:#5B6C77; --line:#D8E0E4;
-  --accent:#0D6B66; --accent-soft:#DCEFEC; --ok:#22784A; --ok-soft:#E1F2E8; --bad:#B23A2A; --bad-soft:#F8E3DF; --mid:#A86A00;
+  --accent:#0D6B66; --accent-soft:#DCEFEC; --ok:#22784A; --ok-soft:#E1F2E8; --bad:#B23A2A; --bad-soft:#F8E3DF; --mid:#A86A00; --cta:#A9431D; --cta-fg:#FFFFFF;
   --mi:#2F5D9A; --cir:#8A4B2B; --ped:#2E7D6B; --go:#9A3D6E; --sp:#6A5A12;
   --display:"Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
   --body:"Inter", "Segoe UI", system-ui, sans-serif;
@@ -28,14 +28,14 @@
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0E161B; --surface:#152129; --fg:#E3EAEE; --muted:#93A4AE; --line:#26353F;
-  --accent:#4CC2B7; --accent-soft:#16363A; --ok:#5CC98A; --ok-soft:#163626; --bad:#F07F6C; --bad-soft:#3D1F1A; --mid:#E5B04A;
+  --accent:#4CC2B7; --accent-soft:#16363A; --ok:#5CC98A; --ok-soft:#163626; --bad:#F07F6C; --bad-soft:#3D1F1A; --mid:#E5B04A; --cta:#F08A5D; --cta-fg:#0E161B;
   --mi:#86A9E0; --cir:#E0A07E; --ped:#7BCDB8; --go:#E59BC2; --sp:#D8C46A; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0E161B; --surface:#152129; --fg:#E3EAEE; --muted:#93A4AE; --line:#26353F;
-  --accent:#4CC2B7; --accent-soft:#16363A; --ok:#5CC98A; --ok-soft:#163626; --bad:#F07F6C; --bad-soft:#3D1F1A; --mid:#E5B04A;
+  --accent:#4CC2B7; --accent-soft:#16363A; --ok:#5CC98A; --ok-soft:#163626; --bad:#F07F6C; --bad-soft:#3D1F1A; --mid:#E5B04A; --cta:#F08A5D; --cta-fg:#0E161B;
   --mi:#86A9E0; --cir:#E0A07E; --ped:#7BCDB8; --go:#E59BC2; --sp:#D8C46A; color-scheme:dark}
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:17px;line-height:1.5;
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:17px;line-height:1.6;
   padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:20px 48px}
 .wrap{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
 header{display:flex;flex-direction:column;gap:14px}
@@ -63,7 +63,7 @@ nav button:focus-visible,.opt:focus-visible,.btn:focus-visible{outline:2px solid
 .dif{display:inline-flex;align-items:center;gap:5px;font-size:.74rem;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--line)}
 .dif i{display:inline-flex;gap:2px}.dif i b{width:5px;height:10px;border-radius:2px;background:currentColor;opacity:.25}.dif i b.on{opacity:1}
 .dif.d1{color:var(--ok)}.dif.d2{color:var(--mid)}.dif.d3{color:var(--bad)}
-.stem{font-size:1.08rem;font-weight:600;margin:0}
+.stem{font-size:1.1rem;font-weight:600;margin:0;line-height:1.55}
 .opts{display:flex;flex-direction:column;gap:8px}
 .opt{display:flex;gap:12px;align-items:flex-start;text-align:left;width:100%;font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:11px 12px;cursor:pointer}
 .opt:hover:not(:disabled){border-color:var(--accent)}
@@ -75,23 +75,24 @@ nav button:focus-visible,.opt:focus-visible,.btn:focus-visible{outline:2px solid
 .opt.wrong{background:var(--bad-soft);border-color:var(--bad)}
 .opt.wrong .l{color:var(--bad)}
 .why{border-left:3px solid var(--accent);padding:4px 0 4px 12px;display:flex;flex-direction:column;gap:4px}
-.why strong{font-size:.95rem}
+.why strong{font-size:1rem}
 .why p{margin:0;color:var(--fg)}
 .nots{display:flex;flex-direction:column;gap:8px}
 .nots strong{font-size:.9rem;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
 .nots ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
-.nots li{display:flex;gap:10px;align-items:flex-start;font-size:.95rem}
+.nots li{display:flex;gap:10px;align-items:flex-start;font-size:1rem}
 .nots li .l{font-family:var(--mono);font-size:.82rem;color:var(--muted);min-width:1.2em;padding-top:2px}
 .nots li span{min-width:0}
 .nots li.mine{background:var(--bad-soft);border-radius:8px;padding:6px 8px;margin-inline:-8px}
 .nots li.mine .l{color:var(--bad)}
 .key{background:var(--accent-soft);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
 .key strong{font-size:.8rem;color:var(--accent);letter-spacing:.04em;text-transform:uppercase}
-.key p{margin:0;font-size:.95rem}
+.key p{margin:0;font-size:1rem}
 .src{margin:0;font-size:.8rem;color:var(--muted);font-style:italic}
 .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
 .btn{font:700 .95rem var(--body);border-radius:10px;padding:10px 16px;cursor:pointer;border:1px solid var(--accent);background:var(--accent);color:var(--surface)}
 .btn.ghost{background:transparent;color:var(--accent)}
+.btn.cta{background:var(--cta);border-color:var(--cta);color:var(--cta-fg)}
 .done{text-align:center;align-items:center}
 .big{font-family:var(--display);font-weight:800;font-size:2.6rem;line-height:1}
 .areas{display:flex;flex-direction:column;gap:14px}
@@ -142,7 +143,7 @@ h2{font-family:var(--display);font-weight:600;font-size:1.2rem;margin:0}
 .fc7>div{display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end}
 .fc7 i{display:block;width:70%;background:var(--accent);border-radius:4px 4px 0 0;min-height:2px}
 .fc7 span{font-size:.72rem;color:var(--muted);font-variant-numeric:tabular-nums}
-@media (max-width:420px){body{font-size:16px}.count b{font-size:1.15rem}.card{padding:16px}}
+@media (max-width:420px){body{font-size:17px}.count b{font-size:1.15rem}.card{padding:16px}}
 @media (prefers-reduced-motion:no-preference){.why{animation:in .2s ease-out}@keyframes in{from{opacity:.4;transform:translateY(-3px)}to{opacity:1;transform:none}}}
 </style>
 <style>
@@ -180,7 +181,7 @@ body{padding-top:54px!important}
     <label id="passWrap">Contraseña<input id="pass" type="password" minlength="6" required autocomplete="current-password"></label>
     <p class="msg" id="lMsg" role="status"></p>
     <div class="row" style="justify-content:flex-start">
-      <button class="btn" id="bMain" type="submit">Entrar</button>
+      <button class="btn cta" id="bMain" type="submit">Entrar</button>
     </div>
     <div class="acctbar">
       <button class="linkbtn" type="button" id="toSignup">Crear cuenta</button>
@@ -194,7 +195,7 @@ body{padding-top:54px!important}
     <p class="note" id="cInfo">Ingresá el código que recibiste al comprar el acceso.</p>
     <label>Código de acceso<input id="code" required maxlength="20" autocomplete="off" style="text-transform:uppercase;font-family:var(--mono);letter-spacing:.08em"></label>
     <p class="msg" id="cMsg" role="status"></p>
-    <div class="row" style="justify-content:flex-start"><button class="btn" type="submit">Activar</button></div>
+    <div class="row" style="justify-content:flex-start"><button class="btn cta" type="submit">Activar</button></div>
     <button class="linkbtn" type="button" id="outCode">Cerrar sesión</button>
   </form>
 
@@ -420,7 +421,7 @@ function renderHoy(){
     const doneToday=ids.filter(id=>S.ans[id]&&S.ans[id].d===S.today.date);
     const ok=doneToday.filter(id=>S.ans[id].ok).length;
     const tm=addDays(todayKey(),1);const nTm=Object.values(S.srs||{}).filter(o=>o.due<=tm).length;
-    h+='<div class="card done"><p class="sub">Sesión de hoy terminada</p><p class="big">'+ok+'/'+doneToday.length+'</p>'+endMsg(ok,doneToday.length,S.today.date+doneToday.length)+'<p class="sub">'+(ok<doneToday.length?'Las que fallaste vuelven mañana como repaso. ':'')+(nTm?'Mañana tenés <b>'+nTm+' repaso'+(nTm===1?'':'s')+'</b> programado'+(nTm===1?'':'s')+'.':'Mañana no tenés repasos pendientes.')+'</p><div class="row" style="justify-content:center"><button class="btn ghost" id="toErr">Repasar errores</button><button class="btn" id="more">10 preguntas más</button></div></div></div>';
+    h+='<div class="card done"><p class="sub">Sesión de hoy terminada</p><p class="big">'+ok+'/'+doneToday.length+'</p>'+endMsg(ok,doneToday.length,S.today.date+doneToday.length)+'<p class="sub">'+(ok<doneToday.length?'Las que fallaste vuelven mañana como repaso. ':'')+(nTm?'Mañana tenés <b>'+nTm+' repaso'+(nTm===1?'':'s')+'</b> programado'+(nTm===1?'':'s')+'.':'Mañana no tenés repasos pendientes.')+'</p><div class="row" style="justify-content:center"><button class="btn ghost" id="toErr">Repasar errores</button><button class="btn cta" id="more">10 preguntas más</button></div></div></div>';
     v.innerHTML=h;bindPlan();
     document.getElementById('more').onclick=addMore;
     document.getElementById('toErr').onclick=()=>go('err');
@@ -482,7 +483,7 @@ function renderErr(){
   }
   const w=wrongIds();
   if(!w.length){v.innerHTML='<div class="card"><p class="empty">Todavía no hay errores para repasar. Las preguntas que falles en la sesión diaria aparecen acá.</p></div>';return}
-  let h='<div style="display:flex;flex-direction:column;gap:14px"><div class="day"><span class="sub">'+w.length+' preguntas para repasar. Al acertarlas salen de la lista.</span><button class="btn" id="start">Repasar ahora</button></div><div class="list">';
+  let h='<div style="display:flex;flex-direction:column;gap:14px"><div class="day"><span class="sub">'+w.length+' preguntas para repasar. Al acertarlas salen de la lista.</span><button class="btn cta" id="start">Repasar ahora</button></div><div class="list">';
   w.forEach(id=>{const q=BYID[id];h+='<div class="item"><div class="meta"><span class="chip '+q.area+'">'+ANAME[q.area]+'</span>'+yl(q)+difB(q)+'</div><p>'+rich(q.q)+'</p><p class="ans">'+L[q.a]+') '+rich(q.o[q.a])+'</p><p class="note">'+rich(q.x||q.e)+'</p></div>'});
   v.innerHTML=h+'</div></div>';
   document.getElementById('start').onclick=()=>{reviewIds=w.slice();rcur=0;rpicked=null;render();window.scrollTo({top:0})};
@@ -526,7 +527,7 @@ function renderPrac(){
   h+='<div class="fgroup"><strong>Dificultad</strong>'+chipRow('difs',[[1,'Básica'],[2,'Intermedia'],[3,'Difícil']],'Dificultad')+'</div>';
   h+='<div class="fgroup"><strong>Cuáles</strong><div class="chips" role="radiogroup">'+[['all','Todas'],['new','Sin responder'],['wrong','Las que fallé']].map(([k,t])=>'<button class="fc" data-st="'+k+'" aria-pressed="'+(f.status===k)+'">'+t+'</button>').join('')+'</div></div>';
   h+='<label class="planbar"><input type="checkbox" id="fshuf"'+(f.shuffle?' checked':'')+'> Mezclar el orden</label>';
-  h+='<div class="row" style="justify-content:space-between;align-items:center"><button class="btn ghost" id="fclear">Limpiar filtros</button><button class="btn" id="fgo"'+(list.length?'':' disabled')+'>'+(list.length?'Practicar '+Math.min(list.length,20)+' de '+list.length:'Sin preguntas con estos filtros')+'</button></div>';
+  h+='<div class="row" style="justify-content:space-between;align-items:center"><button class="btn ghost" id="fclear">Limpiar filtros</button><button class="btn cta" id="fgo"'+(list.length?'':' disabled')+'>'+(list.length?'Practicar '+Math.min(list.length,20)+' de '+list.length:'Sin preguntas con estos filtros')+'</button></div>';
   h+='<p class="note">Las tandas son de hasta 20 preguntas. Lo que respondas acá cuenta en tu progreso y vuelve como repaso en Hoy cuando le toque. Sin elegir nada en un grupo, se incluyen todas sus opciones.</p></div>';
   v.innerHTML=h;
   v.querySelectorAll('.fc[data-g]').forEach(b=>b.onclick=()=>{const g=b.dataset.g;let val=b.dataset.v;if(g!=='areas')val=+val;const arr=f[g];const i=arr.indexOf(val);if(i<0)arr.push(val);else arr.splice(i,1);persist();render()});
