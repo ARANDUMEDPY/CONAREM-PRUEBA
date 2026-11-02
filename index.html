@@ -67,7 +67,7 @@ nav{display:flex;gap:2px;border-bottom:1px solid var(--line);overflow-x:auto;scr
 nav button{white-space:nowrap;flex-shrink:0;font:600 .95rem var(--body);color:var(--muted);background:none;border:0;border-bottom:3px solid transparent;padding:8px 10px;cursor:pointer;display:flex;align-items:center;gap:7px}
 nav svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
 nav button[aria-selected="true"] svg{color:var(--accent)}
-@media (max-width:640px){
+@media (max-width:640px),(hover:none) and (pointer:coarse){
   body{padding-bottom:calc(92px + env(safe-area-inset-bottom, 0px))}
   nav{position:fixed;left:0;right:0;bottom:0;z-index:40;justify-content:space-around;gap:0;background:var(--surface);border-top:1px solid var(--line);border-bottom:0;padding:6px max(6px,env(safe-area-inset-left,0px)) calc(6px + env(safe-area-inset-bottom, 0px));box-shadow:0 -6px 20px rgba(0,0,0,.12);overflow:visible}
   nav button{flex:1 1 0;min-width:0;flex-direction:column;gap:3px;padding:6px 0;border-bottom:0;border-radius:10px;font-size:.68rem;letter-spacing:.01em;min-height:52px;justify-content:center}
