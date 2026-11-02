@@ -5,18 +5,19 @@
 <script>try{var th=localStorage.getItem("tema");if(th)document.documentElement.setAttribute("data-theme",th)}catch(e){}</script>
 <meta name="theme-color" content="#0E161B">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Banco CONAREM</title>
+<title>AranduMed · Asegurá tu plaza</title>
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
 <style>
 /* Layout: una columna tipo cuaderno de guardia; barra de cuenta regresiva arriba, tarjeta de pregunta al centro, pestañas abajo del encabezado */
 :root{
   --bg:#F2F5F6; --surface:#FFFFFF; --fg:#13222C; --muted:#5B6C77; --line:#D8E0E4;
   --accent:#0D6B66; --accent-soft:#DCEFEC; --ok:#22784A; --ok-soft:#E1F2E8; --bad:#B23A2A; --bad-soft:#F8E3DF; --mid:#A86A00;
   --mi:#2F5D9A; --cir:#8A4B2B; --ped:#2E7D6B; --go:#9A3D6E; --sp:#6A5A12;
-  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
-  --body:"Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --display:"Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+  --body:"Inter", "Segoe UI", system-ui, sans-serif;
   --mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
@@ -120,6 +121,10 @@ h2{font-family:var(--display);font-weight:600;font-size:1.2rem;margin:0}
 </style>
 <style>
 [hidden]{display:none!important}
+.brandmed{color:var(--accent)}
+.gate h1.logo{font-size:2.3rem;letter-spacing:-.02em}
+.slogan{font-family:var(--display);font-weight:700;font-size:1.15rem;margin:4px 0 0;color:var(--fg)}
+body{letter-spacing:-.005em}
 .gate{max-width:440px;margin:6vh auto 0;display:flex;flex-direction:column;gap:16px}
 .gate .card{gap:12px}
 .gate label{display:flex;flex-direction:column;gap:4px;font-size:.92rem;color:var(--muted)}
@@ -140,7 +145,7 @@ body{padding-top:54px!important}
 
 <button class="themebtn" id="themeBtn" type="button"></button>
 <div class="gate" id="gate">
-  <div class="brand"><h1>Banco CONAREM</h1><p class="sub">Troncales · preguntas de exámenes 2021–2026 y propias, con explicaciones</p></div>
+  <div class="brand"><h1 class="logo">Arandu<span class="brandmed">Med</span></h1><p class="slogan">Asegurá tu plaza con el banco de preguntas de AranduMed.</p><p class="sub">Preparación para el CONAREM · Especialidades Troncales · más de 900 preguntas con explicación y fuente.</p></div>
 
   <form class="card" id="fLogin" autocomplete="on">
     <h2 id="lTitle">Ingresar</h2>
@@ -180,8 +185,8 @@ body{padding-top:54px!important}
 <div class="wrap" id="app" hidden>
   <header>
     <div class="brand">
-      <h1>Plan CONAREM 2027</h1>
-      <p class="sub">Troncales · 10 preguntas por día · exámenes 2021–2026</p>
+      <h1>Arandu<span class="brandmed">Med</span></h1>
+      <p class="sub">Asegurá tu plaza con el banco de preguntas de AranduMed · Troncales CONAREM</p>
     </div>
     <div class="count" aria-label="Resumen">
       <div><b id="kDays">—</b><span>días al examen</span></div>
@@ -196,7 +201,7 @@ body{padding-top:54px!important}
     </nav>
   </header>
   <main id="view"></main>
-  <p class="note">Preguntas de los cuadernillos de Especialidades Troncales del CONAREM (INS) y preguntas propias de práctica, con explicaciones y fuentes. <span class="sync" id="sync"></span></p>
+  <p class="note">Preguntas de los cuadernillos de Especialidades Troncales del CONAREM (INS) y preguntas propias de práctica, con explicaciones y fuentes. AranduMed es un recurso independiente, sin vínculo oficial con el INS ni con la CONAREM. <span class="sync" id="sync"></span></p>
   <p class="note" id="acct"></p>
 </div>
 

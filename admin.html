@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Administración · Banco CONAREM</title>
+<title>Administración · AranduMed</title>
 <meta name="robots" content="noindex">
 <style>
 :root{--bg:#F2F5F6;--surface:#fff;--fg:#13222C;--muted:#5B6C77;--line:#D8E0E4;--accent:#0D6B66;--ok:#22784A;--bad:#B23A2A}
@@ -33,7 +33,7 @@ code,.mono{font-family:ui-monospace,Menlo,monospace;letter-spacing:.04em}
 </head>
 <body>
 <div class="wrap">
-  <h1>Panel de administración</h1>
+  <h1>AranduMed · Panel de administración</h1>
   <p class="muted"><a href="index.html">← Volver al banco</a></p>
 
   <form class="card" id="fLogin" hidden>
@@ -122,7 +122,7 @@ $('gGo').onclick=async()=>{
   $('gGo').disabled=false;
   if(error){msg('gMsg',error.message);return}
   const site=location.origin+location.pathname.replace(/admin\.html$/,'');
-  $('gOut').innerHTML=data.map(c=>{const txt='¡Hola! Tu código de acceso al Banco CONAREM es '+c+'. Entrá a '+site+' , creá tu cuenta y activalo.';
+  $('gOut').innerHTML=data.map(c=>{const txt='¡Hola! Tu código de acceso a AranduMed es '+c+'. Entrá a '+site+' , creá tu cuenta y activalo.';
     return '<span class="mono">'+esc(c)+' <button class="ghost" type="button" data-t="'+esc(txt)+'">Copiar mensaje</button></span>'}).join('');
   $('gOut').querySelectorAll('button').forEach(b=>b.onclick=async()=>{try{await navigator.clipboard.writeText(b.dataset.t);b.textContent='Copiado'}catch(e){prompt('Copiá el mensaje:',b.dataset.t)}});
   msg('gMsg',data.length+' código(s) creado(s).',true);loadCodes();
