@@ -41,8 +41,22 @@ body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:17px
 header{display:flex;flex-direction:column;gap:14px}
 .topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:44px}
 .tbr{display:flex;align-items:center;gap:8px}
-.daypill{font:600 .85rem var(--body);color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 12px;white-space:nowrap}
+.daypill{cursor:pointer;font:600 .85rem var(--body);color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 12px;white-space:nowrap}
 .daypill b{font-family:var(--mono);color:var(--accent);font-size:.95rem}
+.daypill .dp-g{color:var(--accent)}.daypill.on{border-color:var(--accent);background:var(--accent-soft)}
+.rs-list{display:flex;flex-direction:column;gap:10px}
+.rs-item{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.rs-item:hover{border-color:var(--accent)}.rs-item:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.rs-h{font-family:var(--display);font-size:1.05rem}.rs-l{color:var(--muted);font-size:.92rem;line-height:1.45}.rs-n{font-size:.8rem;color:var(--accent);font-weight:600}
+.rs-ok{font:600 .72rem var(--body);color:var(--ok)}.rs-dr{font:700 .68rem var(--body);text-transform:uppercase;letter-spacing:.04em;color:var(--bad)}
+.rsum{gap:14px}.rs-t{font-family:var(--display);font-weight:800;font-size:1.5rem}.rs-lead{margin:0;color:var(--muted)}
+.rs-ask{background:var(--accent-soft);border-radius:12px;padding:12px 16px}.rs-ask strong,.rs-trap strong{font-size:.78rem;letter-spacing:.05em;text-transform:uppercase;color:var(--accent)}
+.rs-ask ul,.rs-trap ul{margin:6px 0 0;padding-left:1.15em;display:flex;flex-direction:column;gap:4px;line-height:1.5}
+.rs-sec h3{margin:4px 0 8px;font-family:var(--display);font-size:1.08rem;font-weight:700;padding-bottom:6px;border-bottom:1px solid var(--line)}
+.rs-sec .klist{margin:0;padding-left:1.15em;display:flex;flex-direction:column;gap:7px;line-height:1.55}.rs-sec .klist>li::marker{color:var(--accent)}
+.rs-sec b{color:var(--fg)}
+.rs-trap{background:var(--bad-soft);border-radius:12px;padding:12px 16px}.rs-trap strong{color:var(--bad)}
+@media (max-width:420px){.daypill .dp-g{display:none}}
 h1{font-family:var(--display);font-weight:800;font-size:1.45rem;letter-spacing:-0.01em;margin:0;text-wrap:balance}
 .sub{color:var(--muted);font-size:.95rem;margin:0}
 .count{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden}
@@ -56,8 +70,9 @@ nav button[aria-selected="true"] svg{color:var(--accent)}
 @media (max-width:640px){
   body{padding-bottom:calc(92px + env(safe-area-inset-bottom, 0px))}
   nav{position:fixed;left:0;right:0;bottom:0;z-index:40;justify-content:space-around;gap:0;background:var(--surface);border-top:1px solid var(--line);border-bottom:0;padding:6px max(6px,env(safe-area-inset-left,0px)) calc(6px + env(safe-area-inset-bottom, 0px));box-shadow:0 -6px 20px rgba(0,0,0,.12);overflow:visible}
-  nav button{flex:1 1 0;min-width:0;flex-direction:column;gap:3px;padding:6px 2px;border-bottom:0;border-radius:10px;font-size:.68rem;letter-spacing:.01em;min-height:52px;justify-content:center}
-  nav button span{overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  nav button{flex:1 1 0;min-width:0;flex-direction:column;gap:3px;padding:6px 0;border-bottom:0;border-radius:10px;font-size:.68rem;letter-spacing:.01em;min-height:52px;justify-content:center}
+  nav button span{overflow:hidden;text-overflow:ellipsis;max-width:100%;letter-spacing:-.02em}
+  nav{padding-left:max(2px,env(safe-area-inset-left,0px));padding-right:max(2px,env(safe-area-inset-right,0px))}
   nav svg{width:23px;height:23px}
   nav button[aria-selected="true"]{color:var(--fg);background:var(--accent-soft)}
 }
@@ -358,7 +373,7 @@ body:has(#gate:not([hidden])){padding-top:54px!important}
   <header>
     <div class="topbar">
       <h1>Arandu<span class="brandmed">Med</span></h1>
-      <span class="tbr"><span class="daypill" title="Días que faltan para el examen"><b id="kDays">—</b> días</span></span>
+      <span class="tbr"><button class="daypill" id="tab-guia" type="button" title="Guía del examen: fechas, documentos y reglas"><b id="kDays">—</b> días<span class="dp-g"> · Guía</span></button></span>
     </div>
     <div class="count" aria-label="Resumen">
       <div><b id="kDone">—</b><span>respondidas</span></div>
@@ -368,9 +383,9 @@ body:has(#gate:not([hidden])){padding-top:54px!important}
       <button role="tab" id="tab-hoy" aria-selected="true" data-v="hoy"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3v3M16 3v3M4 9h16"/><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M9 14l2 2 4-4"/></svg><span>Hoy</span></button>
       <button role="tab" id="tab-prac" aria-selected="false" data-v="prac"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r=".6" fill="currentColor"/></svg><span>Practicar</span></button>
       <button role="tab" id="tab-sim" aria-selected="false" data-v="sim"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="7.5"/><path d="M12 9.5V13l2.5 2M10 2.5h4M18.5 6l1.5-1.5"/></svg><span>Simulacro</span></button>
+      <button role="tab" id="tab-res" aria-selected="false" data-v="res"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5C6.5 4.5 9.5 4.5 12 6c2.5-1.5 5.5-1.5 8-.5V19c-2.5-1-5.5-1-8 .5-2.5-1.5-5.5-1.5-8-.5z"/><path d="M12 6v13.5"/><path d="M7 9h2.5M7 12h2.5M14.5 9H17M14.5 12H17"/></svg><span>Resúmenes</span></button>
       <button role="tab" id="tab-prog" aria-selected="false" data-v="prog"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16"/><rect x="5.5" y="12" width="3" height="5.5" rx="1"/><rect x="10.5" y="8" width="3" height="9.5" rx="1"/><rect x="15.5" y="4.5" width="3" height="13" rx="1"/></svg><span>Progreso</span></button>
       <button role="tab" id="tab-err" aria-selected="false" data-v="err"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4h4"/><path d="M12 8.5v4l2.5 1.5"/></svg><span>Errores</span></button>
-      <button role="tab" id="tab-guia" aria-selected="false" data-v="guia"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5z"/><path d="M5 19.5A1.5 1.5 0 0 0 6.5 21H19v-3"/><path d="M9 7.5h6M9 11h4"/></svg><span>Guía</span></button>
     </nav>
   </header>
   <main id="view"></main>
@@ -382,6 +397,7 @@ body:has(#gate:not([hidden])){padding-top:54px!important}
 <div id="tip" hidden role="tooltip"></div>
 <script>
 window.startApp=function(BANK){
+const RESL=window.__RES||(()=>{try{return JSON.parse(document.getElementById('res').textContent)}catch(e){return []}})();
 const EXAM=new Date(2027,2,6); // sábado 6 de marzo de 2027
 const PER_DAY=10;
 // Ritmo automático: reparte lo que falta en los días que quedan, dejando las últimas 2 semanas para repasar. Con topes para no saturar.
@@ -438,7 +454,7 @@ function todayKey(){return dkey(new Date())}
 function addDays(k,n){const p=k.split('-');const d=new Date(+p[0],+p[1]-1,+p[2]);d.setDate(d.getDate()+n);return dkey(d)}
 function lsGet(){try{const t=localStorage.getItem('conarem2027:'+(window.__uid||''));return t?JSON.parse(t):null}catch(e){return null}}
 function lsSet(){try{localStorage.setItem('conarem2027:'+(window.__uid||''),JSON.stringify(S))}catch(e){}}
-function persist(now){lsSet();if(!docRef)return;clearTimeout(saveTimer);saveTimer=setTimeout(()=>{docRef.set({ans:S.ans,today:S.today,pref:S.pref||'ALL',flt:S.flt||null,srs:S.srs||{},rate:S.rate||'auto',sims:S.sims||[],simCfg:S.simCfg||null,docs:S.docs||{},v:3}).then(()=>setSync('Progreso guardado en tu cuenta.')).catch(()=>setSync('Progreso guardado solo en este dispositivo.'))},now?0:600)}
+function persist(now){lsSet();if(!docRef)return;clearTimeout(saveTimer);saveTimer=setTimeout(()=>{docRef.set({ans:S.ans,today:S.today,pref:S.pref||'ALL',flt:S.flt||null,srs:S.srs||{},rate:S.rate||'auto',sims:S.sims||[],simCfg:S.simCfg||null,docs:S.docs||{},resRead:S.resRead||{},v:3}).then(()=>setSync('Progreso guardado en tu cuenta.')).catch(()=>setSync('Progreso guardado solo en este dispositivo.'))},now?0:600)}
 function setSync(t){document.getElementById('sync').textContent=t}
 
 function ensureToday(){
@@ -812,9 +828,35 @@ function renderGuia(){const v=document.getElementById('view');const d=S.docs||{}
   v.innerHTML=h;
   v.querySelectorAll('[data-doc]').forEach(c=>c.onchange=()=>{S.docs=S.docs||{};if(c.checked)S.docs[c.dataset.doc]=1;else delete S.docs[c.dataset.doc];persist();const sec=c.closest('details');const open=[...v.querySelectorAll('details')].map(x=>x.open);render();[...document.querySelectorAll('#view details')].forEach((x,i)=>x.open=open[i])});
 }
-function render(){header();if(view==='hoy')renderHoy();else if(view==='prog')renderProg();else if(view==='prac')renderPrac();else if(view==='sim')renderSim();else if(view==='guia')renderGuia();else renderErr()}
-function go(v){if(v!==view)simRev=null;view=v;document.querySelectorAll('nav button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.v===v)));render()}
+// ---------- Resúmenes de alto rendimiento por tema ----------
+let resOpen=null,resArea=null;
+function resCount(r){return BANK.filter(q=>q.area===r.area&&q.t===r.t).length}
+function resPractice(r){S.flt={areas:[r.area],topic:r.area+'|'+r.t,years:[],difs:[],status:'all',shuffle:true};const f=F();let ids=ORDER.filter(q=>matches(q,f)).map(q=>q.id);for(let i=ids.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[ids[i],ids[j]]=[ids[j],ids[i]]}pIds=ids.slice(0,20);pcur=0;pRes={ok:0,n:0};ppicked=null;persist();resOpen=null;go('prac');window.scrollTo({top:0})}
+function renderRes(){const v=document.getElementById('view');const R=RESL;
+  if(resOpen){const r=R.find(x=>x.id===resOpen);if(!r){resOpen=null;return renderRes()}
+    S.resRead=S.resRead||{};if(!S.resRead[r.id]){S.resRead[r.id]=todayKey();persist()}
+    const n=resCount(r);
+    let h='<div style="display:flex;flex-direction:column;gap:14px"><div class="day"><button class="btn ghost" id="rsBack">← Todos los resúmenes</button>'+(r.draft?'<span class="rep" style="background:var(--bad-soft);color:var(--bad)">Borrador · solo vos lo ves</span>':'')+'</div>';
+    h+='<article class="card rsum"><div class="meta"><span class="chip '+r.area+'">'+ANAME[r.area]+'</span><span class="tagt">'+n+' preguntas en el banco</span></div><h2 class="rs-t">'+esc(r.title)+'</h2><p class="rs-lead">'+rich(r.lead)+'</p>';
+    if(r.ask&&r.ask.length)h+='<div class="rs-ask"><strong>Lo que más preguntan</strong><ul>'+r.ask.map(x=>'<li>'+rich(x)+'</li>').join('')+'</ul></div>';
+    h+=r.sec.map(s=>'<section class="rs-sec"><h3>'+esc(s.h)+'</h3><ul class="klist">'+s.li.map(x=>'<li>'+keyPart(x)+'</li>').join('')+'</ul></section>').join('');
+    if(r.trap&&r.trap.length)h+='<div class="rs-trap"><strong>⚠ Trampas típicas</strong><ul>'+r.trap.map(x=>'<li>'+rich(x)+'</li>').join('')+'</ul></div>';
+    h+='<p class="src">Resumen orientativo basado en Harrison, 21.ª ed., las guías vigentes y las preguntas del CONAREM 2016–2026.</p></article>';
+    h+='<div class="row" style="justify-content:center"><button class="btn cta" id="rsGo"'+(n?'':' disabled')+'>Practicar '+esc(r.title)+' · '+Math.min(n,20)+' preguntas</button></div></div>';
+    v.innerHTML=h;document.getElementById('rsBack').onclick=()=>{resOpen=null;render();window.scrollTo({top:0})};document.getElementById('rsGo').onclick=()=>resPractice(r);return}
+  const have=AREAS.filter(([a])=>R.some(r=>r.area===a));if(!resArea||!AREAS.some(x=>x[0]===resArea))resArea=(have[0]||AREAS[0])[0];
+  let h='<div style="display:flex;flex-direction:column;gap:14px"><div class="card"><h2>Resúmenes de alto rendimiento</h2><p class="note">Lo más preguntado de cada tema en los exámenes 2016–2026, en una pantalla. Leelo y después practicá ese tema.</p><div class="chips" role="tablist">'+AREAS.map(([a,nm])=>{const k=R.filter(r=>r.area===a).length;return '<button class="fc" data-ra="'+a+'" aria-pressed="'+(a===resArea)+'">'+nm+(k?' · '+k:'')+'</button>'}).join('')+'</div></div>';
+  const list=R.filter(r=>r.area===resArea);
+  if(!list.length)h+='<div class="card empty"><p style="margin:0"><b>'+ANAME[resArea]+'</b>: próximamente.</p><p class="note" style="margin:6px 0 0">Estamos preparando estos resúmenes. Mientras tanto, practicá por tema en Practicar.</p></div>';
+  else h+='<div class="rs-list">'+list.map(r=>{const n=resCount(r);const read=S.resRead&&S.resRead[r.id];return '<button class="rs-item" data-rs="'+r.id+'"><span class="rs-h"><b>'+esc(r.title)+'</b>'+(r.draft?' <span class="rs-dr">borrador</span>':'')+(read?' <span class="rs-ok">✓ leído</span>':'')+'</span><span class="rs-l">'+esc(r.lead)+'</span><span class="rs-n">'+n+' preguntas · '+r.sec.length+' secciones ›</span></button>'}).join('')+'</div>';
+  v.innerHTML=h+'</div>';
+  v.querySelectorAll('[data-ra]').forEach(b=>b.onclick=()=>{resArea=b.dataset.ra;render()});
+  v.querySelectorAll('[data-rs]').forEach(b=>b.onclick=()=>{resOpen=b.dataset.rs;render();window.scrollTo({top:0})});
+}
+function render(){header();if(view==='hoy')renderHoy();else if(view==='prog')renderProg();else if(view==='prac')renderPrac();else if(view==='sim')renderSim();else if(view==='guia')renderGuia();else if(view==='res')renderRes();else renderErr()}
+function go(v){if(v!==view){simRev=null;if(v!=='res')resOpen=null}view=v;document.getElementById('tab-guia').classList.toggle('on',v==='guia');document.querySelectorAll('nav button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.v===v)));render()}
 document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>go(b.dataset.v));
+document.getElementById('tab-guia').onclick=()=>go('guia');
 
 const saved=lsGet();if(saved&&saved.ans)S=Object.assign({pref:'ALL',flt:null,srs:{}},saved);
 migrateSrs();ensureToday();fixToday();cur=firstOpen();if(S.simRun){view='sim';document.querySelectorAll('nav button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.v==='sim')));startTick()}render();
@@ -828,7 +870,7 @@ setSync('Progreso guardado en este dispositivo.');
     if(snap.exists){
       const d=snap.data()||{};const remote=d.ans||{};
       S.ans=Object.assign({},remote,S.ans);
-      if(d.pref&&(!S.pref||S.pref==='ALL'))S.pref=d.pref;if(d.flt&&!S.flt)S.flt=d.flt;if(d.rate&&(!S.rate||S.rate==='auto'))S.rate=d.rate;if(d.simCfg&&!S.simCfg)S.simCfg=d.simCfg;if(d.docs)S.docs=Object.assign({},d.docs,S.docs||{});{const m={};(S.sims||[]).concat(d.sims||[]).forEach(s=>{m[s.ts||s.date]=s});S.sims=Object.values(m).sort((a,b)=>(a.ts||0)-(b.ts||0)).slice(-30)}
+      if(d.pref&&(!S.pref||S.pref==='ALL'))S.pref=d.pref;if(d.flt&&!S.flt)S.flt=d.flt;if(d.rate&&(!S.rate||S.rate==='auto'))S.rate=d.rate;if(d.simCfg&&!S.simCfg)S.simCfg=d.simCfg;if(d.docs)S.docs=Object.assign({},d.docs,S.docs||{});if(d.resRead)S.resRead=Object.assign({},d.resRead,S.resRead||{});{const m={};(S.sims||[]).concat(d.sims||[]).forEach(s=>{m[s.ts||s.date]=s});S.sims=Object.values(m).sort((a,b)=>(a.ts||0)-(b.ts||0)).slice(-30)}
       const rt=d.today,lt=S.today;
       const rs=d.srs||{};S.srs=S.srs||{};for(const id in rs){const l=S.srs[id];if(!l||l.m&&!rs[id].m||(rs[id].last||'')>(l.last||''))S.srs[id]=rs[id]}
       if(rt&&rt.ids){if(!lt||!lt.ids||rt.date>lt.date)S.today=rt;else if(rt.date===lt.date){const seen=new Set(lt.ids);const rv=new Set((lt.rev||[]).concat(rt.rev||[]));S.today={date:lt.date,ids:lt.ids.concat(rt.ids.filter(x=>!seen.has(x))),rev:(lt.rev||rt.rev)?[...rv]:undefined}}}
@@ -951,6 +993,7 @@ async function route(){
       set:async(obj)=>{const {error}=await sb.from('progress').upsert({user_id:uid,data:obj,updated_at:new Date().toISOString()});if(error)throw error}
     };
     $('gate').hidden=true;$('app').hidden=false;{const tb=document.querySelector('.tbr'),th=$('themeBtn');if(tb&&th&&th.parentNode!==tb)tb.appendChild(th)}
+    try{const {data:rs}=await sb.from('summaries').select('id,area,ord,data,published').order('area').order('ord');window.__RES=(rs||[]).map(r=>Object.assign({},r.data,{id:r.id,area:r.area,draft:!r.published}))}catch(e){window.__RES=[]}
     window.startApp(bank);
     const until=prof.is_admin?'administrador':'acceso hasta el '+new Date(prof.access_until).toLocaleDateString('es-PY',{day:'numeric',month:'long',year:'numeric'});
     trialBar(prof);
