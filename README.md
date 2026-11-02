@@ -18,7 +18,7 @@ Web de práctica para el examen CONAREM (Especialidades Troncales): plan diario,
 
 1. **Supabase → SQL Editor:** pegá el contenido de `supabase/schema.sql` y tocá **Run**.
 2. **Supabase → Project Settings → API:** copiá la **Project URL** y la **anon public key** dentro de `config.js`. Nunca uses la *service_role key*.
-3. **Supabase → Authentication → URL Configuration:** en *Site URL* poné la dirección de la web, por ejemplo `https://andrewgimenez20-crypto.github.io/conarem-prueba/`.
+3. **Supabase → Authentication → URL Configuration:** en *Site URL* poné la dirección de la web, por ejemplo `https://arandumed.com.py/` (o la dirección que te dé Cloudflare Pages mientras tanto).
 4. **GitHub → Settings → Pages:** *Deploy from a branch* → `main` / `(root)` → Save.
 5. Entrá a la web, **creá tu cuenta** y confirmá el correo.
 6. En **SQL Editor**, convertite en administrador:
