@@ -66,8 +66,9 @@ code,.mono{font-family:ui-monospace,Menlo,monospace;letter-spacing:.04em}
 
       <section class="card">
         <h2>Usuarios</h2>
+        <p class="muted">Cada cuenta puede usarse en hasta 2 dispositivos. "Cambios" = veces que se cerró la sesión en uno por entrar desde otro nuevo; muchos cambios (⚠) suele indicar cuenta compartida.</p>
         <p class="msg" id="uMsg"></p>
-        <div class="scroll"><table><thead><tr><th>Correo</th><th>Acceso hasta</th><th>Alta</th><th>Acción</th></tr></thead><tbody id="uBody"></tbody></table></div>
+        <div class="scroll"><table><thead><tr><th>Correo</th><th>Acceso hasta</th><th>Alta</th><th>Dispositivos</th><th>Acción</th></tr></thead><tbody id="uBody"></tbody></table></div>
         <h2 style="margin-top:10px">Dar o cambiar acceso manualmente</h2>
         <div class="row"><label style="flex:2">Correo del usuario<input id="aEmail" type="email"></label><label>Hasta (fecha)<input id="aDate" type="date"></label><button id="aGo" type="button">Guardar</button></div>
         <p class="msg" id="aMsg"></p>
@@ -114,11 +115,12 @@ async function loadCodes(){
 }
 async function loadUsers(){
   const {data,error}=await sb.from('profiles').select('email,access_until,created_at,is_admin').order('created_at',{ascending:false}).limit(500);
-  if(error){$('uBody').innerHTML='<tr><td colspan="4">'+esc(error.message)+'</td></tr>';return}
-  const now=new Date();
+  if(error){$('uBody').innerHTML='<tr><td colspan="5">'+esc(error.message)+'</td></tr>';return}
+  const now=new Date();const DS={};try{const {data:st}=await sb.rpc('admin_device_stats');(st||[]).forEach(s=>DS[s.email]=s)}catch(e){}
+  const dv=e=>{const s=DS[e];if(!s)return '—';return s.devices+(s.kicks?' <span class="'+(s.kicks>=3?'err':'muted')+'" title="Veces que se cerró la sesión en un dispositivo por entrar desde uno nuevo">· '+s.kicks+' cambio'+(s.kicks===1?'':'s')+(s.kicks>=3?' ⚠':'')+'</span>':'')};
   $('uBody').innerHTML=data.map(r=>{const on=r.access_until&&new Date(r.access_until)>now;
     const act=r.is_admin?'—':on?'<button class="ghost" type="button" data-rev="'+esc(r.email)+'">Quitar acceso</button>':'<span class="muted">Sin acceso</span> <button class="ghost" type="button" data-give="'+esc(r.email)+'">Dar acceso</button>';
-    return '<tr><td>'+esc(r.email)+(r.is_admin?' (admin)':'')+'</td><td>'+fd(r.access_until)+'</td><td>'+fd(r.created_at)+'</td><td>'+act+'</td></tr>'}).join('')||'<tr><td colspan="4">Sin usuarios.</td></tr>';
+    return '<tr><td>'+esc(r.email)+(r.is_admin?' (admin)':'')+'</td><td>'+fd(r.access_until)+'</td><td>'+fd(r.created_at)+'</td><td>'+dv(r.email)+'</td><td>'+act+'</td></tr>'}).join('')||'<tr><td colspan="5">Sin usuarios.</td></tr>';
   $('uBody').querySelectorAll('[data-rev]').forEach(b=>b.onclick=async()=>{
     if(!b.dataset.ok){b.dataset.ok=1;b.textContent='¿Seguro? Tocá de nuevo';b.classList.add('danger');setTimeout(()=>{if(b.isConnected){delete b.dataset.ok;b.textContent='Quitar acceso';b.classList.remove('danger')}},4000);return}
     b.disabled=true;b.textContent='Quitando…';

@@ -600,7 +600,7 @@ $('fCode').onsubmit=async ev=>{ev.preventDefault();msg('cMsg','');
   const {data,error}=await sb.rpc('redeem_code',{p_code:$('code').value.trim().toUpperCase()});
   if(error){msg('cMsg',error.message.replace(/^.*?:\s*/,''));return}
   msg('cMsg','¡Listo! Acceso activo hasta el '+new Date(data).toLocaleDateString('es-PY',{day:'numeric',month:'long',year:'numeric'})+'.',true);setTimeout(()=>route(),900)};
-$('outCode').onclick=()=>sb.auth.signOut();
+$('outCode').onclick=()=>logout();
 $('fNewPass').onsubmit=async ev=>{ev.preventDefault();const {error}=await sb.auth.updateUser({password:$('newpass').value});if(error){msg('nMsg',tr(error));return}msg('nMsg','Contraseña actualizada.',true);setTimeout(()=>route(),800)};
 
 // ---- Banco guardado en el dispositivo (IndexedDB): solo se descarga si hay cambios ----
@@ -630,15 +630,26 @@ function installUI(){
   if(isIOS())return ' <span class="iosHint">📲 Para instalar la app: tocá <b>Compartir</b> y luego <b>Agregar a inicio</b>.</span>';
   return ' <button class="linkbtn" id="installBtn"'+(installEvt?'':' hidden')+'>📲 Instalar app</button>';
 }
+function devId(){let d=null;try{d=localStorage.getItem('am_device')}catch(e){}
+  if(!d){d=(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2));try{localStorage.setItem('am_device',d)}catch(e){}}return d}
+function devLabel(){const u=navigator.userAgent;const os=/android/i.test(u)?'Android':/iphone|ipad|ipod/i.test(u)?'iPhone/iPad':/windows/i.test(u)?'Windows':/mac os/i.test(u)?'Mac':/linux/i.test(u)?'Linux':'Otro';
+  const br=/edg\//i.test(u)?'Edge':/chrome|crios/i.test(u)?'Chrome':/firefox|fxios/i.test(u)?'Firefox':/safari/i.test(u)?'Safari':'Navegador';return os+' · '+br}
+let pingT=null;
+async function kicked(){clearInterval(pingT);try{sessionStorage.setItem('am_kicked','1')}catch(e){}await sb.auth.signOut()}
+async function ping(){if(document.hidden)return;try{const {data,error}=await sb.rpc('device_ping',{p_device:devId()});if(!error&&data===false)kicked()}catch(e){}}
+function startPing(){clearInterval(pingT);pingT=setInterval(ping,120000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)ping()})}
+async function logout(){try{await sb.rpc('forget_device',{p_device:devId()})}catch(e){}await sb.auth.signOut()}
 async function route(){
   const {data:{session}}=await sb.auth.getSession();
-  if(!session){$('app').hidden=true;$('gate').hidden=false;show('fLogin');return}
+  if(!session){$('app').hidden=true;$('gate').hidden=false;show('fLogin');let k=null;try{k=sessionStorage.getItem('am_kicked');sessionStorage.removeItem('am_kicked')}catch(e){}if(k)msg('lMsg','Tu cuenta se abrió en otro dispositivo. Cada cuenta se puede usar en hasta 2 dispositivos; al entrar acá se cerrará la sesión en el más antiguo.');return}
   const uid=session.user.id;
   const {data:prof}=await sb.from('profiles').select('access_until,is_admin,email').eq('id',uid).maybeSingle();
   const active=prof&&(prof.is_admin||(prof.access_until&&new Date(prof.access_until)>new Date()));
   if(!active){$('gate').hidden=false;$('app').hidden=true;show('fCode');
     $('cInfo').textContent=(prof&&prof.access_until)?'Tu acceso venció el '+new Date(prof.access_until).toLocaleDateString('es-PY')+'. Ingresá un código nuevo para renovarlo.':'Ingresá el código que recibiste al comprar el acceso.';return}
   if(started)return;started=true;show('loading');
+  try{await sb.rpc('register_device',{p_device:devId(),p_label:devLabel()})}catch(e){}
+  startPing();
   try{
     const bank=await loadBank();
     window.__uid=uid;
@@ -651,7 +662,7 @@ async function route(){
     const until=prof.is_admin?'administrador':'acceso hasta el '+new Date(prof.access_until).toLocaleDateString('es-PY',{day:'numeric',month:'long',year:'numeric'});
     $('acct').innerHTML='<span class="acctbar">'+prof.email+' · '+until+(prof.is_admin?' · <a href="admin.html">Panel de administración</a>':'')+' <button class="linkbtn" id="logout">Cerrar sesión</button>'+installUI()+'</span>';
     const ib=document.getElementById('installBtn');if(ib)ib.onclick=async()=>{if(!installEvt)return;installEvt.prompt();await installEvt.userChoice;installEvt=null;ib.hidden=true};
-    $('logout').onclick=()=>sb.auth.signOut();
+    $('logout').onclick=logout;
   }catch(e){started=false;show('fLogin');msg('lMsg','No se pudieron cargar las preguntas: '+tr(e))}
 }
 sb.auth.onAuthStateChange((ev)=>{
