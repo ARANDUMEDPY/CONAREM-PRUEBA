@@ -46,8 +46,8 @@ h1{font-family:var(--display);font-weight:800;font-size:1.7rem;letter-spacing:-0
 .count>div{background:var(--surface);padding:10px 12px;display:flex;flex-direction:column;gap:2px;min-width:0}
 .count b{font-family:var(--mono);font-size:1.35rem;font-variant-numeric:tabular-nums;line-height:1.2}
 .count span{font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-nav{display:flex;gap:6px;border-bottom:1px solid var(--line)}
-nav button{font:600 .95rem var(--body);color:var(--muted);background:none;border:0;border-bottom:3px solid transparent;padding:8px 10px;cursor:pointer}
+nav{display:flex;gap:2px;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}nav::-webkit-scrollbar{display:none}
+nav button{white-space:nowrap;flex-shrink:0;font:600 .95rem var(--body);color:var(--muted);background:none;border:0;border-bottom:3px solid transparent;padding:8px 10px;cursor:pointer}
 nav button[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--accent)}
 nav button:focus-visible,.opt:focus-visible,.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .day{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
@@ -88,6 +88,21 @@ nav button:focus-visible,.opt:focus-visible,.btn:focus-visible{outline:2px solid
 .key{background:var(--accent-soft);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
 .key strong{font-size:.8rem;color:var(--accent);letter-spacing:.04em;text-transform:uppercase}
 .key p{margin:0;font-size:1rem}
+.simbar{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px;box-shadow:0 4px 14px rgba(0,0,0,.12)}
+.simbar .clock{font-family:var(--mono);font-size:1.35rem;font-variant-numeric:tabular-nums;font-weight:600;color:var(--accent);min-width:4.5em}
+.simbar .clock.low{color:var(--bad)}
+.simbar .btn{margin-left:auto}
+.opt.sel{border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent)}
+.simgrid-c summary{cursor:pointer;font-weight:600}
+.simgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(42px,1fr));gap:6px}
+.simgrid button{font:600 .85rem var(--mono);height:44px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--muted);cursor:pointer;position:relative}
+.simgrid button.a{background:var(--accent-soft);color:var(--fg);border-color:var(--accent)}
+.simgrid button.m::after{content:"★";position:absolute;top:1px;right:3px;font-size:.65rem;color:var(--cta)}
+.simgrid button.c{outline:2px solid var(--fg);outline-offset:1px}
+.simhist{display:flex;flex-direction:column;gap:8px}
+.simhist .sh{display:grid;grid-template-columns:minmax(0,1fr) auto 7.5em;gap:10px;align-items:center;font-size:.92rem;border-bottom:1px solid var(--line);padding-bottom:6px}
+.simhist .sh .sub{text-align:right}
+.danger{color:var(--bad)!important;border-color:var(--bad)!important}
 .key{padding:14px 16px;gap:8px}
 .key .klist,.key .ksub{margin:0;padding-left:1.15em;display:flex;flex-direction:column;gap:7px;font-size:1rem;line-height:1.55}
 .key .ksub{margin-top:5px;gap:4px;list-style:"– "}
@@ -149,7 +164,7 @@ h2{font-family:var(--display);font-weight:600;font-size:1.2rem;margin:0}
 .fc7>div{display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end}
 .fc7 i{display:block;width:70%;background:var(--accent);border-radius:4px 4px 0 0;min-height:2px}
 .fc7 span{font-size:.72rem;color:var(--muted);font-variant-numeric:tabular-nums}
-@media (max-width:420px){body{font-size:17px}.count b{font-size:1.15rem}.card{padding:16px}}
+@media (max-width:420px){nav button{padding:8px 6px;font-size:.86rem}.simbar{flex-wrap:nowrap;gap:8px;padding:8px 10px}.simbar .clock{min-width:0;font-size:1.2rem}.simbar .sub{font-size:.8rem}.simbar .btn{padding:9px 12px}body{font-size:17px}.count b{font-size:1.15rem}.card{padding:16px}}
 @media (prefers-reduced-motion:no-preference){.why{animation:in .2s ease-out}@keyframes in{from{opacity:.4;transform:translateY(-3px)}to{opacity:1;transform:none}}}
 </style>
 <style>
@@ -230,6 +245,7 @@ body{padding-top:54px!important}
     <nav role="tablist">
       <button role="tab" id="tab-hoy" aria-selected="true" data-v="hoy">Hoy</button>
       <button role="tab" id="tab-prac" aria-selected="false" data-v="prac">Practicar</button>
+      <button role="tab" id="tab-sim" aria-selected="false" data-v="sim">Simulacro</button>
       <button role="tab" id="tab-prog" aria-selected="false" data-v="prog">Progreso</button>
       <button role="tab" id="tab-err" aria-selected="false" data-v="err">Errores</button>
     </nav>
@@ -299,7 +315,7 @@ function todayKey(){return dkey(new Date())}
 function addDays(k,n){const p=k.split('-');const d=new Date(+p[0],+p[1]-1,+p[2]);d.setDate(d.getDate()+n);return dkey(d)}
 function lsGet(){try{const t=localStorage.getItem('conarem2027:'+(window.__uid||''));return t?JSON.parse(t):null}catch(e){return null}}
 function lsSet(){try{localStorage.setItem('conarem2027:'+(window.__uid||''),JSON.stringify(S))}catch(e){}}
-function persist(now){lsSet();if(!docRef)return;clearTimeout(saveTimer);saveTimer=setTimeout(()=>{docRef.set({ans:S.ans,today:S.today,pref:S.pref||'ALL',flt:S.flt||null,srs:S.srs||{},rate:S.rate||'auto',v:3}).then(()=>setSync('Progreso guardado en tu cuenta.')).catch(()=>setSync('Progreso guardado solo en este dispositivo.'))},now?0:600)}
+function persist(now){lsSet();if(!docRef)return;clearTimeout(saveTimer);saveTimer=setTimeout(()=>{docRef.set({ans:S.ans,today:S.today,pref:S.pref||'ALL',flt:S.flt||null,srs:S.srs||{},rate:S.rate||'auto',sims:S.sims||[],simCfg:S.simCfg||null,v:3}).then(()=>setSync('Progreso guardado en tu cuenta.')).catch(()=>setSync('Progreso guardado solo en este dispositivo.'))},now?0:600)}
 function setSync(t){document.getElementById('sync').textContent=t}
 
 function ensureToday(){
@@ -553,12 +569,86 @@ function renderPrac(){
   document.getElementById('fclear').onclick=()=>{S.flt=null;persist();render()};
   document.getElementById('fgo').onclick=()=>{let ids=list.map(q=>q.id);if(f.shuffle){for(let i=ids.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[ids[i],ids[j]]=[ids[j],ids[i]]}}pIds=ids.slice(0,20);pcur=0;pRes={ok:0,n:0};ppicked=null;render();window.scrollTo({top:0})};
 }
-function render(){header();if(view==='hoy')renderHoy();else if(view==='prog')renderProg();else if(view==='prac')renderPrac();else renderErr()}
-function go(v){view=v;document.querySelectorAll('nav button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.v===v)));render()}
+// ---------- Simulacro con cronómetro ----------
+const SIM_MIX={140:{MI:30,CIR:30,PED:30,GO:30,SP:20},70:{MI:15,CIR:15,PED:15,GO:15,SP:10},30:{MI:6,CIR:6,PED:6,GO:6,SP:6}};
+const SIM_SEC=[[60,'1 min por pregunta'],[75,'1 min 15 s por pregunta'],[90,'1 min 30 s por pregunta'],[0,'Sin límite de tiempo']];
+const SYEARS=[...new Set(BANK.filter(q=>!q.p&&q.y).map(q=>q.y))].sort((a,b)=>b-a);
+let simIdx=0,simTick=null,simRev=null,simRcur=0,simConfirm=false;
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function fmtT(s){s=Math.max(0,Math.round(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return (h?h+':'+String(m).padStart(2,'0'):m)+':'+String(x).padStart(2,'0')}
+function simBuild(cfg){let ids=[];
+  if(cfg.src==='year'){AREAS.forEach(([a])=>{ids=ids.concat(BANK.filter(q=>q.y===cfg.year&&!q.p&&q.area===a).sort((x,y)=>x.id.localeCompare(y.id)).map(q=>q.id))})}
+  else{const mix=SIM_MIX[cfg.size];AREAS.forEach(([a])=>{const all=BANK.filter(q=>q.area===a);const fresh=shuffle(all.filter(q=>!S.ans[q.id])),seen=shuffle(all.filter(q=>S.ans[q.id]));ids=ids.concat(fresh.concat(seen).slice(0,mix[a]).map(q=>q.id))})}
+  return ids}
+function simStart(cfg){const ids=simBuild(cfg);if(!ids.length)return;const now=Date.now();
+  S.simRun={ids,ch:{},mk:{},start:now,end:cfg.sec?now+ids.length*cfg.sec*1000:0,cfg};simIdx=0;simConfirm=false;lsSet();startTick();render();window.scrollTo({top:0})}
+function startTick(){clearInterval(simTick);if(!S.simRun)return;simTick=setInterval(()=>{const r=S.simRun;if(!r){clearInterval(simTick);return}
+  if(r.end&&Date.now()>=r.end){simFinish(true);return}
+  const el=document.getElementById('simClock');if(el){const left=r.end?(r.end-Date.now())/1000:(Date.now()-r.start)/1000;el.textContent=fmtT(left);el.classList.toggle('low',!!r.end&&left<300)}},1000)}
+function simFinish(auto){const r=S.simRun;if(!r)return;clearInterval(simTick);const t=todayKey();const area={};let ok=0,ans=0;
+  r.ids.forEach(id=>{const q=BYID[id];if(!q)return;const c=r.ch[id];const a=area[q.area]||(area[q.area]=[0,0]);a[1]++;
+    if(c!==undefined){ans++;const good=c===q.a;if(good){ok++;a[0]++}S.ans[id]={c,ok:good,d:t};srsPick(id,good)}});
+  const used=Math.round(((auto&&r.end)?r.end:Date.now())-r.start)/1000;
+  const res={date:t,ts:Date.now(),n:r.ids.length,ok,ans,used:Math.round(used),lim:r.end?Math.round((r.end-r.start)/1000):0,area,src:r.cfg.src==='year'?'CONAREM '+r.cfg.year:'Mezcla',auto:!!auto,ids:r.ids,ch:r.ch};
+  S.sims=(S.sims||[]).concat([res]).slice(-30);S.simRun=null;simRev=null;persist(true);if(view==='sim')render();else{header()}}
+function simQ(q,chosen,mk,i,n){let h='<div class="card"><div class="meta"><span class="chip '+q.area+'">'+ANAME[q.area]+'</span><span class="yr" style="margin-left:auto">'+(i+1)+' de '+n+'</span></div><p class="stem">'+rich(q.q)+'</p><div class="opts">';
+  q.o.forEach((o,k)=>{h+='<button class="opt'+(chosen===k?' sel':'')+'" data-i="'+k+'" aria-pressed="'+(chosen===k)+'"><span class="l">'+L[k]+'</span><span>'+rich(o)+'</span></button>'});
+  return h+'</div><div class="row" style="justify-content:space-between;align-items:center"><button class="btn ghost" id="sPrev"'+(i?'':' disabled')+'>← Anterior</button><button class="fc" id="sMark" aria-pressed="'+!!mk+'">'+(mk?'★ Marcada':'☆ Marcar para revisar')+'</button><button class="btn" id="sNext">'+(i+1<n?'Siguiente →':'Ir a entregar')+'</button></div></div>'}
+function simRanks(r){if(r.n<100)return '<p class="sub">El puesto estimado se calcula en simulacros de 100 preguntas o más.</p>';const pc=Math.round(100*r.ok/r.n);const k=rankOf(pc);
+  return k?'<p class="cheer-t">Con este puntaje estarías cerca del <b>puesto '+k+'</b> de 834 plazas <span class="sub">(estimado con los puntajes de 2026)</span>.</p>':'<p class="cheer-t">Todavía por debajo del 60 %, que es lo que hace falta para entrar. Cada simulacro te acerca. 🧉</p>'}
+function renderSim(){const v=document.getElementById('view');const r=S.simRun;
+  if(r){if(r.end&&Date.now()>=r.end){simFinish(true);return}
+    const n=r.ids.length,q=BYID[r.ids[simIdx]];const nAns=Object.keys(r.ch).length;const left=r.end?(r.end-Date.now())/1000:(Date.now()-r.start)/1000;
+    let h='<div style="display:flex;flex-direction:column;gap:14px"><div class="simbar"><span class="clock'+(r.end&&left<300?' low':'')+'" id="simClock" aria-live="off" title="'+(r.end?'Tiempo restante':'Tiempo transcurrido')+'">'+fmtT(left)+'</span><span class="sub">'+nAns+'/'+n+' respondidas</span><button class="btn cta" id="sEnd">'+(simConfirm?'¿Entregar? '+(n-nAns?(n-nAns)+' sin responder':'Confirmar'):'Entregar')+'</button></div>';
+    h+=simQ(q,r.ch[q.id],r.mk[q.id],simIdx,n);
+    h+='<details class="card simgrid-c"'+(simIdx+1>=n?' open':'')+'><summary>Ver todas las preguntas <span class="sub">· ★ marcadas: '+Object.keys(r.mk).filter(k=>r.mk[k]).length+'</span></summary><div class="simgrid">'+r.ids.map((id,i)=>'<button class="g'+(r.ch[id]!==undefined?' a':'')+(r.mk[id]?' m':'')+(i===simIdx?' c':'')+'" data-g="'+i+'" aria-label="Pregunta '+(i+1)+'">'+(i+1)+'</button>').join('')+'</div><p class="note">Sin explicaciones durante el simulacro, como en el examen. Al entregar ves tu nota, tu puesto estimado y todas las correcciones.</p><div class="row" style="justify-content:flex-start"><button class="btn ghost" id="sQuit">Abandonar simulacro</button></div></details></div>';
+    v.innerHTML=h;
+    v.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{const k=+b.dataset.i;if(r.ch[q.id]===k)delete r.ch[q.id];else r.ch[q.id]=k;lsSet();simConfirm=false;render()});
+    document.getElementById('sPrev').onclick=()=>{simIdx--;simConfirm=false;render();window.scrollTo({top:0})};
+    document.getElementById('sNext').onclick=()=>{if(simIdx+1<n){simIdx++;simConfirm=false;render();window.scrollTo({top:0})}else{const d=v.querySelector('details');d.open=true;d.scrollIntoView({behavior:'smooth'})}};
+    document.getElementById('sMark').onclick=()=>{r.mk[q.id]=!r.mk[q.id];lsSet();render()};
+    document.getElementById('sEnd').onclick=()=>{if(!simConfirm){simConfirm=true;render();return}simFinish(false)};
+    v.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>{simIdx=+b.dataset.g;simConfirm=false;render();window.scrollTo({top:0})});
+    const qb=document.getElementById('sQuit');qb.onclick=()=>{if(qb.dataset.ok){S.simRun=null;clearInterval(simTick);lsSet();render();return}qb.dataset.ok=1;qb.textContent='¿Seguro? Se pierde este simulacro';qb.classList.add('danger')};
+    return}
+  const sims=S.sims||[];
+  if(simRev){const s=simRev;if(simRcur>=s.ids.length)simRcur=s.ids.length-1;const id=s.ids[simRcur],q=BYID[id];const c=s.ch[id];
+    let h='<div style="display:flex;flex-direction:column;gap:14px"><div class="day"><span class="sub">Revisión · '+(c===undefined?'<b>sin responder</b>':c===q.a?'correcta':'incorrecta')+'</span><button class="btn ghost" id="rvBack">Volver al resultado</button></div>'+qCard(q,c===undefined?-1:c,null,simRcur,s.ids.length);
+    h+='<div class="row" style="justify-content:space-between"><button class="btn ghost" id="rvP"'+(simRcur?'':' disabled')+'>← Anterior</button><button class="fc" id="rvErr" aria-pressed="'+!!s.onlyErr+'">Solo errores</button><button class="btn" id="rvN"'+(simRcur+1<s.ids.length?'':' disabled')+'>Siguiente →</button></div></div></div>';
+    v.innerHTML=h;const step=d=>{let i=simRcur;do{i+=d}while(s.onlyErr&&i>=0&&i<s.ids.length&&s.ch[s.ids[i]]===BYID[s.ids[i]].a);if(i>=0&&i<s.ids.length){simRcur=i;render();window.scrollTo({top:0})}};
+    document.getElementById('rvBack').onclick=()=>{simRev=null;render()};document.getElementById('rvP').onclick=()=>step(-1);document.getElementById('rvN').onclick=()=>step(1);
+    document.getElementById('rvErr').onclick=()=>{s.onlyErr=!s.onlyErr;if(s.onlyErr&&s.ch[s.ids[simRcur]]===BYID[s.ids[simRcur]].a){simRcur=-1;step(1);if(simRcur<0)simRcur=0}render()};
+    return}
+  let h='<div style="display:flex;flex-direction:column;gap:18px">';
+  const last=sims[sims.length-1];
+  if(last&&last.ts&&Date.now()-last.ts<36e5*6){const pc=Math.round(100*last.ok/last.n);
+    h+='<div class="card done"><p class="sub">Simulacro entregado'+(last.auto?' · se terminó el tiempo':'')+' · '+esc(last.src)+'</p><p class="big">'+last.ok+'/'+last.n+'</p>'+cheer(last.ok,last.n,String(last.ts))+simRanks(last)+'<p class="sub">Tiempo usado: '+fmtT(last.used)+(last.lim?' de '+fmtT(last.lim):'')+(last.n-last.ans?' · '+(last.n-last.ans)+' sin responder':'')+'</p>';
+    h+='<div class="areas" style="width:100%;text-align:left">'+AREAS.filter(([a])=>last.area[a]).map(([a,nm])=>{const [o,t]=last.area[a];const p=Math.round(100*o/t);return '<div class="ar"><span>'+nm+'</span><span class="n">'+o+'/'+t+' · '+p+'%</span><div class="bar"><i style="width:'+p+'%;background:var(--'+a.toLowerCase()+')"></i></div></div>'}).join('')+'</div>';
+    h+='<p class="sub">Las que fallaste ya están en Errores y vuelven en tus repasos.</p><div class="row" style="justify-content:center"><button class="btn" id="rvGo">Revisar respuestas</button></div></div>'}
+  h+='<div class="card"><h2>Nuevo simulacro</h2><p class="note">Como el día del examen: cronómetro, sin ver las respuestas hasta entregar. Podés marcar preguntas y volver a ellas.</p>';
+  const c=S.simCfg||{src:'mix',size:140,year:SYEARS[0],sec:75};S.simCfg=c;
+  h+='<div class="fgroup"><strong>Preguntas</strong><div class="row" style="justify-content:flex-start">'+[['mix','Mezcla estilo CONAREM'],['year','Examen de un año']].map(([k,t])=>'<button class="fc" data-src="'+k+'" aria-pressed="'+(c.src===k)+'">'+t+'</button>').join('')+'</div></div>';
+  if(c.src==='mix')h+='<div class="fgroup"><strong>Tamaño</strong><div class="row" style="justify-content:flex-start">'+[[140,'Completo · 140'],[70,'Medio · 70'],[30,'Rápido · 30']].map(([k,t])=>'<button class="fc" data-size="'+k+'" aria-pressed="'+(c.size===k)+'">'+t+'</button>').join('')+'</div><p class="note">Misma proporción que el examen: 30 de cada troncal y 20 de Salud Pública. Primero salen las que todavía no respondiste.</p></div>';
+  else h+='<div class="fgroup"><strong>Año</strong><select id="sYear">'+SYEARS.map(y=>'<option value="'+y+'"'+(y===c.year?' selected':'')+'>CONAREM '+y+' · '+BANK.filter(q=>q.y===y&&!q.p).length+' preguntas</option>').join('')+'</select></div>';
+  h+='<div class="fgroup"><strong>Tiempo</strong><select id="sSec">'+SIM_SEC.map(([k,t])=>'<option value="'+k+'"'+(k===c.sec?' selected':'')+'>'+t+'</option>').join('')+'</select></div>';
+  const n=simBuild(c).length;h+='<div class="row" style="justify-content:flex-end;align-items:center"><span class="sub" style="margin-right:auto">'+n+' preguntas'+(c.sec?' · '+fmtT(n*c.sec)+' de tiempo':'')+'</span><button class="btn cta" id="sGo">Empezar simulacro</button></div></div>';
+  if(sims.length){h+='<div class="card"><h2>Tus simulacros</h2><div class="simhist">'+sims.slice().reverse().slice(0,10).map(s=>{const pc=Math.round(100*s.ok/s.n);const k=s.n>=100?rankOf(pc):null;return '<div class="sh"><span>'+s.date.split('-').reverse().slice(0,2).join('/')+' · '+esc(s.src)+' · '+s.n+'</span><b>'+pc+'%</b><span class="sub">'+(k?'≈ puesto '+k:fmtT(s.used))+'</span></div>'}).join('')+'</div>';
+    if(sims.length>=2){const a=sims[sims.length-2],b=sims[sims.length-1];const d=Math.round(100*b.ok/b.n)-Math.round(100*a.ok/a.n);h+='<p class="note">'+(d>0?'Subiste '+d+' puntos respecto al anterior. ¡Vamos que se puede! 🏎️':d<0?'Bajaste '+(-d)+' puntos respecto al anterior. Revisá los errores y volvé a intentar.':'Igual que el anterior. Constancia, che.')+'</p>'}
+    h+='</div>'}
+  v.innerHTML=h+'</div>';
+  const rg=document.getElementById('rvGo');if(rg)rg.onclick=()=>{simRev=last;simRcur=0;render();window.scrollTo({top:0})};
+  v.querySelectorAll('[data-src]').forEach(b=>b.onclick=()=>{c.src=b.dataset.src;persist();render()});
+  v.querySelectorAll('[data-size]').forEach(b=>b.onclick=()=>{c.size=+b.dataset.size;persist();render()});
+  const sy=document.getElementById('sYear');if(sy)sy.onchange=()=>{c.year=+sy.value;persist();render()};
+  document.getElementById('sSec').onchange=e=>{c.sec=+e.target.value;persist();render()};
+  document.getElementById('sGo').onclick=()=>simStart(Object.assign({},c));
+}
+function render(){header();if(view==='hoy')renderHoy();else if(view==='prog')renderProg();else if(view==='prac')renderPrac();else if(view==='sim')renderSim();else renderErr()}
+function go(v){if(v!==view)simRev=null;view=v;document.querySelectorAll('nav button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.v===v)));render()}
 document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>go(b.dataset.v));
 
 const saved=lsGet();if(saved&&saved.ans)S=Object.assign({pref:'ALL',flt:null,srs:{}},saved);
-migrateSrs();ensureToday();fixToday();cur=firstOpen();render();
+migrateSrs();ensureToday();fixToday();cur=firstOpen();if(S.simRun){view='sim';document.querySelectorAll('nav button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.v==='sim')));startTick()}render();
 setSync('Progreso guardado en este dispositivo.');
 
 (async()=>{
@@ -569,7 +659,7 @@ setSync('Progreso guardado en este dispositivo.');
     if(snap.exists){
       const d=snap.data()||{};const remote=d.ans||{};
       S.ans=Object.assign({},remote,S.ans);
-      if(d.pref&&(!S.pref||S.pref==='ALL'))S.pref=d.pref;if(d.flt&&!S.flt)S.flt=d.flt;if(d.rate&&(!S.rate||S.rate==='auto'))S.rate=d.rate;
+      if(d.pref&&(!S.pref||S.pref==='ALL'))S.pref=d.pref;if(d.flt&&!S.flt)S.flt=d.flt;if(d.rate&&(!S.rate||S.rate==='auto'))S.rate=d.rate;if(d.simCfg&&!S.simCfg)S.simCfg=d.simCfg;{const m={};(S.sims||[]).concat(d.sims||[]).forEach(s=>{m[s.ts||s.date]=s});S.sims=Object.values(m).sort((a,b)=>(a.ts||0)-(b.ts||0)).slice(-30)}
       const rt=d.today,lt=S.today;
       const rs=d.srs||{};S.srs=S.srs||{};for(const id in rs){const l=S.srs[id];if(!l||l.m&&!rs[id].m||(rs[id].last||'')>(l.last||''))S.srs[id]=rs[id]}
       if(rt&&rt.ids){if(!lt||!lt.ids||rt.date>lt.date)S.today=rt;else if(rt.date===lt.date){const seen=new Set(lt.ids);const rv=new Set((lt.rev||[]).concat(rt.rev||[]));S.today={date:lt.date,ids:lt.ids.concat(rt.ids.filter(x=>!seen.has(x))),rev:(lt.rev||rt.rev)?[...rv]:undefined}}}
