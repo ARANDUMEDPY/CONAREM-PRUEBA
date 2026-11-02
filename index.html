@@ -116,6 +116,8 @@ select{font:inherit;color:var(--fg);background:var(--surface);border:1px solid v
 .btn:disabled{opacity:.5;cursor:default}
 .tagt{font-size:.74rem;color:var(--muted)}
 h2{font-family:var(--display);font-weight:600;font-size:1.2rem;margin:0}
+.cheer{font-family:var(--display);font-weight:800;font-size:1.35rem;color:var(--accent);margin:0}
+.cheer-t{margin:0;max-width:440px}
 .rep{font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
 .dot.rv{background:transparent;box-shadow:inset 0 0 0 2px var(--accent)}
 .dot.rv.ok{background:var(--ok);box-shadow:none}.dot.rv.bad{background:var(--bad);box-shadow:none}
@@ -231,7 +233,16 @@ const BYID=Object.fromEntries(BANK.map(q=>[q.id,q]));
 const L='ABCDEFGH';
 let S={ans:{},today:null,pref:'ALL',flt:null,srs:{}};
 const REV_MAX=20;
-let view='hoy', cur=0, picked=null, reviewIds=null, rcur=0, rpicked=null, pIds=null, pcur=0, ppicked=null;
+let view='hoy', cur=0, picked=null, reviewIds=null, rcur=0, rpicked=null, pIds=null, pcur=0, ppicked=null, pRes=null;
+// Mensajes al terminar una tanda, según el porcentaje de aciertos
+const CHEERS=[
+ [100,[['¡Perfecto!','Iporãite (muy bien, en guaraní). Así se asegura una plaza.'],['¡Pleno!','El CONAREM debería tenerte miedo.'],['¡Impecable!','Hoy te ganaste un tereré de premio.']]],
+ [90,[['¡Mbarete!','Fuerte, en guaraní. Casi perfecto: mirá bien la que se escapó.'],['¡Nivel jefe de residentes!','Seguí así y la plaza es tuya.']]],
+ [70,[['¡Muy bien!','Estás por encima del mínimo de 60. Mañana vuelven las que fallaste para que las fijes.'],['¡Buen ritmo!','Con esto entrás. Ahora a pulir los detalles.']]],
+ [60,[['¡Aprobado!','El mínimo es 60 y ya lo pasás; los repasos te van a dar el margen.'],['Vas bien','Cada error de hoy es un punto ganado el día del examen.']]],
+ [40,[['Día difícil, pasa','Lo importante es que leíste las explicaciones: eso es lo que queda.'],['Ndaipóri problema','No hay problema, en guaraní. Mañana estas mismas vuelven y les vas a ganar.']]],
+ [0,[['Hoy tocó lo difícil','Nadie aprende sin equivocarse: las que fallaste vuelven mañana y las vas a reconocer.'],['Respirá','Tomá un tereré y mañana seguimos. Jaha (¡vamos!, en guaraní).']]]];
+function cheer(ok,n,seed){const pc=n?Math.round(100*ok/n):0;const tier=CHEERS.find(c=>pc>=c[0]);let h=0;for(const ch of seed)h=(h*31+ch.charCodeAt(0))>>>0;const m=tier[1][h%tier[1].length];return '<p class="cheer">'+m[0]+'</p><p class="cheer-t">'+m[1]+' <span class="sub">('+pc+'% de aciertos)</span></p>'}
 function pool(){const p=S.pref||'ALL';return p==='ALL'?ORDER:ORDER.filter(q=>q.area===p)}
 let docRef=null, saveTimer=null;
 
@@ -365,7 +376,7 @@ function renderHoy(){
     const doneToday=ids.filter(id=>S.ans[id]&&S.ans[id].d===S.today.date);
     const ok=doneToday.filter(id=>S.ans[id].ok).length;
     const tm=addDays(todayKey(),1);const nTm=Object.values(S.srs||{}).filter(o=>o.due<=tm).length;
-    h+='<div class="card done"><p class="sub">Sesión de hoy terminada</p><p class="big">'+ok+'/'+doneToday.length+'</p><p>'+(ok>=doneToday.length*0.7?'Buen ritmo. ':'')+'Las que fallaste vuelven mañana como repaso. Mañana tenés <b>'+nTm+' repaso'+(nTm===1?'':'s')+'</b> programado'+(nTm===1?'':'s')+'.</p><div class="row" style="justify-content:center"><button class="btn ghost" id="toErr">Repasar errores</button><button class="btn" id="more">10 preguntas más</button></div></div></div>';
+    h+='<div class="card done"><p class="sub">Sesión de hoy terminada</p><p class="big">'+ok+'/'+doneToday.length+'</p>'+cheer(ok,doneToday.length,S.today.date+doneToday.length)+'<p class="sub">Las que fallaste vuelven mañana como repaso. Mañana tenés <b>'+nTm+' repaso'+(nTm===1?'':'s')+'</b> programado'+(nTm===1?'':'s')+'.</p><div class="row" style="justify-content:center"><button class="btn ghost" id="toErr">Repasar errores</button><button class="btn" id="more">10 preguntas más</button></div></div></div>';
     v.innerHTML=h;bindPlan();
     document.getElementById('more').onclick=addMore;
     document.getElementById('toErr').onclick=()=>go('err');
@@ -446,12 +457,12 @@ function chipRow(key,vals,label){const f=F();return '<div class="chips" role="gr
 function renderPrac(){
   const v=document.getElementById('view');const f=F();
   if(pIds){
-    if(pcur>=pIds.length){pIds=null;return renderPrac()}
+    if(pcur>=pIds.length){const r=pRes||{ok:0,n:0};v.innerHTML='<div class="card done"><p class="sub">Tanda terminada</p><p class="big">'+r.ok+'/'+r.n+'</p>'+cheer(r.ok,r.n,todayKey()+r.n+r.ok)+'<div class="row" style="justify-content:center"><button class="btn" id="pback">Volver a los filtros</button></div></div>';document.getElementById('pback').onclick=()=>{pIds=null;render()};return}
     const q=BYID[pIds[pcur]];
     let h='<div style="display:flex;flex-direction:column;gap:14px"><div class="day"><span class="sub">Práctica con filtros</span><button class="btn ghost" id="pstop">Volver a los filtros</button></div>'+qCard(q,ppicked,null,pcur,pIds.length);
     if(ppicked!==null)h+=rateRow(q.id,pcur+1<pIds.length?'Siguiente':'Terminar');
     v.innerHTML=h+'</div></div>';
-    v.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{const i=+b.dataset.i;ppicked=i;S.ans[q.id]={c:i,ok:i===q.a,d:todayKey()};srsPick(q.id,i===q.a);persist();render();focusRate()});
+    v.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{const i=+b.dataset.i;ppicked=i;if(pRes){pRes.n++;if(i===q.a)pRes.ok++}S.ans[q.id]={c:i,ok:i===q.a,d:todayKey()};srsPick(q.id,i===q.a);persist();render();focusRate()});
     document.getElementById('pstop').onclick=()=>{pIds=null;render()};
     bindRate(q.id,()=>{pcur++;ppicked=null;render();window.scrollTo({top:0})});
     return;
@@ -475,7 +486,7 @@ function renderPrac(){
   document.getElementById('ftopic').onchange=e=>{f.topic=e.target.value;persist();render()};
   document.getElementById('fshuf').onchange=e=>{f.shuffle=e.target.checked;persist()};
   document.getElementById('fclear').onclick=()=>{S.flt=null;persist();render()};
-  document.getElementById('fgo').onclick=()=>{let ids=list.map(q=>q.id);if(f.shuffle){for(let i=ids.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[ids[i],ids[j]]=[ids[j],ids[i]]}}pIds=ids.slice(0,20);pcur=0;ppicked=null;render();window.scrollTo({top:0})};
+  document.getElementById('fgo').onclick=()=>{let ids=list.map(q=>q.id);if(f.shuffle){for(let i=ids.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[ids[i],ids[j]]=[ids[j],ids[i]]}}pIds=ids.slice(0,20);pcur=0;pRes={ok:0,n:0};ppicked=null;render();window.scrollTo({top:0})};
 }
 function render(){header();if(view==='hoy')renderHoy();else if(view==='prog')renderProg();else if(view==='prac')renderPrac();else renderErr()}
 function go(v){view=v;document.querySelectorAll('nav button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.v===v)));render()}
