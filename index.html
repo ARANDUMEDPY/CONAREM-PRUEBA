@@ -88,6 +88,12 @@ nav button:focus-visible,.opt:focus-visible,.btn:focus-visible{outline:2px solid
 .key{background:var(--accent-soft);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
 .key strong{font-size:.8rem;color:var(--accent);letter-spacing:.04em;text-transform:uppercase}
 .key p{margin:0;font-size:1rem}
+.key{padding:14px 16px;gap:8px}
+.key .klist,.key .ksub{margin:0;padding-left:1.15em;display:flex;flex-direction:column;gap:7px;font-size:1rem;line-height:1.55}
+.key .ksub{margin-top:5px;gap:4px;list-style:"– "}
+.key .klist>li::marker{color:var(--accent)}
+.key b{font-weight:700;color:var(--fg)}
+.key .kp{font-size:1rem;line-height:1.55}
 .src{margin:0;font-size:.8rem;color:var(--muted);font-style:italic}
 .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
 .btn{font:700 .95rem var(--body);border-radius:10px;padding:10px 16px;cursor:pointer;border:1px solid var(--accent);background:var(--accent);color:var(--surface)}
@@ -371,6 +377,16 @@ const GL=JSON.parse(document.getElementById('gloss').textContent);
 const GKEYS=Object.keys(GL).sort((a,b)=>b.length-a.length).map(k=>k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'));
 const GRX=new RegExp('(^|[^A-Za-z0-9ÁÉÍÓÚÑáéíóúñ])('+GKEYS.join('|')+')(?![A-Za-z0-9ÁÉÍÓÚÑáéíóúñ])','g');
 const ROMAN_CTX=/(grado|tipo|estadio|etapa|clase|categor[ií]a|nivel|fase|Hinchey|Nyhus|Todani|Piver|Fontaine|Rutherford|Bethesda|ASA|FIGO|factor|segmento|par|III|II|I)[\s,yo]*$/i;
+function topSplit(s,ch){const out=[];let d=0,b='';for(const c of s){if(c==='('||c==='[')d++;else if((c===')'||c===']')&&d>0)d--;if(c===ch&&d===0){out.push(b);b=''}else b+=c}out.push(b);return out.map(x=>x.trim()).filter(Boolean)}
+function topColon(s){let d=0;for(let i=0;i<s.length;i++){const c=s[i];if(c==='('||c==='[')d++;else if((c===')'||c===']')&&d>0)d--;else if(c===':'&&d===0&&s[i+1]===' ')return i}return -1}
+function sentences(s){const o=[];let d=0,b='';for(let i=0;i<s.length;i++){const c=s[i];b+=c;if(c==='('||c==='[')d++;else if((c===')'||c===']')&&d>0)d--;else if(c==='.'&&d===0&&s[i+1]===' '&&/[A-ZÁÉÍÓÚÑ¿¡0-9]/.test(s[i+2]||'')&&!/\b(Dr|Dra|vs|al|aprox|p\. ej|ej|etc|Sr|Sra|cap|pág|fig)$/i.test(b.slice(0,-1))){o.push(b.trim());b='';i++}}if(b.trim())o.push(b.trim());return o}
+function keyPart(s){const ci=topColon(s);let lab='',body=s;if(ci>0&&ci<=60){lab=s.slice(0,ci);body=s.slice(ci+1).trim()}
+  const items=topSplit(body,';');
+  const L=lab?'<b>'+rich(lab)+':</b> ':'';
+  if(items.length>=2)return L+'<ul class="ksub">'+items.map(x=>'<li>'+rich(x.replace(/\.$/,''))+'</li>').join('')+'</ul>';
+  return L+rich(body)}
+function keyFmt(k){const ss=sentences(k);if(ss.length===1){const one=keyPart(ss[0]);return one.indexOf('<ul')>=0?'<div class="kp">'+one+'</div>':'<p>'+one+'</p>'}
+  return '<ul class="klist">'+ss.map(s=>'<li>'+keyPart(s)+'</li>').join('')+'</ul>'}
 function rich(s){if(!s)return'';const h=esc(s);return h.replace(GRX,(m,pre,k,off)=>{if(k==='IV'&&ROMAN_CTX.test(h.slice(Math.max(0,off-16),off+pre.length)))return m;return pre+'<abbr class="ab" tabindex="0" data-k="'+k+'" title="'+esc(GL[k])+'">'+k+'</abbr>'})}
 const TIP=document.getElementById('tip');
 function showTip(el){const k=el.dataset.k;TIP.innerHTML='<b>'+esc(k)+'</b> · '+esc(GL[k]||'');TIP.hidden=false;tipAt=Date.now();const r=el.getBoundingClientRect();const w=TIP.offsetWidth;let x=r.left+window.scrollX;x=Math.min(x,window.scrollX+document.documentElement.clientWidth-w-16);x=Math.max(16+window.scrollX,x);TIP.style.left=x+'px';TIP.style.top=(r.bottom+window.scrollY+6)+'px'}
@@ -393,7 +409,7 @@ function qCard(q,chosen,onPick,idx,total,tag){
   if(answered){
     const ok=chosen===q.a;
     h+='<div class="why"><strong style="color:var('+(ok?'--ok':'--bad')+')">'+(ok?'Correcto':'Incorrecto · la respuesta es '+L[q.a])+'</strong><p>'+rich(q.x||q.e)+'</p></div>';
-    if(q.k)h+='<div class="key"><strong>Para recordar</strong><p>'+rich(q.k)+'</p></div>';
+    if(q.k)h+='<div class="key"><strong>Para recordar</strong>'+keyFmt(q.k)+'</div>';
     if(q.w){
       const order=q.w.map((t,i)=>i).filter(i=>q.w[i]);
       if(chosen!==q.a){order.sort((x,y)=>(y===chosen)-(x===chosen))}
