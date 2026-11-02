@@ -637,11 +637,11 @@ function devLabel(){const u=navigator.userAgent;const os=/android/i.test(u)?'And
 let pingT=null;
 async function kicked(){clearInterval(pingT);try{sessionStorage.setItem('am_kicked','1')}catch(e){}await sb.auth.signOut()}
 async function ping(){if(document.hidden)return;try{const {data,error}=await sb.rpc('device_ping',{p_device:devId()});if(!error&&data===false)kicked()}catch(e){}}
-function startPing(){clearInterval(pingT);pingT=setInterval(ping,120000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)ping()})}
+function startPing(){clearInterval(pingT);pingT=setInterval(ping,60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)ping()})}
 async function logout(){try{await sb.rpc('forget_device',{p_device:devId()})}catch(e){}await sb.auth.signOut()}
 async function route(){
   const {data:{session}}=await sb.auth.getSession();
-  if(!session){$('app').hidden=true;$('gate').hidden=false;show('fLogin');let k=null;try{k=sessionStorage.getItem('am_kicked');sessionStorage.removeItem('am_kicked')}catch(e){}if(k)msg('lMsg','Tu cuenta se abrió en otro dispositivo. Cada cuenta se puede usar en hasta 2 dispositivos; al entrar acá se cerrará la sesión en el más antiguo.');return}
+  if(!session){$('app').hidden=true;$('gate').hidden=false;show('fLogin');let k=null;try{k=sessionStorage.getItem('am_kicked');sessionStorage.removeItem('am_kicked')}catch(e){}if(k)msg('lMsg','Tu cuenta se abrió en otro dispositivo. Cada cuenta puede estar abierta en un solo dispositivo a la vez; si ingresás acá, se cerrará en el otro. Tu progreso está guardado.');return}
   const uid=session.user.id;
   const {data:prof}=await sb.from('profiles').select('access_until,is_admin,email').eq('id',uid).maybeSingle();
   const active=prof&&(prof.is_admin||(prof.access_until&&new Date(prof.access_until)>new Date()));
