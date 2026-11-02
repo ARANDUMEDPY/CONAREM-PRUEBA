@@ -118,6 +118,11 @@ select{font:inherit;color:var(--fg);background:var(--surface);border:1px solid v
 h2{font-family:var(--display);font-weight:600;font-size:1.2rem;margin:0}
 .cheer{font-family:var(--display);font-weight:800;font-size:1.35rem;color:var(--accent);margin:0}
 .cheer-t{margin:0;max-width:440px}
+.terere{margin:0;font-weight:600;color:var(--fg)}
+.reach{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.reach li{display:grid;grid-template-columns:5.5em minmax(0,1fr);gap:10px;font-size:.92rem;color:var(--muted)}
+.reach li b{font-family:var(--mono);font-size:.8rem;font-weight:600}
+.reach li.in{color:var(--fg)}.reach li.in b{color:var(--ok)}
 .rep{font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
 .dot.rv{background:transparent;box-shadow:inset 0 0 0 2px var(--accent)}
 .dot.rv.ok{background:var(--ok);box-shadow:none}.dot.rv.bad{background:var(--bad);box-shadow:none}
@@ -226,6 +231,33 @@ body{padding-top:54px!important}
 window.startApp=function(BANK){
 const EXAM=new Date(2027,2,6); // sábado 6 de marzo de 2027
 const PER_DAY=10;
+// Ritmo automático: reparte lo que falta en los días que quedan, dejando las últimas 2 semanas para repasar. Con topes para no saturar.
+const BUFFER=14,MIN_NEW=10,MAX_NEW=30,MAX_LOAD=40;
+function perDay(){const r=S.rate;if(r&&r!=='auto')return +r;const rem=pool().filter(q=>!S.ans[q.id]).length;const av=Math.max(1,daysLeft()-BUFFER);return Math.min(MAX_NEW,Math.max(MIN_NEW,Math.ceil(rem/av)))}
+function newToday(nRev){return Math.max(5,Math.min(perDay(),MAX_LOAD-nRev))}
+// ---------- Puesto estimado (puntajes CONAREM 2026, aproximado) ----------
+const RANK=[[100,1],[85,96],[80,175],[75,302],[70,449],[65,583],[60,723]];
+function rankOf(pc){if(pc<60)return null;for(let i=1;i<RANK.length;i++){const [p1,r1]=RANK[i-1],[p2,r2]=RANK[i];if(pc>=p2)return Math.max(1,Math.round(r1+(r2-r1)*(p1-pc)/(p1-p2)))}return 723}
+function roundR(n){return n<20?n:Math.round(n/10)*10}
+function proj(){const a=Object.values(S.ans).filter(x=>x&&x.d).sort((x,y)=>y.d.localeCompare(x.d)).slice(0,100);if(a.length<30)return {need:30-a.length};const ok=a.filter(x=>x.ok).length;return {n:a.length,pc:Math.round(100*ok/a.length)}}
+const RTIERS=[
+ [85,'¡Purete, nivel podio!','Estarías cerca del puesto ~{N}. Elegís primero: hasta las plazas más difíciles, como Neurocirugía u Otorrino, que tienen 3 en todo el país.'],
+ [80,'¡Tuicha!','Rondarías el puesto ~{N}. Seguís en carrera por Oftalmo, Urología, Imágenes o Psiquiatría.'],
+ [75,'¡Mbarete!','Puesto ~{N}: te alcanza para Anestesia, Trauma o Emergentología, y para elegir sede en las grandes.'],
+ [70,'¡Iporã!','Puesto ~{N}: entrás cómodo a Medicina Interna, Pediatría, Gineco o Cirugía, y elegís dónde.'],
+ [65,'Vas adentro, che','Puesto ~{N}: las troncales grandes te esperan, quizá no en tu sede favorita. Unos puntitos más y elegís vos.'],
+ [60,'Raspando, pero adentro','Puesto ~{N}: pasás el mínimo y Medicina Familiar tiene 214 plazas. Con los repasos subís puestos rápido.'],
+ [0,'¿Medio vai?','Todavía no llegás al mínimo de 60, pero nadie aprende sin errar. Las que fallaste vuelven y les ganás.']];
+const TERERE=[[85,'Merecés un tereré bien helado: hoy descansá tranqui.'],[80,'Cebate un tereré con yuyos y desconectá un rato.'],[75,'Pausa de tereré y a disfrutar el resto del día.'],[70,'Tereré, una vueltita y mañana seguimos sumando.'],[65,'Un tereré bien frío y mañana subimos unos puestos.'],[60,'Relajá con un tereré: con constancia esto sube solo.'],[0,'Cebate un tereré, despejá la mente y mañana jaha.']];
+function terere(pc){return '<p class="terere">'+TERERE.find(x=>pc>=x[0])[1]+'</p>'}
+const RNOTE='<p class="note">Puesto estimado con los puntajes del CONAREM 2026; el puntaje final también pondera tus antecedentes académicos y cambia cada año.</p>';
+function endMsg(ok,n,seed){
+  const pj=proj();const pcS=n?Math.round(100*ok/n):0;
+  if(pj.pc===undefined)return cheer(ok,n,seed)+terere(pcS)+'<p class="sub">Respondé '+pj.need+' pregunta'+(pj.need===1?'':'s')+' más y te muestro en qué puesto estarías en la CONAREM.</p>';
+  const tr=RTIERS.find(x=>pj.pc>=x[0]);const r=rankOf(pj.pc);
+  return '<p class="cheer">'+tr[1]+'</p><p class="cheer-t">'+tr[2].replace('{N}',r?roundR(r):'')+'</p><p class="sub">Hoy: '+ok+'/'+n+' ('+pcS+' %) · tus últimas '+pj.n+': '+pj.pc+' %</p>'+terere(pj.pc)+RNOTE;
+}
+const REACH=[[85,'Neurocirugía, Otorrino, Fisiatría, Paliativa, Oncología Radiante'],[80,'Oftalmología, Neumología, Anatomía Patológica, Urología, Imágenes, Psiquiatría'],[75,'Anestesiología, Traumatología, Emergentología, Cirugía de Trauma'],[70,'Medicina Interna, Pediatría, Gineco-Obstetricia y Cirugía, con sede a elección'],[60,'Medicina Familiar y troncales en sedes con plazas libres']];
 const AREAS=[['MI','Medicina Interna'],['CIR','Cirugía'],['PED','Pediatría'],['GO','Gineco-Obstetricia'],['SP','Salud Pública']];
 const ANAME=Object.fromEntries(AREAS);
 const ORDER=[];AREAS.forEach(([a])=>{BANK.filter(q=>q.area===a).sort((x,y)=>y.y-x.y||x.id.localeCompare(y.id)).forEach(q=>ORDER.push(q))});
@@ -251,7 +283,7 @@ function todayKey(){return dkey(new Date())}
 function addDays(k,n){const p=k.split('-');const d=new Date(+p[0],+p[1]-1,+p[2]);d.setDate(d.getDate()+n);return dkey(d)}
 function lsGet(){try{const t=localStorage.getItem('conarem2027:'+(window.__uid||''));return t?JSON.parse(t):null}catch(e){return null}}
 function lsSet(){try{localStorage.setItem('conarem2027:'+(window.__uid||''),JSON.stringify(S))}catch(e){}}
-function persist(now){lsSet();if(!docRef)return;clearTimeout(saveTimer);saveTimer=setTimeout(()=>{docRef.set({ans:S.ans,today:S.today,pref:S.pref||'ALL',flt:S.flt||null,srs:S.srs||{},v:3}).then(()=>setSync('Progreso guardado en tu cuenta.')).catch(()=>setSync('Progreso guardado solo en este dispositivo.'))},now?0:600)}
+function persist(now){lsSet();if(!docRef)return;clearTimeout(saveTimer);saveTimer=setTimeout(()=>{docRef.set({ans:S.ans,today:S.today,pref:S.pref||'ALL',flt:S.flt||null,srs:S.srs||{},rate:S.rate||'auto',v:3}).then(()=>setSync('Progreso guardado en tu cuenta.')).catch(()=>setSync('Progreso guardado solo en este dispositivo.'))},now?0:600)}
 function setSync(t){document.getElementById('sync').textContent=t}
 
 function ensureToday(){
@@ -259,7 +291,7 @@ function ensureToday(){
   if(S.today&&S.today.ids)S.today.ids=S.today.ids.filter(id=>BYID[id]);
   if(!S.today||S.today.date!==k){
     const rev=dueIds().slice(0,REV_MAX);
-    const next=pool().filter(q=>!S.ans[q.id]).slice(0,PER_DAY).map(q=>q.id);
+    const next=pool().filter(q=>!S.ans[q.id]).slice(0,newToday(rev.length)).map(q=>q.id);
     S.today={date:k,ids:rev.concat(next),rev};cur=firstOpen();persist();
   }
 }
@@ -307,7 +339,7 @@ function setPref(p){
   const oldRev=S.today.rev||[];
   const rev=dueIds().filter(id=>!have.has(id)).slice(0,REV_MAX);rev.forEach(id=>have.add(id));
   const doneNew=keep.filter(id=>!oldRev.includes(id)).length;
-  const need=Math.max(PER_DAY-doneNew,0);
+  const need=Math.max(newToday(rev.length)-doneNew,0);
   const add=pool().filter(q=>!S.ans[q.id]&&!have.has(q.id)).slice(0,need).map(q=>q.id);
   S.today.ids=keep.concat(rev,add);S.today.rev=oldRev.filter(id=>keep.includes(id)).concat(rev);
   cur=firstOpen();picked=null;persist(true);render();
@@ -368,15 +400,18 @@ function renderHoy(){
   if(!ids.length){const pr=S.pref||'ALL';v.innerHTML='<div class="card done"><p class="big">Listo</p><p>'+(pr==='ALL'?'Respondiste todo el banco.':'Respondiste todas las preguntas de '+ANAME[pr]+'.')+' Usá Errores o Practicar para repasar.</p>'+(pr==='ALL'?'':'<div class="row" style="justify-content:center"><button class="btn" id="toAll">Seguir con todas las especialidades</button></div>')+'</div>';const b=document.getElementById('toAll');if(b)b.onclick=()=>setPref('ALL');return}
   const dots=ids.map((id,i)=>{const a=S.ans[id];const today=a&&a.d===S.today.date;return '<span class="dot'+(isRev(id)?' rv':'')+(today?(a.ok?' ok':' bad'):'')+(i===cur?' cur':'')+'"></span>'}).join('');
   const remain=pool().filter(q=>!S.ans[q.id]).length;
-  const daysNeeded=Math.ceil(remain/PER_DAY);const pr=S.pref||'ALL';
+  const pd=perDay();const daysNeeded=Math.ceil(remain/pd);const pr=S.pref||'ALL';const rt=S.rate||'auto';
   const nRev=(S.today.rev||[]).filter(id=>ids.includes(id)).length;const nNew=ids.length-nRev;
   const sel='<label class="planbar" for="planArea">Preguntas del plan:<select id="planArea"><option value="ALL"'+(pr==='ALL'?' selected':'')+'>Todas las especialidades (en orden)</option>'+AREAS.map(([a,n])=>'<option value="'+a+'"'+(pr===a?' selected':'')+'>'+n+'</option>').join('')+'</select></label>';
-  let h='<div style="display:flex;flex-direction:column;gap:14px">'+sel+'<div class="day"><div class="dots" aria-hidden="true">'+dots+'</div><span class="sub">Hoy: <b>'+nRev+' repaso'+(nRev===1?'':'s')+'</b> + '+nNew+' nueva'+(nNew===1?'':'s')+' · Faltan '+remain+' preguntas'+(pr==='ALL'?'':' de '+ANAME[pr])+' · '+daysNeeded+' días a este ritmo</span></div>';
+  const autoN=(()=>{const o=S.rate;S.rate='auto';const n=perDay();S.rate=o;return n})();
+  const rsel='<label class="planbar" for="planRate">Preguntas nuevas por día:<select id="planRate"><option value="auto"'+(rt==='auto'?' selected':'')+'>Automático · '+autoN+' por día (recomendado)</option>'+[10,15,20,30].map(n=>'<option value="'+n+'"'+(String(rt)===String(n)?' selected':'')+'>'+n+' por día</option>').join('')+'</select></label>';
+  const late=rt==='auto'&&remain>MAX_NEW*Math.max(1,daysLeft()-BUFFER)?'<p class="note">No llegás a ver todo antes del examen sin saturarte: usá Practicar para priorizar los temas que más se toman.</p>':'';
+  let h='<div style="display:flex;flex-direction:column;gap:14px">'+sel+rsel+late+'<div class="day"><div class="dots" aria-hidden="true">'+dots+'</div><span class="sub">Hoy: <b>'+nRev+' repaso'+(nRev===1?'':'s')+'</b> + '+nNew+' nueva'+(nNew===1?'':'s')+' · Faltan '+remain+' preguntas'+(pr==='ALL'?'':' de '+ANAME[pr])+' · '+daysNeeded+' días a este ritmo</span></div>';
   if(cur>=ids.length){
     const doneToday=ids.filter(id=>S.ans[id]&&S.ans[id].d===S.today.date);
     const ok=doneToday.filter(id=>S.ans[id].ok).length;
     const tm=addDays(todayKey(),1);const nTm=Object.values(S.srs||{}).filter(o=>o.due<=tm).length;
-    h+='<div class="card done"><p class="sub">Sesión de hoy terminada</p><p class="big">'+ok+'/'+doneToday.length+'</p>'+cheer(ok,doneToday.length,S.today.date+doneToday.length)+'<p class="sub">Las que fallaste vuelven mañana como repaso. Mañana tenés <b>'+nTm+' repaso'+(nTm===1?'':'s')+'</b> programado'+(nTm===1?'':'s')+'.</p><div class="row" style="justify-content:center"><button class="btn ghost" id="toErr">Repasar errores</button><button class="btn" id="more">10 preguntas más</button></div></div></div>';
+    h+='<div class="card done"><p class="sub">Sesión de hoy terminada</p><p class="big">'+ok+'/'+doneToday.length+'</p>'+endMsg(ok,doneToday.length,S.today.date+doneToday.length)+'<p class="sub">'+(ok<doneToday.length?'Las que fallaste vuelven mañana como repaso. ':'')+(nTm?'Mañana tenés <b>'+nTm+' repaso'+(nTm===1?'':'s')+'</b> programado'+(nTm===1?'':'s')+'.':'Mañana no tenés repasos pendientes.')+'</p><div class="row" style="justify-content:center"><button class="btn ghost" id="toErr">Repasar errores</button><button class="btn" id="more">10 preguntas más</button></div></div></div>';
     v.innerHTML=h;bindPlan();
     document.getElementById('more').onclick=addMore;
     document.getElementById('toErr').onclick=()=>go('err');
@@ -393,7 +428,7 @@ function renderHoy(){
   bindRate(q.id,()=>{cur++;picked=null;render();window.scrollTo({top:0})});
 }
 
-function bindPlan(){const s=document.getElementById('planArea');if(s)s.onchange=()=>setPref(s.value)}
+function bindPlan(){const s=document.getElementById('planArea');if(s)s.onchange=()=>setPref(s.value);const r=document.getElementById('planRate');if(r)r.onchange=()=>{S.rate=r.value;setPref(S.pref||'ALL')}}
 function renderProg(){
   const v=document.getElementById('view');
   let h='<div style="display:flex;flex-direction:column;gap:18px"><div class="card"><h2>Por especialidad</h2><div class="legend"><span><i style="background:var(--ok)"></i>Correctas</span><span><i style="background:var(--bad)"></i>Incorrectas</span><span><i style="background:var(--line)"></i>Pendientes</span></div><div class="areas">';
@@ -401,9 +436,13 @@ function renderProg(){
     const s=stats(q=>q.area===a);const bad=s.done-s.ok;
     h+='<div class="ar"><span>'+n+'</span><span class="n">'+s.done+'/'+s.total+(s.done?' · '+Math.round(100*s.ok/s.done)+'%':'')+'</span><div class="bar"><i style="width:'+(100*s.ok/s.total)+'%;background:var(--ok)"></i><i style="width:'+(100*bad/s.total)+'%;background:var(--bad)"></i></div></div>';
   });
-  const remain=ORDER.filter(q=>!S.ans[q.id]).length;const dn=Math.ceil(remain/PER_DAY);const dl=daysLeft();
+  const remain=ORDER.filter(q=>!S.ans[q.id]).length;const pdP=perDay();const dn=Math.ceil(remain/pdP);const dl=daysLeft();
   const end=new Date();end.setDate(end.getDate()+dn);
-  h+='</div></div><div class="card"><h2>Calendario</h2><p style="margin:0">A 10 preguntas por día terminás el banco el <b>'+end.toLocaleDateString('es-PY',{day:'numeric',month:'long',year:'numeric'})+'</b>. '+(dn<=dl?'Te quedan <b>'+(dl-dn)+' días</b> antes del examen para repasar errores.':'Para llegar al examen tendrías que hacer unas <b>'+Math.ceil(remain/Math.max(1,dl))+' por día</b>.')+'</p><p class="note">Orden por defecto: Medicina Interna, Cirugía, Pediatría, Gineco-Obstetricia y Salud Pública; dentro de cada una, del examen más reciente al más antiguo. En Hoy podés elegir una sola especialidad, y en Practicar armar tandas con filtros.</p></div>';
+  h+='</div></div><div class="card"><h2>Calendario</h2><p style="margin:0">A '+pdP+' preguntas nuevas por día terminás el banco el <b>'+end.toLocaleDateString('es-PY',{day:'numeric',month:'long',year:'numeric'})+'</b>. '+(dn<=dl?'Te quedan <b>'+(dl-dn)+' días</b> antes del examen para repasar errores.':'Para llegar al examen tendrías que hacer unas <b>'+Math.ceil(remain/Math.max(1,dl))+' por día</b>.')+'</p><p class="note">Orden por defecto: Medicina Interna, Cirugía, Pediatría, Gineco-Obstetricia y Salud Pública; dentro de cada una, del examen más reciente al más antiguo. En Hoy podés elegir una sola especialidad, y en Practicar armar tandas con filtros.</p></div>';
+  {const pj=proj();h+='<div class="card"><h2>Dónde estarías hoy</h2>';
+   if(pj.pc===undefined)h+='<p style="margin:0">Respondé '+pj.need+' preguntas más y te muestro tu puesto estimado en la CONAREM.</p>';
+   else{const r=rankOf(pj.pc);h+='<p style="margin:0">Con <b>'+pj.pc+' %</b> en tus últimas '+pj.n+' preguntas '+(r?'estarías cerca del <b>puesto ~'+roundR(r)+'</b>.':'todavía no llegás al mínimo de 60.')+'</p><ul class="reach">'+REACH.map(([p,s])=>'<li class="'+(pj.pc>=p?'in':'')+'"><b>'+(pj.pc>=p?'✓':'Desde '+p+' %')+'</b><span>'+s+'</span></li>').join('')+'</ul>'+RNOTE}
+   h+='</div>'}
   {const all=Object.values(S.srs||{});const t=todayKey();const cons=all.filter(o=>o.i>=3&&o.ok).length;const lear=all.length-cons;
    const dueNow=all.filter(o=>o.due<=t&&o.last!==t).length;
    const days=[...Array(7)].map((_,k)=>{const dk=addDays(t,k+1);return {k:dk,n:all.filter(o=>o.due===dk).length}});const mx=Math.max(1,...days.map(d=>d.n));
@@ -457,7 +496,7 @@ function chipRow(key,vals,label){const f=F();return '<div class="chips" role="gr
 function renderPrac(){
   const v=document.getElementById('view');const f=F();
   if(pIds){
-    if(pcur>=pIds.length){const r=pRes||{ok:0,n:0};v.innerHTML='<div class="card done"><p class="sub">Tanda terminada</p><p class="big">'+r.ok+'/'+r.n+'</p>'+cheer(r.ok,r.n,todayKey()+r.n+r.ok)+'<div class="row" style="justify-content:center"><button class="btn" id="pback">Volver a los filtros</button></div></div>';document.getElementById('pback').onclick=()=>{pIds=null;render()};return}
+    if(pcur>=pIds.length){const r=pRes||{ok:0,n:0};v.innerHTML='<div class="card done"><p class="sub">Tanda terminada</p><p class="big">'+r.ok+'/'+r.n+'</p>'+endMsg(r.ok,r.n,todayKey()+r.n+r.ok)+'<div class="row" style="justify-content:center"><button class="btn" id="pback">Volver a los filtros</button></div></div>';document.getElementById('pback').onclick=()=>{pIds=null;render()};return}
     const q=BYID[pIds[pcur]];
     let h='<div style="display:flex;flex-direction:column;gap:14px"><div class="day"><span class="sub">Práctica con filtros</span><button class="btn ghost" id="pstop">Volver a los filtros</button></div>'+qCard(q,ppicked,null,pcur,pIds.length);
     if(ppicked!==null)h+=rateRow(q.id,pcur+1<pIds.length?'Siguiente':'Terminar');
@@ -504,7 +543,7 @@ setSync('Progreso guardado en este dispositivo.');
     if(snap.exists){
       const d=snap.data()||{};const remote=d.ans||{};
       S.ans=Object.assign({},remote,S.ans);
-      if(d.pref&&(!S.pref||S.pref==='ALL'))S.pref=d.pref;if(d.flt&&!S.flt)S.flt=d.flt;
+      if(d.pref&&(!S.pref||S.pref==='ALL'))S.pref=d.pref;if(d.flt&&!S.flt)S.flt=d.flt;if(d.rate&&(!S.rate||S.rate==='auto'))S.rate=d.rate;
       const rt=d.today,lt=S.today;
       const rs=d.srs||{};S.srs=S.srs||{};for(const id in rs){const l=S.srs[id];if(!l||l.m&&!rs[id].m||(rs[id].last||'')>(l.last||''))S.srs[id]=rs[id]}
       if(rt&&rt.ids){if(!lt||!lt.ids||rt.date>lt.date)S.today=rt;else if(rt.date===lt.date){const seen=new Set(lt.ids);const rv=new Set((lt.rev||[]).concat(rt.rev||[]));S.today={date:lt.date,ids:lt.ids.concat(rt.ids.filter(x=>!seen.has(x))),rev:(lt.rev||rt.rev)?[...rv]:undefined}}}
