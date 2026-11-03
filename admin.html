@@ -68,7 +68,8 @@ table.st td{white-space:nowrap}table.st tr.r{cursor:pointer}table.st tr.r:hover 
 
       <section class="card">
         <h2>Códigos</h2>
-        <div class="row"><button class="ghost" id="cRef" type="button">Actualizar</button><label style="flex:0 0 220px">Mostrar<select id="cFilter"><option value="all">Todos</option><option value="free">Sin usar</option><option value="used">Usados</option></select></label></div>
+        <div class="row"><button class="ghost" id="cRef" type="button">Actualizar</button><label style="flex:0 0 220px">Mostrar<select id="cFilter"><option value="tosend" selected>Para enviar</option><option value="sent">Enviados sin canjear</option><option value="free">Sin usar</option><option value="used">Usados</option><option value="all">Todos</option></select></label></div>
+        <p class="muted" id="cSum"></p>
         <div class="scroll"><table><thead><tr><th>Código</th><th>Días</th><th>Nota</th><th>Creado</th><th>Estado</th></tr></thead><tbody id="cBody"></tbody></table></div>
       </section>
 
@@ -129,13 +130,22 @@ async function init(){
   loadCodes();loadUsers();loadStats();
 }
 async function loadCodes(){
-  let q=sb.from('access_codes').select('code,days,note,created_at,used_at,used_by').order('created_at',{ascending:false}).limit(300);
+  let q=sb.from('access_codes').select('code,days,note,created_at,used_at,used_by,sent_at').order('created_at',{ascending:false}).order('code').limit(300);
   const f=$('cFilter').value;if(f==='free')q=q.is('used_by',null);if(f==='used')q=q.not('used_by','is',null);
+  if(f==='tosend')q=q.is('used_by',null).is('sent_at',null);if(f==='sent')q=q.is('used_by',null).not('sent_at','is',null);
+  sb.from('access_codes').select('used_by,sent_at').limit(2000).then(({data:a})=>{if(!a)return;const u=a.filter(x=>x.used_by).length,se=a.filter(x=>!x.used_by&&x.sent_at).length,fr=a.length-u-se;$('cSum').textContent=fr+' para enviar · '+se+' enviados sin canjear · '+u+' canjeados'});
   const {data,error}=await q;if(error){$('cBody').innerHTML='<tr><td colspan="5">'+esc(error.message)+'</td></tr>';return}
-  $('cBody').innerHTML=data.map(r=>'<tr><td class="mono">'+esc(r.code)+'</td><td>'+r.days+'</td><td>'+esc(r.note)+'</td><td>'+fd(r.created_at)+'</td><td>'+(r.used_at?'Usado el '+fd(r.used_at):'<b>Disponible</b> <button class="ghost" type="button" data-cc="'+esc(r.code)+'" data-cd="'+r.days+'">Copiar mensaje</button>')+'</td></tr>').join('')||'<tr><td colspan="5">Sin códigos.</td></tr>';
+  $('cBody').innerHTML=data.map(r=>'<tr><td class="mono">'+esc(r.code)+'</td><td>'+r.days+'</td><td>'+esc(r.note)+'</td><td>'+fd(r.created_at)+'</td><td>'+(r.used_at?'Usado el '+fd(r.used_at):r.sent_at?'Enviado el '+fd(r.sent_at)+' <button class="ghost" type="button" data-cc="'+esc(r.code)+'" data-cd="'+r.days+'" data-again="1">Copiar de nuevo</button> <button class="ghost" type="button" data-unsend="'+esc(r.code)+'">Desmarcar</button>':'<b>Disponible</b> <button class="ghost" type="button" data-cc="'+esc(r.code)+'" data-cd="'+r.days+'">Copiar mensaje</button> <button class="ghost" type="button" data-sent="'+esc(r.code)+'">Marcar enviado</button>')+'</td></tr>').join('')||'<tr><td colspan="5">Sin códigos.</td></tr>';
   // Copiar el mensaje listo para mandar por Instagram o WhatsApp, con el código ya puesto
   $('cBody').querySelectorAll('[data-cc]').forEach(b=>b.onclick=async()=>{const t=codeMsg(b.dataset.cc,+b.dataset.cd);
-    try{await navigator.clipboard.writeText(t);b.textContent='Copiado ✓';b.classList.add('ok');setTimeout(()=>{if(b.isConnected){b.textContent='Copiar mensaje';b.classList.remove('ok')}},2500)}catch(e){prompt('Copiá el mensaje:',t)}});
+    let ok=true;try{await navigator.clipboard.writeText(t)}catch(e){ok=prompt('Copiá el mensaje y tocá Aceptar:',t)!==null}
+    if(!ok)return;b.textContent='Copiado ✓';b.classList.add('ok');
+    if(!b.dataset.again){const {error}=await sb.rpc('admin_mark_code_sent',{p_code:b.dataset.cc});if(error){b.textContent='Copiado (no se pudo marcar: '+error.message+')';return}
+      const tr=b.closest('tr');if(tr){tr.style.opacity='.45';setTimeout(loadCodes,1500)}}});
+  // Marcar o desmarcar a mano los que ya se mandaron
+  $('cBody').querySelectorAll('[data-sent],[data-unsend]').forEach(b=>b.onclick=async()=>{b.disabled=true;
+    const {error}=await sb.rpc('admin_mark_code_sent',{p_code:b.dataset.sent||b.dataset.unsend,p_sent:!!b.dataset.sent});
+    if(error){b.disabled=false;b.textContent='Error: '+error.message;return}loadCodes()});
 }
 function codeMsg(code,days){const site=location.origin+location.pathname.replace(/admin\.html$/,'');
   const dur=days===7?'1 semana':days===14?'2 semanas':days+' días';
