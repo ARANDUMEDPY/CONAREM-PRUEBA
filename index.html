@@ -239,6 +239,9 @@ body:has(#gate:not([hidden])){padding-top:54px!important}
 .trialbox{background:var(--accent-soft);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}.tb-t{margin:0;font-family:var(--display);font-weight:800;font-size:1.1rem}
 .trialbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:var(--accent-soft);border:1px solid var(--accent);border-radius:12px;padding:10px 14px;font-size:.94rem}.trialbar .btn{padding:8px 14px;min-height:40px}
 .plan-free{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:var(--accent-soft);border-radius:16px;padding:18px 22px;margin-top:6px}.plan-free .btn{text-decoration:none;display:inline-flex;align-items:center;min-height:46px;padding:12px 20px}
+.pnext{flex-basis:100%;color:var(--muted);font-size:.85rem;font-weight:600}
+.promo{display:flex;align-items:center;justify-content:center;gap:10px 16px;flex-wrap:wrap;background:#0B0B0C;color:#F5F5F5;border:1px solid #2A2A2E;border-radius:14px;padding:12px 18px;text-align:center}.promo-t{font-family:var(--display);font-weight:800;letter-spacing:.02em}.promo-c{font-family:var(--mono);color:var(--cta);font-weight:600}
+.hpromo{white-space:nowrap;margin:16px 0 0;display:inline-flex;align-items:center;gap:8px;background:#0B0B0C;color:#F5F5F5;border:1px solid #2A2A2E;border-radius:99px;padding:6px 14px;font-size:.88rem;font-weight:600}.hpromo b{color:var(--cta);font-family:var(--mono)}
 .pbar{height:6px;border-radius:99px;background:var(--line);overflow:hidden}.pbar i{display:block;height:100%;width:2%;background:var(--accent);transition:width .3s}.iosHint{font-size:.85rem;color:var(--muted)}
 </style>
 <style>
@@ -302,6 +305,7 @@ body:has(#gate:not([hidden])){padding-top:54px!important}
     <h1 class="logo">Arandu<span class="brandmed">Med</span></h1>
     <p class="hline">Arandu Rape · Tu ruta a una de las <span class="mark">834 plazas</span></p>
     <p class="hsub">+1.600 preguntas comentadas de los exámenes 2016–2026. Practicá todos los días, simulá el examen real y mirá en qué puesto estarías hoy.</p>
+    <p class="hpromo" id="heroPromo" hidden></p>
     <div class="row hcta" style="justify-content:flex-start"><a class="btn cta" href="#acceso" data-go="signup">Probá 3 días gratis</a><a class="btn ghost" href="#acceso" data-go="login">Ya tengo cuenta</a></div>
   </div>
   <div class="phone" aria-hidden="true"><div class="phone-in"><img src="img/app-shot.jpg" alt="" width="390" height="780" loading="eager"></div></div>
@@ -314,10 +318,11 @@ body:has(#gate:not([hidden])){padding-top:54px!important}
 </section>
 <section class="plans" id="planes">
   <h2 class="sec-t">Planes</h2>
-  <p class="note" style="text-align:center">Precio de lanzamiento por tiempo limitado. <b>Antes de pagar, probá 3 días gratis</b>, sin tarjeta.</p>
+  <div class="promo" id="promoBox" hidden><span class="promo-t" id="promoT"></span><span class="promo-c" id="promoC" aria-live="off"></span></div>
+  <p class="note" style="text-align:center"><span id="promoNote">Precio por tiempo limitado.</span> <b>Antes de pagar, probá 3 días gratis</b>, sin tarjeta.</p>
   <div class="plan-g">
-    <div class="plan best"><span class="tag">Más elegido</span><h3>Completo</h3><p class="pdesc">Todo, hasta el día del examen.</p><p class="price"><s>Gs. 320.000</s><b>Gs. 240.000</b></p><ul><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Las +1.600 preguntas</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Simulacros ilimitados</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Plan diario y repasos</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Puesto estimado</li></ul><a class="btn cta" href="#acceso" data-go="signup" data-plan="Completo">Elegir Completo</a></div>
-    <div class="plan"><h3>Mensual</h3><p class="pdesc">Para empezar o si ya falta poco.</p><p class="price"><s>Gs. 120.000</s><b>Gs. 100.000</b><span>/mes</span></p><ul><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Todo lo del plan Completo</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>30 días de acceso</li></ul><a class="btn ghost" href="#acceso" data-go="signup" data-plan="Mensual">Elegir Mensual</a></div>
+    <div class="plan best"><span class="tag">Más elegido</span><h3>Completo</h3><p class="pdesc">Todo, hasta el día del examen.</p><p class="price"><span class="pnext" data-pl="fullList"></span><b data-pl="full">Gs. 240.000</b></p><ul><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Las +1.600 preguntas</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Simulacros ilimitados</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Plan diario y repasos</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Puesto estimado</li></ul><a class="btn cta" href="#acceso" data-go="signup" data-plan="Completo">Elegir Completo</a></div>
+    <div class="plan"><h3>Mensual</h3><p class="pdesc">Para empezar o si ya falta poco.</p><p class="price"><span class="pnext" data-pl="monthList"></span><b data-pl="month">Gs. 100.000</b><span>/mes</span></p><ul><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Todo lo del plan Completo</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>30 días de acceso</li></ul><a class="btn ghost" href="#acceso" data-go="signup" data-plan="Mensual">Elegir Mensual</a></div>
     <div class="plan"><h3>Grupo de estudio</h3><p class="pdesc">De 3 personas en adelante.</p><p class="price"><b>−15 %</b><span>c/u en el Completo</span></p><ul><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Cada uno con su cuenta</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Ideal para estudiar juntos</li></ul><a class="btn ghost" href="#acceso" data-go="signup" data-plan="Grupo">Armar grupo</a></div>
   </div>
   <div class="plan-free"><div><b>¿No estás seguro?</b> Creá tu cuenta y usá AranduMed completo durante 3 días, gratis.</div><a class="btn cta" href="#acceso" data-go="signup">Empezar prueba gratis</a></div>
@@ -345,7 +350,7 @@ body:has(#gate:not([hidden])){padding-top:54px!important}
     <h2>Activá tu acceso</h2>
     <div class="trialbox" id="trialBox" hidden><p class="tb-t">🎁 Probá AranduMed gratis por 3 días</p><p class="note">Acceso completo: preguntas, simulacros y tu puesto estimado. Sin pagar nada ni dejar tarjeta.</p><div class="row" style="justify-content:flex-start"><button class="btn cta" type="button" id="bTrial">Empezar mis 3 días gratis</button></div><p class="msg" id="tMsg" role="status"></p></div>
     <p class="note" id="cInfo">Ingresá el código que recibiste al comprar el acceso.</p>
-    <p class="note" id="cPlans">Planes: <b>Completo Gs. 240.000</b> (hasta el examen) · <b>Mensual Gs. 100.000</b> · grupos de 3+ con 15 % de descuento.</p>
+    <p class="note" id="cPlans">Planes: <b>Completo <span data-pl="full">Gs. 240.000</span></b> (hasta el examen) · <b>Mensual <span data-pl="month">Gs. 100.000</span></b> · grupos de 3+ con 15 % de descuento. <span data-pl="tag"></span></p>
     <label>Código de acceso<input id="code" required maxlength="20" autocomplete="off" style="text-transform:uppercase;font-family:var(--mono);letter-spacing:.08em"></label>
     <p class="msg" id="cMsg" role="status"></p>
     <div class="row" style="justify-content:flex-start"><button class="btn cta" type="submit">Activar</button></div>
@@ -890,6 +895,28 @@ const $=id=>document.getElementById(id);
 const C=window.CONFIG||{};
 // Contacto: completá WHATSAPP (solo números, con 595) e INSTAGRAM (usuario sin @) en config.js cuando los tengas
 const CONTACT={wa:String(C.WHATSAPP||'').replace(/\D/g,''),ig:String(C.INSTAGRAM||'').replace(/^@/,'').trim()};
+// ---------- Precios según la fecha (hora de Paraguay) ----------
+// Para cambiar precios o fechas, editá solo esta tabla.
+const PRICES=[
+ {until:'2026-12-01T00:00:00-03:00',full:240000,month:100000,promo:'Black Friday',untilTxt:'30 de noviembre',note:'🖤 Black Friday: precio especial hasta el 30 de noviembre.'},
+ {until:'2027-02-01T00:00:00-03:00',full:280000,month:110000,promo:'',untilTxt:'31 de enero',note:'Precio de verano: el 1 de febrero sube a Gs. 320.000.'},
+ {until:'2099-01-01T00:00:00-03:00',full:320000,month:120000,promo:'',untilTxt:'',note:''}];
+const LIST={full:320000,month:120000};
+function gs(n){return 'Gs. '+n.toLocaleString('es-PY').replace(/,/g,'.')}
+function priceNow(){const now=Date.now();return PRICES.find(p=>now<new Date(p.until).getTime())||PRICES[PRICES.length-1]}
+function nextTier(p){const i=PRICES.indexOf(p);const n=PRICES[i+1];if(!n)return null;const f=new Date(p.until);return Object.assign({fromTxt:f.toLocaleDateString('es-PY',{day:'numeric',month:'long',timeZone:'America/Asuncion'})},n)}
+function cdTxt(ms){if(ms<=0)return '';const d=Math.floor(ms/864e5),h=Math.floor(ms%864e5/36e5),m=Math.floor(ms%36e5/6e4);return (d?d+' d ':'')+h+' h '+String(m).padStart(2,'0')+' min'}
+function paintPrices(){const p=priceNow();
+  document.querySelectorAll('[data-pl]').forEach(el=>{const k=el.dataset.pl;
+    if(k==='full'||k==='month')el.textContent=gs(p[k]);
+    else if(k==='fullList'||k==='monthList'){const kk=k==='fullList'?'full':'month';const nx=nextTier(p);el.hidden=!(nx&&nx[kk]>p[kk]);if(nx)el.textContent='Desde el '+nx.fromTxt+': '+gs(nx[kk])}
+    else if(k==='tag')el.textContent=p.note||''});
+  const pn=document.getElementById('promoNote');if(pn)pn.textContent=p.note||'';
+  const left=new Date(p.until).getTime()-Date.now();const box=document.getElementById('promoBox'),hp=document.getElementById('heroPromo');
+  if(p.promo&&left>0){box.hidden=false;const nx=nextTier(p);document.getElementById('promoT').textContent='🖤 '+p.promo.toUpperCase()+' · Completo a '+gs(p.full)+(nx?' (desde el '+nx.fromTxt+': '+gs(nx.full)+')':'');document.getElementById('promoC').textContent='Termina en '+cdTxt(left);
+    hp.hidden=false;const dd=Math.floor(left/864e5),hh=Math.floor(left%864e5/36e5),mm=Math.floor(left%36e5/6e4);hp.innerHTML='🖤 Black Friday · quedan <b>'+(dd?dd+' d '+hh+' h':hh+' h '+mm+' min')+'</b>'}
+  else{box.hidden=true;hp.hidden=true}}
+paintPrices();setInterval(paintPrices,30000);
 function waLink(t){return 'https://wa.me/'+CONTACT.wa+'?text='+encodeURIComponent(t)}
 (function(){const ig=$('lnkIg'),wa=$('lnkWa');
   if(CONTACT.ig){ig.href='https://instagram.com/'+encodeURIComponent(CONTACT.ig);ig.target='_blank';ig.rel='noopener'}else ig.title='Instagram · próximamente';
@@ -932,7 +959,7 @@ $('bTrial').onclick=async()=>{const b=$('bTrial');b.disabled=true;msg('tMsg','')
 $('backApp').onclick=()=>{$('gate').hidden=true;$('app').hidden=false;window.scrollTo({top:0})};
 function isTrial(p){return !!(p&&p.trial_started&&p.access_until&&(new Date(p.access_until)-new Date(p.trial_started))<=3*864e5+36e5)}
 function trialBar(p){const old=document.getElementById('trialBar');if(old)old.remove();if(!isTrial(p)||p.is_admin)return;const ms=new Date(p.access_until)-Date.now();if(ms<=0)return;const h=Math.ceil(ms/36e5);const left=h>24?Math.ceil(h/24)+' días':h+' h';
-  const d=document.createElement('div');d.id='trialBar';d.className='trialbar';d.innerHTML='<span>🎁 <b>Prueba gratis</b> · te quedan '+left+'</span><button class="btn cta" type="button" id="tbGo">Activar mi plan</button>';
+  const d=document.createElement('div');d.id='trialBar';d.className='trialbar';const pr=priceNow();d.innerHTML='<span>🎁 <b>Prueba gratis</b> · te quedan '+left+(pr.promo?'<br><span class="sub">'+pr.promo+': Completo a '+gs(pr.full)+' hasta el '+pr.untilTxt+'</span>':'')+'</span><button class="btn cta" type="button" id="tbGo">Activar mi plan</button>';
   const hdr=document.querySelector('#app header');hdr.parentNode.insertBefore(d,hdr.nextSibling);document.getElementById('tbGo').onclick=()=>{$('app').hidden=true;$('gate').hidden=false;show('fCode');$('trialBox').hidden=true;$('backApp').hidden=false;$('cInfo').textContent='Elegí tu plan, escribinos para pagar y activá acá tu código. Tu progreso de la prueba se mantiene.';window.scrollTo({top:0})}}
 $('outCode').onclick=()=>logout();
 $('fNewPass').onsubmit=async ev=>{ev.preventDefault();const {error}=await sb.auth.updateUser({password:$('newpass').value});if(error){msg('nMsg',tr(error));return}msg('nMsg','Contraseña actualizada.',true);setTimeout(()=>route(),800)};
