@@ -114,7 +114,7 @@ function esc(s){const d=document.createElement('div');d.textContent=s==null?'':S
 const EXAM_END='2027-03-06T23:59:59-03:00';
 const fd=d=>d?new Date(d).toLocaleDateString('es-PY'):'—';
 if(!C.SUPABASE_URL){$('fLogin').hidden=false;msg('lMsg','Falta completar config.js.');return}
-const sb=window.supabase.createClient(C.SUPABASE_URL,C.SUPABASE_ANON_KEY);
+const sb=window.supabase.createClient(C.SUPABASE_URL,C.SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true,lock:async(name,acquireTimeout,fn)=>await fn()}});
 
 $('fLogin').onsubmit=async e=>{e.preventDefault();const {error}=await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('pass').value});if(error)msg('lMsg',error.message);else init()};
 

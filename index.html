@@ -1013,7 +1013,12 @@ b.onclick=()=>{const n=r.getAttribute('data-theme')==='dark'?'light':'dark';r.se
 function show(id){['fLogin','fCode','fNewPass','loading'].forEach(x=>$(x).hidden=(x!==id));$('gate').classList.toggle('lp',id==='fLogin')}
 function msg(id,t,ok){const m=$(id);m.textContent=t||'';m.className='msg'+(t?(ok?' ok':' err'):'')}
 if(!C.SUPABASE_URL||!C.SUPABASE_ANON_KEY){show('fLogin');msg('lMsg','La web todavía no está conectada a la base de datos (falta completar config.js).');$('bMain').disabled=true;return}
-const sb=window.supabase.createClient(C.SUPABASE_URL,C.SUPABASE_ANON_KEY);
+// Candado propio: evita que la sesión quede trabada al volver a la pestaña (problema conocido de supabase-js con navigator.locks)
+const sb=window.supabase.createClient(C.SUPABASE_URL,C.SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,lock:async(name,acquireTimeout,fn)=>await fn()}});
+const withTimeout=(p,ms)=>Promise.race([p,new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),ms))]);
+let hiddenAt=0,stalls=0;
+// Si la app estuvo más de 30 minutos en segundo plano, se recarga al volver (el progreso está guardado y las preguntas en el dispositivo)
+document.addEventListener('visibilitychange',()=>{if(document.hidden){hiddenAt=Date.now();return}if(hiddenAt&&Date.now()-hiddenAt>30*60e3&&started&&!leaving){location.reload()}});
 let mode='login', started=false;
 function setMode(m){mode=m;
   $('lTitle').textContent={login:'Ingresar',signup:'Creá tu cuenta · 3 días gratis',forgot:'Recuperar contraseña'}[m];
@@ -1093,11 +1098,11 @@ const isAuthErr=e=>e&&(e.code==='PGRST301'||e.code==='PGRST303'||/JWT|expired|40
 async function ping(){if(document.hidden||pinging||leaving)return;pinging=true;
   try{
     // Al volver después de un rato, primero se renueva la sesión vencida (getSession la refresca sola)
-    const {data:{session}}=await sb.auth.getSession();if(!session){pinging=false;return}
-    let r=await sb.rpc('device_ping',{p_device:devId()});
+    const {data:{session}}=await withTimeout(sb.auth.getSession(),12000);if(!session){pinging=false;return}
+    let r=await withTimeout(sb.rpc('device_ping',{p_device:devId()}),12000);stalls=0;
     if(r.error&&isAuthErr(r.error)){const rf=await sb.auth.refreshSession();if(rf.error||!rf.data.session){pinging=false;leave(false);return}r=await sb.rpc('device_ping',{p_device:devId()})}
     if(!r.error&&r.data===false)kicked();
-  }catch(e){}
+  }catch(e){if(e&&e.message==='timeout'&&++stalls>=2&&!leaving){location.reload();return}}
   pinging=false}
 function startPing(){clearInterval(pingT);pingT=setInterval(ping,60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)ping()})}
 function logout(){return leave(false)}
