@@ -969,10 +969,17 @@ function devId(){let d=null;try{d=localStorage.getItem('am_device')}catch(e){}
 function devLabel(){const u=navigator.userAgent;const os=/android/i.test(u)?'Android':/iphone|ipad|ipod/i.test(u)?'iPhone/iPad':/windows/i.test(u)?'Windows':/mac os/i.test(u)?'Mac':/linux/i.test(u)?'Linux':'Otro';
   const br=/edg\//i.test(u)?'Edge':/chrome|crios/i.test(u)?'Chrome':/firefox|fxios/i.test(u)?'Firefox':/safari/i.test(u)?'Safari':'Navegador';return os+' · '+br}
 let pingT=null;
-async function kicked(){clearInterval(pingT);try{sessionStorage.setItem('am_kicked','1')}catch(e){}await sb.auth.signOut()}
-async function ping(){if(document.hidden)return;try{const {data,error}=await sb.rpc('device_ping',{p_device:devId()});if(!error&&data===false)kicked()}catch(e){}}
+let leaving=false;
+async function leave(kick){if(leaving)return;leaving=true;clearInterval(pingT);try{if(kick)sessionStorage.setItem('am_kicked','1')}catch(e){}
+  const done=()=>{try{location.replace(location.pathname)}catch(e){location.reload()}};setTimeout(done,2500);
+  try{if(!kick)await Promise.race([sb.rpc('forget_device',{p_device:devId()}),new Promise(r=>setTimeout(r,1500))])}catch(e){}
+  try{await Promise.race([sb.auth.signOut({scope:'local'}),new Promise(r=>setTimeout(r,1500))])}catch(e){}
+  try{Object.keys(localStorage).filter(k=>/^sb-.*-auth-token$/.test(k)).forEach(k=>localStorage.removeItem(k))}catch(e){}
+  done()}
+function kicked(){return leave(true)}
+async function ping(){if(document.hidden)return;try{const {data,error}=await sb.rpc('device_ping',{p_device:devId()});if(!error&&data===false)kicked();else if(error&&(error.code==='PGRST301'||/JWT|401/i.test(error.message||'')))leave(false)}catch(e){}}
 function startPing(){clearInterval(pingT);pingT=setInterval(ping,60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)ping()})}
-async function logout(){try{await sb.rpc('forget_device',{p_device:devId()})}catch(e){}await sb.auth.signOut()}
+function logout(){return leave(false)}
 async function route(){
   const {data:{session}}=await sb.auth.getSession();
   if(!session){$('app').hidden=true;$('gate').hidden=false;show('fLogin');let k=null;try{k=sessionStorage.getItem('am_kicked');sessionStorage.removeItem('am_kicked')}catch(e){}if(k)msg('lMsg','Tu cuenta se abrió en otro dispositivo. Cada cuenta puede estar abierta en un solo dispositivo a la vez; si ingresás acá, se cerrará en el otro. Tu progreso está guardado.');return}
@@ -1004,7 +1011,7 @@ async function route(){
 }
 sb.auth.onAuthStateChange((ev)=>{
   if(ev==='PASSWORD_RECOVERY'){$('gate').hidden=false;$('app').hidden=true;show('fNewPass');return}
-  if(ev==='SIGNED_OUT'){location.reload();return}
+  if(ev==='SIGNED_OUT'){if(!leaving){leaving=true;location.replace(location.pathname)}return}
   if(ev==='SIGNED_IN'||ev==='INITIAL_SESSION')setTimeout(route,0);
 });
 })();
