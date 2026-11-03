@@ -31,6 +31,13 @@ code,.mono{font-family:ui-monospace,Menlo,monospace;letter-spacing:.04em}
 .muted{color:var(--muted);font-size:.88rem;margin:0}
 .danger{color:var(--bad)!important;border-color:var(--bad)!important}
 .qk{display:inline-flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.kpi{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 14px}.kpi b{display:block;font-size:1.35rem;font-variant-numeric:tabular-nums}.kpi span{font-size:.78rem;color:var(--muted)}
+table.st td{white-space:nowrap}table.st tr.r{cursor:pointer}table.st tr.r:hover td{background:var(--bg)}
+.pc{font-weight:700}.pc.g{color:var(--ok)}.pc.m{color:#C98A14}.pc.b{color:var(--bad)}
+.tagp{font-size:.72rem;font-weight:700;padding:2px 7px;border-radius:99px;background:var(--line);margin-left:6px}
+.idle{color:var(--bad);font-weight:600}
+.det td{background:var(--bg);white-space:normal}.abar{display:grid;grid-template-columns:150px 1fr 90px;gap:8px;align-items:center;margin:4px 0;font-size:.85rem}.abar i{display:block;height:8px;border-radius:99px;background:var(--line);overflow:hidden}.abar i b{display:block;height:100%;background:var(--accent)}
 </style>
 </head>
 <body>
@@ -63,6 +70,15 @@ code,.mono{font-family:ui-monospace,Menlo,monospace;letter-spacing:.04em}
         <h2>Códigos</h2>
         <div class="row"><button class="ghost" id="cRef" type="button">Actualizar</button><label style="flex:0 0 220px">Mostrar<select id="cFilter"><option value="all">Todos</option><option value="free">Sin usar</option><option value="used">Usados</option></select></label></div>
         <div class="scroll"><table><thead><tr><th>Código</th><th>Días</th><th>Nota</th><th>Creado</th><th>Estado</th></tr></thead><tbody id="cBody"></tbody></table></div>
+      </section>
+
+      <section class="card" id="stSec">
+        <h2>Desempeño de estudiantes</h2>
+        <div class="kpis" id="stKpi"></div>
+        <div class="row"><button class="ghost" id="stRef" type="button">Actualizar</button><label style="flex:0 0 220px">Mostrar<select id="stFilter"><option value="all">Todos</option><option value="active">Activos esta semana</option><option value="idle">Inactivos 3+ días</option><option value="trial">En prueba gratis</option></select></label><button class="ghost" id="stCsv" type="button">Descargar Excel (CSV)</button></div>
+        <p class="msg" id="stMsg"></p>
+        <div class="scroll"><table class="st"><thead><tr><th>Estudiante</th><th>Ingresos<br><span class="muted">7 d · total</span></th><th>Tiempo<br><span class="muted">7 d · total</span></th><th>Preguntas<br><span class="muted">7 d · total</span></th><th>% aciertos<br><span class="muted">7 d · total</span></th><th>Simulacros<br><span class="muted">cant. · último · mejor</span></th><th>Área más floja</th><th>Repasos<br><span class="muted">pendientes</span></th><th>Última actividad</th></tr></thead><tbody id="stBody"></tbody></table></div>
+        <p class="muted">Tocá una fila para ver el detalle por especialidad. El tiempo cuenta solo con la app abierta en pantalla; un "ingreso" es cada vez que abre la app después de 10 minutos sin usarla. Los ingresos y minutos se registran desde el 3 de noviembre de 2026.</p>
       </section>
 
       <section class="card">
@@ -108,7 +124,7 @@ async function init(){
   const {data:adm}=await sb.rpc('is_admin');
   if(!adm){$('fLogin').hidden=false;msg('lMsg','Esta cuenta no es administradora.');return}
   $('fLogin').hidden=true;$('panel').hidden=false;$('who').textContent='Sesión: '+session.user.email;
-  loadCodes();loadUsers();
+  loadCodes();loadUsers();loadStats();
 }
 async function loadCodes(){
   let q=sb.from('access_codes').select('code,days,note,created_at,used_at,used_by').order('created_at',{ascending:false}).limit(300);
@@ -141,6 +157,31 @@ async function loadUsers(){
     msg('uMsg','Listo: '+b.dataset.em+' tiene acceso '+lab+'. Ya puede entrar, no necesita código.',true);loadUsers()});
   $('uBody').querySelectorAll('[data-give]').forEach(b=>b.onclick=()=>{$('aEmail').value=b.dataset.give;$('aDate').focus();$('aEmail').scrollIntoView({behavior:'smooth',block:'center'});msg('aMsg','Elegí hasta qué fecha y tocá el botón.',true)});
 }
+
+const ANM={MI:'Medicina Interna',CIR:'Cirugía',PED:'Pediatría',GO:'Gineco-Obstetricia',SP:'Salud Pública'};
+let ST=[];
+const hm=m=>{m=m||0;return m<60?m+' min':Math.floor(m/60)+' h '+String(m%60).padStart(2,'0')};
+const pct=(ok,n)=>n?Math.round(100*ok/n):null;
+const pcs=p=>p==null?'—':'<span class="pc '+(p>=70?'g':p>=60?'m':'b')+'">'+p+'%</span>';
+function daysAgo(d){if(!d)return null;const t=new Date();t.setHours(0,0,0,0);return Math.round((t-new Date(d+'T00:00:00'))/864e5)}
+function weak(a){let w=null;for(const k in a){const x=a[k];if(x.n<5)continue;const p=100*x.ok/x.n;if(!w||p<w.p)w={k,p:Math.round(p),n:x.n}}return w}
+async function loadStats(){const {data,error}=await sb.rpc('admin_student_stats');if(error){msg('stMsg',error.message);return}ST=data||[];renderStats()}
+function renderStats(){const f=$('stFilter').value;
+  const act=ST.filter(s=>s.days_active_7d>0||s.answered_7d>0);
+  const n7=ST.reduce((a,s)=>a+s.answered_7d,0),ok7=ST.reduce((a,s)=>a+s.correct_7d,0),m7=ST.reduce((a,s)=>a+s.minutes_7d,0);
+  $('stKpi').innerHTML=[[ST.length,'estudiantes registrados'],[act.length,'activos en los últimos 7 días'],[n7,'preguntas respondidas (7 d)'],[pct(ok7,n7)==null?'—':pct(ok7,n7)+'%','aciertos promedio (7 d)'],[hm(m7),'tiempo total de uso (7 d)']].map(([v,l])=>'<div class="kpi"><b>'+v+'</b><span>'+l+'</span></div>').join('');
+  let rows=ST.slice();
+  if(f==='active')rows=act;else if(f==='idle')rows=ST.filter(s=>{const d=daysAgo(s.last_active);return s.access_until&&new Date(s.access_until)>new Date()&&(d==null||d>=3)});else if(f==='trial')rows=ST.filter(s=>s.trial&&new Date(s.access_until)>new Date());
+  $('stBody').innerHTML=rows.map((s,i)=>{const on=s.access_until&&new Date(s.access_until)>new Date();const tag=s.trial&&on?'prueba':on?'activo':'sin acceso';const da=daysAgo(s.last_active);const w=weak(s.areas||{});
+    const last=s.last_active?(da===0?'hoy':da===1?'ayer':'hace '+da+' días'):'nunca';
+    return '<tr class="r" data-i="'+ST.indexOf(s)+'"><td>'+esc(s.email)+'<span class="tagp">'+tag+'</span></td><td>'+s.sessions_7d+' · '+s.sessions_total+'</td><td>'+hm(s.minutes_7d)+' · '+hm(s.minutes_total)+'</td><td>'+s.answered_7d+' · '+s.answered+'</td><td>'+pcs(pct(s.correct_7d,s.answered_7d))+' · '+pcs(pct(s.correct,s.answered))+'</td><td>'+(s.sims?s.sims+' · '+(s.sim_last_pct??'—')+'% · '+(s.sim_best_pct??'—')+'%':'—')+'</td><td>'+(w?ANM[w.k]+' ('+w.p+'%)':'—')+'</td><td>'+s.srs_due+'</td><td'+(on&&(da==null||da>=3)?' class="idle"':'')+'>'+last+'</td></tr>'}).join('')||'<tr><td colspan="9">Sin estudiantes en este filtro.</td></tr>';
+  $('stBody').querySelectorAll('tr.r').forEach(tr=>tr.onclick=()=>{const nx=tr.nextElementSibling;if(nx&&nx.classList.contains('det')){nx.remove();return}const s=ST[+tr.dataset.i];const a=s.areas||{};
+    const det=document.createElement('tr');det.className='det';det.innerHTML='<td colspan="9"><div style="max-width:640px;position:sticky;left:0"><b>Por especialidad</b>'+(Object.keys(a).length?Object.keys(ANM).filter(k=>a[k]).map(k=>{const p=pct(a[k].ok,a[k].n);return '<div class="abar"><span>'+ANM[k]+'</span><i><b style="width:'+p+'%"></b></i><span>'+a[k].ok+'/'+a[k].n+' · '+p+'%</span></div>'}).join(''):'<p class="muted">Todavía no respondió preguntas.</p>')+'<p class="muted">Cuenta creada el '+fd(s.created_at)+' · acceso hasta '+fd(s.access_until)+(s.trial?' (prueba gratis)':'')+'.</p></div></td>';tr.after(det)})}
+$('stRef').onclick=loadStats;$('stFilter').onchange=renderStats;
+$('stCsv').onclick=()=>{const H=['correo','estado','ingresos_7d','ingresos_total','minutos_7d','minutos_total','preguntas_7d','preguntas_total','aciertos_7d_%','aciertos_total_%','simulacros','sim_ultimo_%','sim_mejor_%','area_mas_floja','repasos_pendientes','ultima_actividad'];
+  const L=ST.map(s=>{const on=s.access_until&&new Date(s.access_until)>new Date();const w=weak(s.areas||{});return [s.email,s.trial&&on?'prueba':on?'activo':'sin acceso',s.sessions_7d,s.sessions_total,s.minutes_7d,s.minutes_total,s.answered_7d,s.answered,pct(s.correct_7d,s.answered_7d)??'',pct(s.correct,s.answered)??'',s.sims,s.sim_last_pct??'',s.sim_best_pct??'',w?ANM[w.k]:'',s.srs_due,s.last_active||'']});
+  const csv='﻿'+[H].concat(L).map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(';')).join('\n');
+  const u=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=u;a.download='desempeno-estudiantes-'+new Date().toISOString().slice(0,10)+'.csv';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),2000)};
 $('cRef').onclick=loadCodes;$('cFilter').onchange=loadCodes;
 $('gGo').onclick=async()=>{
   $('gGo').disabled=true;msg('gMsg','');
