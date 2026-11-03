@@ -399,7 +399,7 @@ body:has(#gate:not([hidden])){padding-top:54px!important}
   <div class="plan-g">
     <div class="plan best"><span class="tag">Más elegido</span><h3>Completo</h3><p class="pdesc">Todo, hasta el día del examen.</p><p class="price"><span class="pnext" data-pl="fullList"></span><b data-pl="full">Gs. 240.000</b></p><ul><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Las +1.600 preguntas</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Simulacros ilimitados</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Plan diario y repasos</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Puesto estimado</li></ul><a class="btn cta" href="#acceso" data-go="signup" data-plan="Completo">Elegir Completo</a></div>
     <div class="plan"><h3>Mensual</h3><p class="pdesc">Para empezar o si ya falta poco.</p><p class="price"><span class="pnext" data-pl="monthList"></span><b data-pl="month">Gs. 100.000</b><span>/mes</span></p><ul><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Todo lo del plan Completo</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>30 días de acceso</li></ul><a class="btn ghost" href="#acceso" data-go="signup" data-plan="Mensual">Elegir Mensual</a></div>
-    <div class="plan"><h3>2 exámenes</h3><p class="pdesc">CONAREM 2027 y 2028. Si este año no entrás a la plaza que querés, seguís sin pagar de nuevo.</p><p class="price"><span class="pnext" data-pl="twoList"></span><b data-pl="two">Gs. 380.000</b></p><ul><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Todo lo del plan Completo</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Acceso hasta el examen 2028</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Dos intentos con el mismo pago</li></ul><a class="btn ghost" href="#acceso" data-go="signup" data-plan="2 exámenes">Elegir 2 exámenes</a></div>
+    <div class="plan"><h3>2 exámenes</h3><p class="pdesc">CONAREM 2027 y 2028. Ideal si querés empezar a estudiar por adelantado, o si este año no entrás a la plaza que querés: seguís sin pagar de nuevo.</p><p class="price"><span class="pnext" data-pl="twoList"></span><b data-pl="two">Gs. 380.000</b></p><ul><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Todo lo del plan Completo</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Acceso hasta el examen 2028</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Empezá con tiempo, sin apuro</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Dos intentos con el mismo pago</li></ul><a class="btn ghost" href="#acceso" data-go="signup" data-plan="2 exámenes">Elegir 2 exámenes</a></div>
   </div>
   <div class="plan-free"><div><b>¿No estás seguro?</b> Creá tu cuenta y usá AranduMed completo durante 3 días, gratis.</div><a class="btn cta" href="#acceso" data-go="signup">Empezar prueba gratis</a></div>
   <p class="note" style="text-align:center">Cómo funciona: creás tu cuenta, probás 3 días gratis y, si te gusta, elegís tu plan y activás tu código. Tu progreso queda guardado.</p>
@@ -447,7 +447,7 @@ body:has(#gate:not([hidden])){padding-top:54px!important}
   <div class="soc"><a class="sbtn" id="lnkIg" aria-label="Instagram" title="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="14" rx="3.5"/><circle cx="12" cy="12.5" r="3.6"/><path d="M8 5.5l1.3-2h5.4l1.3 2"/></svg><span>Instagram</span></a><a class="sbtn" id="lnkWa" aria-label="WhatsApp" title="WhatsApp" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 20l1.5-4A8 8 0 1 1 20 11.5z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5"/></svg><span>WhatsApp</span></a></div>
   <p class="note">AranduMed es un recurso independiente de preparación, sin vínculo oficial con el INS ni con la CONAREM. Las preguntas provienen de los cuadernillos publicados por el INS.</p>
   <p class="note"><a href="legal.html#terminos">Términos y condiciones</a> · <a href="legal.html#privacidad">Privacidad</a> · <a href="legal.html#reembolsos">Reembolsos</a></p>
-  <p class="note">© 2026 AranduMed</p>
+  <p class="note">© 2026 AranduMed · <span id="verTag"></span></p>
 </footer>
 </div>
 
@@ -971,6 +971,17 @@ setSync('Progreso guardado en este dispositivo.');
 (function(){
 const $=id=>document.getElementById(id);
 const C=window.CONFIG||{};
+// ---------- Registro de errores (para diagnosticar cuelgues en celulares) ----------
+const VER='2026.11.03-f';let nlog=0;
+function tok(){try{const k=Object.keys(localStorage).find(k=>/^sb-.*-auth-token$/.test(k));const v=k&&JSON.parse(localStorage.getItem(k));return v&&v.access_token}catch(e){return null}}
+function clog(kind,msg){try{if(!C.SUPABASE_URL||nlog++>25)return;const t=tok();
+  fetch(C.SUPABASE_URL+'/rest/v1/client_logs',{method:'POST',keepalive:true,headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:'Bearer '+(t||C.SUPABASE_ANON_KEY),'Content-Type':'application/json',Prefer:'return=minimal'},
+    body:JSON.stringify({ver:VER,kind:String(kind).slice(0,40),msg:String(msg||'').slice(0,2000),url:(location.pathname+location.search).slice(0,300),ua:navigator.userAgent.slice(0,300)})}).catch(()=>{})}catch(e){}}
+window.__clog=clog;
+window.addEventListener('error',e=>clog('error',(e.message||'')+' @'+(e.filename||'').split('/').pop()+':'+e.lineno+':'+e.colno+(e.error&&e.error.stack?'\n'+e.error.stack.slice(0,1200):'')));
+window.addEventListener('unhandledrejection',e=>{const r=e.reason;clog('promise',(r&&(r.message||r.toString()))+(r&&r.stack?'\n'+String(r.stack).slice(0,1200):''))});
+clog('boot',(document.referrer||'')+' sw:'+(navigator.serviceWorker&&navigator.serviceWorker.controller?'1':'0')+' standalone:'+(matchMedia('(display-mode: standalone)').matches?'1':'0'));
+setTimeout(()=>{const ld=document.getElementById('loading');if(ld&&!ld.hidden)clog('slow_load',document.getElementById('loadTxt').textContent)},25000);
 // Contacto: completá WHATSAPP (solo números, con 595) e INSTAGRAM (usuario sin @) en config.js cuando los tengas
 const CONTACT={wa:String(C.WHATSAPP||'').replace(/\D/g,''),ig:String(C.INSTAGRAM||'').replace(/^@/,'').trim()};
 // ---------- Precios según la fecha (hora de Paraguay) ----------
@@ -998,6 +1009,7 @@ function paintPrices(){const p=priceNow();
 function tick(){const p=priceNow();const left=new Date(p.until).getTime()-Date.now();if(!p.promo||left<=0){if(!document.getElementById('promoBox').hidden)paintPrices();return}
   const v={d:Math.floor(left/864e5),h:Math.floor(left%864e5/36e5),m:Math.floor(left%36e5/6e4),s:Math.floor(left%6e4/1e3)};
   document.querySelectorAll('[data-cd]').forEach(el=>{const x=String(v[el.dataset.cd]).padStart(2,'0');if(el.textContent!==x)el.textContent=x})}
+try{document.getElementById('verTag').textContent='v'+VER}catch(e){}
 paintPrices();tick();setInterval(tick,1000);setInterval(paintPrices,60000);
 function waLink(t){return 'https://wa.me/'+CONTACT.wa+'?text='+encodeURIComponent(t)}
 (function(){const ig=$('lnkIg'),wa=$('lnkWa');
@@ -1018,7 +1030,7 @@ const sb=window.supabase.createClient(C.SUPABASE_URL,C.SUPABASE_ANON_KEY,{auth:{
 const withTimeout=(p,ms)=>Promise.race([p,new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),ms))]);
 let hiddenAt=0,stalls=0;
 // Si la app estuvo más de 30 minutos en segundo plano, se recarga al volver (el progreso está guardado y las preguntas en el dispositivo)
-document.addEventListener('visibilitychange',()=>{if(document.hidden){hiddenAt=Date.now();return}if(hiddenAt&&Date.now()-hiddenAt>30*60e3&&started&&!leaving){location.reload()}});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){hiddenAt=Date.now();return}if(hiddenAt&&Date.now()-hiddenAt>30*60e3&&started&&!leaving){clog('reload','resume');location.reload()}});
 let mode='login', started=false;
 function setMode(m){mode=m;
   $('lTitle').textContent={login:'Ingresar',signup:'Creá tu cuenta · 3 días gratis',forgot:'Recuperar contraseña'}[m];
@@ -1086,7 +1098,7 @@ function devLabel(){const u=navigator.userAgent;const os=/android/i.test(u)?'And
   const br=/edg\//i.test(u)?'Edge':/chrome|crios/i.test(u)?'Chrome':/firefox|fxios/i.test(u)?'Firefox':/safari/i.test(u)?'Safari':'Navegador';return os+' · '+br}
 let pingT=null;
 let leaving=false;
-async function leave(kick){if(leaving)return;leaving=true;clearInterval(pingT);try{if(kick)sessionStorage.setItem('am_kicked','1')}catch(e){}
+async function leave(kick){if(leaving)return;leaving=true;clog('leave',kick?'kick':'logout');clearInterval(pingT);try{if(kick)sessionStorage.setItem('am_kicked','1')}catch(e){}
   const done=()=>{try{location.replace(location.pathname)}catch(e){location.reload()}};setTimeout(done,2500);
   try{if(!kick)await Promise.race([sb.rpc('forget_device',{p_device:devId()}),new Promise(r=>setTimeout(r,1500))])}catch(e){}
   try{await Promise.race([sb.auth.signOut({scope:'local'}),new Promise(r=>setTimeout(r,1500))])}catch(e){}
@@ -1102,15 +1114,24 @@ async function ping(){if(document.hidden||pinging||leaving)return;pinging=true;
     let r=await withTimeout(sb.rpc('device_ping',{p_device:devId()}),12000);stalls=0;
     if(r.error&&isAuthErr(r.error)){const rf=await sb.auth.refreshSession();if(rf.error||!rf.data.session){pinging=false;leave(false);return}r=await sb.rpc('device_ping',{p_device:devId()})}
     if(!r.error&&r.data===false)kicked();
-  }catch(e){if(e&&e.message==='timeout'&&++stalls>=2&&!leaving){location.reload();return}}
+  }catch(e){if(e&&e.message==='timeout'){clog('stall','ping '+stalls);if(++stalls>=2&&!leaving){clog('reload','stall');location.reload();return}}}
   pinging=false}
 function startPing(){clearInterval(pingT);pingT=setInterval(ping,60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)ping()})}
 function logout(){return leave(false)}
-async function route(){
-  const {data:{session}}=await sb.auth.getSession();
-  if(!session){$('app').hidden=true;$('gate').hidden=false;show('fLogin');let k=null;try{k=sessionStorage.getItem('am_kicked');sessionStorage.removeItem('am_kicked')}catch(e){}if(k)msg('lMsg','Tu cuenta se abrió en otro dispositivo. Cada cuenta puede estar abierta en un solo dispositivo a la vez; si ingresás acá, se cerrará en el otro. Tu progreso está guardado.');return}
+// Si la sesión guardada quedó trabada, se limpia sola y se vuelve a ingresar (lo mismo que cerrar sesión a mano)
+let recovering=false;
+function recoverSession(why){if(recovering||leaving)return;recovering=true;clog('recover',why);
+  try{Object.keys(localStorage).filter(k=>/^sb-.*-auth-token$/.test(k)).forEach(k=>localStorage.removeItem(k))}catch(e){}
+  try{sessionStorage.setItem('am_recover','1')}catch(e){}location.replace(location.pathname)}
+async function route(depth){depth=depth||0;
+  let session=null;
+  try{session=(await withTimeout(sb.auth.getSession(),10000)).data.session}catch(e){recoverSession('getSession '+e.message);return}
+  if(!session){$('app').hidden=true;$('gate').hidden=false;show('fLogin');let k=null;try{k=sessionStorage.getItem('am_kicked');sessionStorage.removeItem('am_kicked')}catch(e){}let rc=null;try{rc=sessionStorage.getItem('am_recover');sessionStorage.removeItem('am_recover')}catch(e){}if(rc&&!k)msg('lMsg','Por seguridad tu sesión se reinició. Ingresá de nuevo: tu progreso está guardado.',true);if(k)msg('lMsg','Tu cuenta se abrió en otro dispositivo. Cada cuenta puede estar abierta en un solo dispositivo a la vez; si ingresás acá, se cerrará en el otro. Tu progreso está guardado.');return}
   const uid=session.user.id;
-  const {data:prof}=await sb.from('profiles').select('access_until,is_admin,email,trial_started').eq('id',uid).maybeSingle();
+  let prof=null;
+  try{const r=await withTimeout(sb.from('profiles').select('access_until,is_admin,email,trial_started').eq('id',uid).maybeSingle(),12000);
+    if(r.error&&isAuthErr(r.error)){const rf=await withTimeout(sb.auth.refreshSession(),10000);if(rf.error||!rf.data.session||depth>0){recoverSession('refresh');return}return route(depth+1)}
+    prof=r.data}catch(e){recoverSession('profiles '+e.message);return}
   const active=prof&&(prof.is_admin||(prof.access_until&&new Date(prof.access_until)>new Date()));
   if(!active){$('gate').hidden=false;$('app').hidden=true;show('fCode');
     const canTrial=prof&&!prof.trial_started;$('trialBox').hidden=!canTrial;$('backApp').hidden=true;
@@ -1130,7 +1151,7 @@ async function route(){
     window.startApp(bank);
     const until=prof.is_admin?'administrador':'acceso hasta el '+new Date(prof.access_until).toLocaleDateString('es-PY',{day:'numeric',month:'long',year:'numeric'});
     trialBar(prof);
-    $('acct').innerHTML='<span class="acctbar">'+prof.email+' · '+until+(prof.is_admin?' · <a href="admin.html">Panel de administración</a>':'')+' <button class="linkbtn" id="logout">Cerrar sesión</button> <a href="legal.html" class="linkbtn" style="text-decoration:underline">Términos y privacidad</a>'+installUI()+'</span>';
+    $('acct').innerHTML='<span class="acctbar">'+prof.email+' · '+until+(prof.is_admin?' · <a href="admin.html">Panel de administración</a>':'')+' <button class="linkbtn" id="logout">Cerrar sesión</button> <a href="legal.html" class="linkbtn" style="text-decoration:underline">Términos y privacidad</a> <span class="sub">v'+VER+'</span>'+installUI()+'</span>';
     const ib=document.getElementById('installBtn');if(ib)ib.onclick=async()=>{if(!installEvt)return;installEvt.prompt();await installEvt.userChoice;installEvt=null;ib.hidden=true};
     $('logout').onclick=logout;
   }catch(e){started=false;show('fLogin');msg('lMsg','No se pudieron cargar las preguntas: '+tr(e))}
