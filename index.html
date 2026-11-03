@@ -1088,7 +1088,17 @@ async function leave(kick){if(leaving)return;leaving=true;clearInterval(pingT);t
   try{Object.keys(localStorage).filter(k=>/^sb-.*-auth-token$/.test(k)).forEach(k=>localStorage.removeItem(k))}catch(e){}
   done()}
 function kicked(){return leave(true)}
-async function ping(){if(document.hidden)return;try{const {data,error}=await sb.rpc('device_ping',{p_device:devId()});if(!error&&data===false)kicked();else if(error&&(error.code==='PGRST301'||/JWT|401/i.test(error.message||'')))leave(false)}catch(e){}}
+let pinging=false;
+const isAuthErr=e=>e&&(e.code==='PGRST301'||e.code==='PGRST303'||/JWT|expired|401/i.test(e.message||''));
+async function ping(){if(document.hidden||pinging||leaving)return;pinging=true;
+  try{
+    // Al volver después de un rato, primero se renueva la sesión vencida (getSession la refresca sola)
+    const {data:{session}}=await sb.auth.getSession();if(!session){pinging=false;return}
+    let r=await sb.rpc('device_ping',{p_device:devId()});
+    if(r.error&&isAuthErr(r.error)){const rf=await sb.auth.refreshSession();if(rf.error||!rf.data.session){pinging=false;leave(false);return}r=await sb.rpc('device_ping',{p_device:devId()})}
+    if(!r.error&&r.data===false)kicked();
+  }catch(e){}
+  pinging=false}
 function startPing(){clearInterval(pingT);pingT=setInterval(ping,60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)ping()})}
 function logout(){return leave(false)}
 async function route(){
