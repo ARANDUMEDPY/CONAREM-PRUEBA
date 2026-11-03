@@ -132,8 +132,14 @@ async function loadCodes(){
   let q=sb.from('access_codes').select('code,days,note,created_at,used_at,used_by').order('created_at',{ascending:false}).limit(300);
   const f=$('cFilter').value;if(f==='free')q=q.is('used_by',null);if(f==='used')q=q.not('used_by','is',null);
   const {data,error}=await q;if(error){$('cBody').innerHTML='<tr><td colspan="5">'+esc(error.message)+'</td></tr>';return}
-  $('cBody').innerHTML=data.map(r=>'<tr><td class="mono">'+esc(r.code)+'</td><td>'+r.days+'</td><td>'+esc(r.note)+'</td><td>'+fd(r.created_at)+'</td><td>'+(r.used_at?'Usado el '+fd(r.used_at):'<b>Disponible</b>')+'</td></tr>').join('')||'<tr><td colspan="5">Sin códigos.</td></tr>';
+  $('cBody').innerHTML=data.map(r=>'<tr><td class="mono">'+esc(r.code)+'</td><td>'+r.days+'</td><td>'+esc(r.note)+'</td><td>'+fd(r.created_at)+'</td><td>'+(r.used_at?'Usado el '+fd(r.used_at):'<b>Disponible</b> <button class="ghost" type="button" data-cc="'+esc(r.code)+'" data-cd="'+r.days+'">Copiar mensaje</button>')+'</td></tr>').join('')||'<tr><td colspan="5">Sin códigos.</td></tr>';
+  // Copiar el mensaje listo para mandar por Instagram o WhatsApp, con el código ya puesto
+  $('cBody').querySelectorAll('[data-cc]').forEach(b=>b.onclick=async()=>{const t=codeMsg(b.dataset.cc,+b.dataset.cd);
+    try{await navigator.clipboard.writeText(t);b.textContent='Copiado ✓';b.classList.add('ok');setTimeout(()=>{if(b.isConnected){b.textContent='Copiar mensaje';b.classList.remove('ok')}},2500)}catch(e){prompt('Copiá el mensaje:',t)}});
 }
+function codeMsg(code,days){const site=location.origin+location.pathname.replace(/admin\.html$/,'');
+  const dur=days===7?'1 semana':days===14?'2 semanas':days+' días';
+  return '¡Hola! 🙌 Gracias por seguirnos. Este es tu código personal de '+dur+' de acceso completo a AranduMed:\n\n🔑 '+code+'\n\nPara activarlo:\n1. Entrá a '+site+'\n2. Creá tu cuenta con tu correo (confirmalo desde el mail que te llega)\n3. Escribí el código en «Activá tu acceso» y listo ✅\n\nTenés las +1.600 preguntas comentadas, los simulacros y tu puesto estimado. ¡Éxitos con el estudio! 💚\nEquipo AranduMed'}
 async function loadUsers(){
   const {data,error}=await sb.from('profiles').select('email,access_until,created_at,is_admin,trial_started').order('created_at',{ascending:false}).limit(500);
   if(error){$('uBody').innerHTML='<tr><td colspan="5">'+esc(error.message)+'</td></tr>';return}
