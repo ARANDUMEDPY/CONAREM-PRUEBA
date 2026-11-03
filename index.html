@@ -323,11 +323,31 @@ body:has(#gate:not([hidden])){padding-top:54px!important}
 .trial-s li{display:flex;gap:12px;align-items:flex-start}.trial-s li>b{flex-shrink:0;width:34px;height:34px;border-radius:10px;background:var(--accent);color:var(--surface);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:800}
 .trial-s span{display:flex;flex-direction:column;font-size:.92rem;color:var(--muted)}.trial-s strong{color:var(--fg);font-size:1rem}
 .trial .btn{grid-column:1/-1;justify-self:center;text-decoration:none;display:inline-flex;align-items:center}
-.stickycta{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:50;display:flex;align-items:center;justify-content:center;min-height:52px;border-radius:14px;background:var(--cta);color:var(--cta-fg);font-weight:800;text-decoration:none;box-shadow:0 12px 30px -10px rgba(0,0,0,.5)}
-@media (min-width:821px){.stickycta{display:none!important}}
-@media (max-width:820px){body:has(.gate.lp){padding-bottom:96px!important}}
 .terms{flex-direction:row!important;align-items:flex-start;gap:10px!important;font-size:.88rem!important;line-height:1.45}.terms input{width:20px;height:20px;margin-top:1px;flex-shrink:0;accent-color:var(--accent)}
 @media (max-width:820px){.trial{grid-template-columns:1fr;padding:22px 20px}}
+</style>
+<style>
+/* Estética sobria: sin sombras ni brillos, un solo acento */
+.btn.big{font-size:1rem;min-height:48px;padding:12px 20px;box-shadow:none}
+.hcheck{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.88rem;color:var(--muted);font-weight:500}
+.hcheck li{display:flex;align-items:center;gap:6px;white-space:nowrap}
+.hcheck li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.mark{text-decoration-thickness:.08em;text-underline-offset:.16em;text-decoration-color:color-mix(in srgb,var(--accent) 80%,transparent)}
+.phone{box-shadow:none;background:var(--line);padding:8px}
+.phone-in{border-radius:34px}
+.feat{border-radius:14px}
+.feat svg{background:transparent;padding:0;width:26px;height:26px}
+.plan{border-radius:14px}
+.plan.best{border:1.5px solid var(--accent);box-shadow:none}
+.plan .tag{background:var(--surface);color:var(--accent);border:1.5px solid var(--accent)}
+.trial{background:var(--surface);border:1px solid var(--line);border-radius:16px}
+.trial-s li>b{background:transparent;color:var(--accent);border:1.5px solid var(--accent);border-radius:50%;width:30px;height:30px;font-size:.9rem}
+.plan-free{background:var(--surface);border:1px solid var(--line)}
+.bf-sub{display:flex;gap:4px 18px;flex-wrap:wrap;justify-content:center}
+.bf-sub span{white-space:nowrap}
+.trialbox{background:var(--bg);border:1px solid var(--line)}
+.trialbar{background:var(--surface);border-color:var(--line)}
+.sec-t{font-size:1.5rem}
 </style>
 
 </head>
@@ -342,8 +362,8 @@ body:has(#gate:not([hidden])){padding-top:54px!important}
     <p class="hline">Arandu Rape · Tu ruta a una de las <span class="mark">834 plazas</span></p>
     <p class="hsub">+1.600 preguntas comentadas de los exámenes 2016–2026. Practicá todos los días, simulá el examen real y mirá en qué puesto estarías hoy.</p>
     <a class="hpromo" id="heroPromo" href="#planes" hidden><span class="hp-tag">Black Friday</span><span class="hp-cd"><b data-cd="d">00</b>d <b data-cd="h">00</b>h <b data-cd="m">00</b>m <b data-cd="s">00</b>s</span></a>
-    <div class="row hcta" style="justify-content:flex-start"><a class="btn cta big" href="#acceso" data-go="signup">🎁 Empezar mis 3 días gratis</a><a class="btn ghost" href="#acceso" data-go="login">Ya tengo cuenta</a></div>
-    <p class="hcheck">✓ Acceso completo · ✓ Sin tarjeta · ✓ Sin compromiso</p>
+    <div class="row hcta" style="justify-content:flex-start"><a class="btn cta big" href="#acceso" data-go="signup">Empezar mis 3 días gratis</a><a class="btn ghost" href="#acceso" data-go="login">Ya tengo cuenta</a></div>
+    <ul class="hcheck"><li>Acceso completo</li><li>Sin tarjeta</li><li>Sin compromiso</li></ul>
   </div>
   <div class="phone" aria-hidden="true"><div class="phone-in"><img src="img/app-shot.jpg" alt="" width="390" height="780" loading="eager"></div></div>
 </section>
@@ -395,7 +415,7 @@ body:has(#gate:not([hidden])){padding-top:54px!important}
 
   <form class="card" id="fCode" hidden>
     <h2>Activá tu acceso</h2>
-    <div class="trialbox" id="trialBox" hidden><p class="tb-t">🎁 Probá AranduMed gratis por 3 días</p><p class="note">Acceso completo: preguntas, simulacros y tu puesto estimado. Sin pagar nada ni dejar tarjeta.</p><div class="row" style="justify-content:flex-start"><button class="btn cta" type="button" id="bTrial">Empezar mis 3 días gratis</button></div><p class="msg" id="tMsg" role="status"></p></div>
+    <div class="trialbox" id="trialBox" hidden><p class="tb-t">Probá AranduMed gratis por 3 días</p><p class="note">Acceso completo: preguntas, simulacros y tu puesto estimado. Sin pagar nada ni dejar tarjeta.</p><div class="row" style="justify-content:flex-start"><button class="btn cta" type="button" id="bTrial">Empezar mis 3 días gratis</button></div><p class="msg" id="tMsg" role="status"></p></div>
     <p class="note" id="cInfo">Ingresá el código que recibiste al comprar el acceso.</p>
     <p class="note" id="cPlans">Planes: <b>Completo <span data-pl="full">Gs. 240.000</span></b> (hasta el examen) · <b>Mensual <span data-pl="month">Gs. 100.000</span></b> · grupos de 3+ con 15 % de descuento. <span data-pl="tag"></span></p>
     <label>Código de acceso<input id="code" required maxlength="20" autocomplete="off" style="text-transform:uppercase;font-family:var(--mono);letter-spacing:.08em"></label>
@@ -413,7 +433,6 @@ body:has(#gate:not([hidden])){padding-top:54px!important}
 
   <div class="card" id="loading" hidden><p style="margin:0" id="loadTxt">Cargando preguntas…</p><div class="pbar"><i id="loadBar"></i></div></div>
   </div>
-<a class="stickycta" id="stickyCta" href="#acceso" data-go="signup" hidden>🎁 Probá 3 días gratis</a>
 <footer class="lfoot" id="lfoot">
   <div class="soc"><a class="sbtn" id="lnkIg" aria-label="Instagram" title="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="14" rx="3.5"/><circle cx="12" cy="12.5" r="3.6"/><path d="M8 5.5l1.3-2h5.4l1.3 2"/></svg><span>Instagram</span></a><a class="sbtn" id="lnkWa" aria-label="WhatsApp" title="WhatsApp" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 20l1.5-4A8 8 0 1 1 20 11.5z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5"/></svg><span>WhatsApp</span></a></div>
   <p class="note">AranduMed es un recurso independiente de preparación, sin vínculo oficial con el INS ni con la CONAREM. Las preguntas provienen de los cuadernillos publicados por el INS.</p>
@@ -947,7 +966,7 @@ const CONTACT={wa:String(C.WHATSAPP||'').replace(/\D/g,''),ig:String(C.INSTAGRAM
 // ---------- Precios según la fecha (hora de Paraguay) ----------
 // Para cambiar precios o fechas, editá solo esta tabla.
 const PRICES=[
- {until:'2026-12-01T00:00:00-03:00',full:240000,month:100000,promo:'Black Friday',untilTxt:'30 de noviembre',note:'🖤 Black Friday: precio especial hasta el 30 de noviembre.'},
+ {until:'2026-12-01T00:00:00-03:00',full:240000,month:100000,promo:'Black Friday',untilTxt:'30 de noviembre',note:'Black Friday: precio especial hasta el 30 de noviembre.'},
  {until:'2027-02-01T00:00:00-03:00',full:280000,month:110000,promo:'',untilTxt:'31 de enero',note:'Precio de verano: el 1 de febrero sube a Gs. 320.000.'},
  {until:'2099-01-01T00:00:00-03:00',full:320000,month:120000,promo:'',untilTxt:'',note:''}];
 const LIST={full:320000,month:120000};
@@ -963,16 +982,13 @@ function paintPrices(){const p=priceNow();
   const pn=document.getElementById('promoNote');if(pn)pn.textContent=p.promo?'':(p.note||'');
   const left=new Date(p.until).getTime()-Date.now();const box=document.getElementById('promoBox'),hp=document.getElementById('heroPromo');
   if(p.promo&&left>0){box.hidden=false;hp.hidden=false;const nx=nextTier(p);
-    document.getElementById('promoT').innerHTML='Plan Completo a <b>'+gs(p.full)+'</b> · Mensual a <b>'+gs(p.month)+'</b>';
+    document.getElementById('promoT').innerHTML='<span>Completo <b>'+gs(p.full)+'</b></span><span>Mensual <b>'+gs(p.month)+'</b></span>';
     document.getElementById('promoC').textContent='Hasta el '+p.untilTxt+' a las 23:59'+(nx?'. Desde el '+nx.fromTxt+' el Completo pasa a '+gs(nx.full)+'.':'.');}
   else{box.hidden=true;hp.hidden=true}}
 function tick(){const p=priceNow();const left=new Date(p.until).getTime()-Date.now();if(!p.promo||left<=0){if(!document.getElementById('promoBox').hidden)paintPrices();return}
   const v={d:Math.floor(left/864e5),h:Math.floor(left%864e5/36e5),m:Math.floor(left%36e5/6e4),s:Math.floor(left%6e4/1e3)};
   document.querySelectorAll('[data-cd]').forEach(el=>{const x=String(v[el.dataset.cd]).padStart(2,'0');if(el.textContent!==x)el.textContent=x})}
 paintPrices();tick();setInterval(tick,1000);setInterval(paintPrices,60000);
-(function(){const sc=$('stickyCta');if(!sc||!('IntersectionObserver' in window))return;let heroVis=true,formVis=false;const upd=()=>{sc.hidden=heroVis||formVis||!$('gate').classList.contains('lp')};
-  new IntersectionObserver(e=>{heroVis=e[0].isIntersecting;upd()},{threshold:0}).observe(document.querySelector('.hcta'));
-  new IntersectionObserver(e=>{formVis=e[0].isIntersecting;upd()},{threshold:0}).observe($('acceso'));})();
 function waLink(t){return 'https://wa.me/'+CONTACT.wa+'?text='+encodeURIComponent(t)}
 (function(){const ig=$('lnkIg'),wa=$('lnkWa');
   if(CONTACT.ig){ig.href='https://instagram.com/'+encodeURIComponent(CONTACT.ig);ig.target='_blank';ig.rel='noopener'}else ig.title='Instagram · próximamente';
@@ -1017,7 +1033,7 @@ $('bTrial').onclick=async()=>{const b=$('bTrial');b.disabled=true;msg('tMsg','')
 $('backApp').onclick=()=>{$('gate').hidden=true;$('app').hidden=false;window.scrollTo({top:0})};
 function isTrial(p){return !!(p&&p.trial_started&&p.access_until&&(new Date(p.access_until)-new Date(p.trial_started))<=3*864e5+36e5)}
 function trialBar(p){const old=document.getElementById('trialBar');if(old)old.remove();if(!isTrial(p)||p.is_admin)return;const ms=new Date(p.access_until)-Date.now();if(ms<=0)return;const h=Math.ceil(ms/36e5);const left=h>24?Math.ceil(h/24)+' días':h+' h';
-  const d=document.createElement('div');d.id='trialBar';d.className='trialbar';const pr=priceNow();d.innerHTML='<span>🎁 <b>Prueba gratis</b> · te quedan '+left+(pr.promo?'<br><span class="sub">'+pr.promo+': Completo a '+gs(pr.full)+' hasta el '+pr.untilTxt+'</span>':'')+'</span><button class="btn cta" type="button" id="tbGo">Activar mi plan</button>';
+  const d=document.createElement('div');d.id='trialBar';d.className='trialbar';const pr=priceNow();d.innerHTML='<span><b>Prueba gratis</b> · te quedan '+left+(pr.promo?'<br><span class="sub">'+pr.promo+': Completo a '+gs(pr.full)+' hasta el '+pr.untilTxt+'</span>':'')+'</span><button class="btn cta" type="button" id="tbGo">Activar mi plan</button>';
   const hdr=document.querySelector('#app header');hdr.parentNode.insertBefore(d,hdr.nextSibling);document.getElementById('tbGo').onclick=()=>{$('app').hidden=true;$('gate').hidden=false;show('fCode');$('trialBox').hidden=true;$('backApp').hidden=false;$('cInfo').textContent='Elegí tu plan, escribinos para pagar y activá acá tu código. Tu progreso de la prueba se mantiene.';window.scrollTo({top:0})}}
 $('outCode').onclick=()=>logout();
 $('fNewPass').onsubmit=async ev=>{ev.preventDefault();const {error}=await sb.auth.updateUser({password:$('newpass').value});if(error){msg('nMsg',tr(error));return}msg('nMsg','Contraseña actualizada.',true);setTimeout(()=>route(),800)};
