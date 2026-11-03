@@ -978,7 +978,7 @@ setSync('Progreso guardado en este dispositivo.');
 const $=id=>document.getElementById(id);
 const C=window.CONFIG||{};
 // ---------- Registro de errores (para diagnosticar cuelgues en celulares) ----------
-const VER='2026.11.03-h';let nlog=0;
+const VER='2026.11.03-i';let nlog=0;
 function tok(){try{const k=Object.keys(localStorage).find(k=>/^sb-.*-auth-token$/.test(k));const v=k&&JSON.parse(localStorage.getItem(k));return v&&v.access_token}catch(e){return null}}
 function clog(kind,msg){try{if(!C.SUPABASE_URL||nlog++>25)return;const t=tok();
   fetch(C.SUPABASE_URL+'/rest/v1/client_logs',{method:'POST',keepalive:true,headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:'Bearer '+(t||C.SUPABASE_ANON_KEY),'Content-Type':'application/json',Prefer:'return=minimal'},
@@ -987,7 +987,7 @@ window.__clog=clog;
 window.addEventListener('error',e=>clog('error',(e.message||'')+' @'+(e.filename||'').split('/').pop()+':'+e.lineno+':'+e.colno+(e.error&&e.error.stack?'\n'+e.error.stack.slice(0,1200):'')));
 window.addEventListener('unhandledrejection',e=>{const r=e.reason;clog('promise',(r&&(r.message||r.toString()))+(r&&r.stack?'\n'+String(r.stack).slice(0,1200):''))});
 clog('boot',(document.referrer||'')+' sw:'+(navigator.serviceWorker&&navigator.serviceWorker.controller?'1':'0')+' standalone:'+(matchMedia('(display-mode: standalone)').matches?'1':'0'));
-setTimeout(()=>{const ld=document.getElementById('loading');if(ld&&!ld.hidden)clog('slow_load',document.getElementById('loadTxt').textContent)},25000);
+setTimeout(()=>{const ld=document.getElementById('loading');if(ld&&!ld.hidden&&ld.offsetParent!==null)clog('slow_load',document.getElementById('loadTxt').textContent)},25000);
 // Contacto: completá WHATSAPP (solo números, con 595) e INSTAGRAM (usuario sin @) en config.js cuando los tengas
 const CONTACT={wa:String(C.WHATSAPP||'').replace(/\D/g,''),ig:String(C.INSTAGRAM||'').replace(/^@/,'').trim()};
 // ---------- Precios según la fecha (hora de Paraguay) ----------
@@ -1052,11 +1052,12 @@ function tr(e){const m=(e&&e.message)||String(e);return ERR[m]||m}
 
 $('fLogin').onsubmit=async ev=>{ev.preventDefault();const email=$('email').value.trim(),pass=$('pass').value;$('bMain').disabled=true;msg('lMsg','');
   try{
-    if(mode==='login'){const {error}=await sb.auth.signInWithPassword({email,password:pass});if(error)throw error}
-    else if(mode==='signup'){const {data,error}=await sb.auth.signUp({email,password:pass,options:{emailRedirectTo:location.origin+location.pathname,data:{terms_version:'1.1',terms_accepted_at:new Date().toISOString()}}});if(error)throw error;
+    clog('auth_'+mode,'inicio');
+    if(mode==='login'){const {error}=await withTimeout(sb.auth.signInWithPassword({email,password:pass}),20000);if(error)throw error}
+    else if(mode==='signup'){const {data,error}=await withTimeout(sb.auth.signUp({email,password:pass,options:{emailRedirectTo:location.origin+location.pathname,data:{terms_version:'1.1',terms_accepted_at:new Date().toISOString()}}}),20000);if(error)throw error;
       if(!data.session){msg('lMsg','Cuenta creada. Te enviamos un correo para confirmarla; después volvé e ingresá.',true);setMode('login');msg('lMsg','Cuenta creada. Confirmá tu correo y luego ingresá.',true)}}
-    else{const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});if(error)throw error;msg('lMsg','Si el correo existe, te llegó un enlace para crear una contraseña nueva.',true)}
-  }catch(e){msg('lMsg',tr(e))}finally{$('bMain').disabled=false}};
+    else{const {error}=await withTimeout(sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname}),20000);if(error)throw error;msg('lMsg','Si el correo existe, te llegó un enlace para crear una contraseña nueva.',true)}
+  }catch(e){if(e&&e.message==='timeout'){clog('auth_timeout',mode);msg('lMsg','La conexión está muy lenta o se cortó. Revisá tu internet (probá con Wi-Fi) y tocá de nuevo el botón.')}else{clog('auth_err',mode+': '+((e&&e.message)||e));msg('lMsg',tr(e))}}finally{$('bMain').disabled=false}};
 
 $('fCode').onsubmit=async ev=>{ev.preventDefault();msg('cMsg','');
   const {data,error}=await sb.rpc('redeem_code',{p_code:$('code').value.trim().toUpperCase()});
@@ -1077,13 +1078,13 @@ async function cacheGet(k){try{const db=await idb();return await new Promise(res
 async function cacheSet(k,v){try{const db=await idb();await new Promise(res=>{const tx=db.transaction('kv','readwrite');tx.objectStore('kv').put(v,k);tx.oncomplete=res;tx.onerror=res})}catch(e){}}
 function prog(t,p){$('loadTxt').textContent=t;$('loadBar').style.width=(p||0)+'%'}
 async function loadBank(){
-  const cached=await cacheGet('bank');
+  const cached=await withTimeout(cacheGet('bank'),6000).catch(()=>null);
   let ver=null,total=0;
-  try{const {data,count,error}=await sb.from('questions').select('updated_at',{count:'exact'}).order('updated_at',{ascending:false}).limit(1);if(error)throw error;total=count||0;ver=total+'|'+(data&&data[0]?data[0].updated_at:'')}
+  try{const {data,count,error}=await withTimeout(sb.from('questions').select('updated_at',{count:'exact'}).order('updated_at',{ascending:false}).limit(1),cached&&cached.data?5000:12000);if(error)throw error;total=count||0;ver=total+'|'+(data&&data[0]?data[0].updated_at:'')}
   catch(e){if(cached&&cached.data)return cached.data;throw e}
   if(cached&&cached.ver===ver&&cached.data&&cached.data.length)return cached.data;
   const all=[];const step=500;prog('Descargando preguntas… 0 de '+total,2);
-  for(let from=0;;from+=step){const {data,error}=await sb.from('questions').select('data').order('id').range(from,from+step-1);if(error){if(cached&&cached.data)return cached.data;throw error}
+  for(let from=0;;from+=step){let data,error;try{({data,error}=await withTimeout(sb.from('questions').select('data').order('id').range(from,from+step-1),45000))}catch(e){error=e}if(error){if(cached&&cached.data)return cached.data;throw error}
     data.forEach(r=>all.push(r.data));prog('Descargando preguntas… '+all.length+' de '+total,Math.round(100*all.length/Math.max(1,total)));if(data.length<step)break}
   prog('Guardando en tu dispositivo para que la próxima vez abra al instante…',100);
   await cacheSet('bank',{ver,data:all});return all}
@@ -1143,7 +1144,9 @@ async function route(depth){depth=depth||0;
     const canTrial=prof&&!prof.trial_started;$('trialBox').hidden=!canTrial;$('backApp').hidden=true;
     $('cInfo').textContent=canTrial?'¿Ya compraste? Ingresá el código que recibiste.':(prof&&prof.trial_started&&isTrial(prof))?'Terminó tu prueba gratis. ¡Ojalá te haya servido! Elegí un plan y activalo con tu código: tu progreso sigue guardado.':(prof&&prof.access_until)?'Tu acceso venció el '+new Date(prof.access_until).toLocaleDateString('es-PY')+'. Ingresá un código nuevo para renovarlo.':'Ingresá el código que recibiste al comprar el acceso.';return}
   if(started)return;started=true;show('loading');
-  try{await sb.rpc('register_device',{p_device:devId(),p_label:devLabel()})}catch(e){}
+  const slowT=setTimeout(()=>{if($('loading').hidden||$('gate').hidden)return;clog('stuck_loading',$('loadTxt').textContent);
+    if(!$('loadRetry')){const d=document.createElement('p');d.id='loadRetry';d.className='sub';d.style.margin='10px 0 0';d.innerHTML='Está tardando más de lo normal. Puede ser la conexión. <button class="btn" type="button" style="margin-top:8px">Reintentar</button>';d.querySelector('button').onclick=()=>location.reload();$('loading').appendChild(d)}},20000);
+  try{await withTimeout(sb.rpc('register_device',{p_device:devId(),p_label:devLabel()}),6000)}catch(e){clog('register_device',(e&&e.message)||e)}
   startPing();
   try{
     const bank=await loadBank();
@@ -1153,14 +1156,14 @@ async function route(depth){depth=depth||0;
       set:async(obj)=>{const {error}=await sb.from('progress').upsert({user_id:uid,data:obj,updated_at:new Date().toISOString()});if(error)throw error}
     };
     $('gate').hidden=true;$('app').hidden=false;{const tb=document.querySelector('.tbr'),th=$('themeBtn');if(tb&&th&&th.parentNode!==tb)tb.appendChild(th)}
-    try{const {data:rs}=await sb.from('summaries').select('id,area,ord,data,published').order('area').order('ord');window.__RES=(rs||[]).map(r=>Object.assign({},r.data,{id:r.id,area:r.area,draft:!r.published}))}catch(e){window.__RES=[]}
-    window.startApp(bank);
+    try{const {data:rs}=await withTimeout(sb.from('summaries').select('id,area,ord,data,published').order('area').order('ord'),10000);window.__RES=(rs||[]).map(r=>Object.assign({},r.data,{id:r.id,area:r.area,draft:!r.published}))}catch(e){window.__RES=[]}
+    clearTimeout(slowT);window.startApp(bank);
     const until=prof.is_admin?'administrador':'acceso hasta el '+new Date(prof.access_until).toLocaleDateString('es-PY',{day:'numeric',month:'long',year:'numeric'});
     trialBar(prof);
     $('acct').innerHTML='<span class="acctbar">'+prof.email+' · '+until+(prof.is_admin?' · <a href="admin.html">Panel de administración</a>':'')+' <button class="linkbtn" id="logout">Cerrar sesión</button> <a href="legal.html" class="linkbtn" style="text-decoration:underline">Términos y privacidad</a> <span class="sub">v'+VER+'</span>'+installUI()+'</span>';
     const ib=document.getElementById('installBtn');if(ib)ib.onclick=async()=>{if(!installEvt)return;installEvt.prompt();await installEvt.userChoice;installEvt=null;ib.hidden=true};
     $('logout').onclick=logout;
-  }catch(e){started=false;show('fLogin');msg('lMsg','No se pudieron cargar las preguntas: '+tr(e))}
+  }catch(e){clearTimeout(slowT);started=false;clog('load_fail',(e&&e.message)||e);show('fLogin');msg('lMsg',e&&e.message==='timeout'?'La conexión está muy lenta y no se pudieron descargar las preguntas. Revisá tu internet y volvé a entrar.':'No se pudieron cargar las preguntas: '+tr(e))}
 }
 sb.auth.onAuthStateChange((ev)=>{
   if(ev==='PASSWORD_RECOVERY'){$('gate').hidden=false;$('app').hidden=true;show('fNewPass');return}
