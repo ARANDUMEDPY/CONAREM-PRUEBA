@@ -35,6 +35,9 @@
   --accent:#4CC2B7; --accent-soft:#16363A; --ok:#5CC98A; --ok-soft:#163626; --bad:#F07F6C; --bad-soft:#3D1F1A; --mid:#E5B04A; --cta:#F08A5D; --cta-fg:#0E161B;
   --mi:#86A9E0; --cir:#E0A07E; --ped:#7BCDB8; --go:#E59BC2; --sp:#D8C46A; color-scheme:dark}
 *{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+h1,h2,h3,.big,.cheer,.rs-t{line-height:1.22}
+p,li,.stem,.opt span{overflow-wrap:anywhere}
 body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:17px;line-height:1.6;
   padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:20px 48px}
 .wrap{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
@@ -57,7 +60,7 @@ header{display:flex;flex-direction:column;gap:14px}
 .rs-sec b{color:var(--fg)}
 .rs-trap{background:var(--bad-soft);border-radius:12px;padding:12px 16px}.rs-trap strong{color:var(--bad)}
 @media (max-width:420px){.daypill .dp-g{display:none}}
-h1{font-family:var(--display);font-weight:800;font-size:1.45rem;letter-spacing:-0.01em;margin:0;text-wrap:balance}
+h1{font-family:var(--display);font-weight:800;font-size:1.45rem;letter-spacing:-0.01em;margin:0;text-wrap:balance;line-height:1.15}
 .sub{color:var(--muted);font-size:.95rem;margin:0}
 .count{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden}
 .count>div{background:var(--surface);padding:8px 14px;display:flex;align-items:baseline;flex-wrap:wrap;gap:0 8px;min-width:0}
@@ -164,7 +167,7 @@ nav button:focus-visible,.opt:focus-visible,.btn:focus-visible{outline:2px solid
 .btn.ghost{background:transparent;color:var(--accent)}
 .btn.cta{background:var(--cta);border-color:var(--cta);color:var(--cta-fg)}
 .done{text-align:center;align-items:center}
-.big{font-family:var(--display);font-weight:800;font-size:2.6rem;line-height:1}
+.big{font-family:var(--display);font-weight:800;font-size:2.6rem;line-height:1.1}
 .areas{display:flex;flex-direction:column;gap:14px}
 .ar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;align-items:baseline}
 .ar .n{font-family:var(--mono);font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
@@ -218,9 +221,11 @@ h2{font-family:var(--display);font-weight:600;font-size:1.2rem;margin:0}
 </style>
 <style>
 [hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+.hsub,.feat p,.plan li,.pdesc,.lfoot .note,.trial p{line-height:1.6}
 .brandmed{color:var(--accent)}
 .gate h1.logo{font-size:2.3rem;letter-spacing:-.02em}
-.slogan{font-family:var(--display);font-weight:700;font-size:1.15rem;margin:4px 0 0;color:var(--fg)}
+.slogan{font-family:var(--display);font-weight:700;font-size:1.15rem;margin:4px 0 0;color:var(--fg);line-height:1.35}
 body{letter-spacing:-.005em}
 .gate{max-width:440px;margin:6vh auto 0;display:flex;flex-direction:column;gap:16px}
 .gate .card{gap:12px}
@@ -252,8 +257,8 @@ body:has(#gate:not([hidden])){padding-top:54px!important}
 .gate:not(.lp) #miniBrand{max-width:440px;width:100%;margin:0 auto}
 .hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:40px;align-items:center}
 .kick{margin:0 0 6px;font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
-.hero h1.logo{font-size:clamp(2.4rem,6vw,3.4rem)!important;line-height:1}
-.hline{font-family:var(--display);font-weight:800;font-size:clamp(1.45rem,3.6vw,2.15rem);line-height:1.18;letter-spacing:-.015em;margin:14px 0 0;text-wrap:balance}
+.hero h1.logo{font-size:clamp(2.4rem,6vw,3.4rem)!important;line-height:1.08}
+.hline{font-family:var(--display);font-weight:800;font-size:clamp(1.45rem,3.6vw,2.15rem);line-height:1.28;letter-spacing:-.015em;margin:14px 0 0;text-wrap:balance}
 .mark{text-decoration:underline;text-decoration-color:var(--cta);text-decoration-thickness:.15em;text-underline-offset:.14em;text-decoration-skip-ink:none;white-space:nowrap}
 .hsub{color:var(--muted);font-size:1.06rem;margin:14px 0 0;max-width:34em}
 .hcta{margin-top:22px;gap:10px}
@@ -265,7 +270,7 @@ body:has(#gate:not([hidden])){padding-top:54px!important}
 .feat{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:8px}
 .feat svg,.lfoot svg,.plan li svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .feat svg{width:30px;height:30px;color:var(--accent);background:var(--accent-soft);border-radius:10px;padding:6px;box-sizing:content-box}
-.feat h3{margin:6px 0 0;font-family:var(--display);font-size:1.05rem;font-weight:700;line-height:1.3}
+.feat h3{margin:6px 0 0;font-family:var(--display);font-size:1.05rem;font-weight:700;line-height:1.35}
 .feat p{margin:0;color:var(--muted);font-size:.94rem;line-height:1.5}
 .sec-t{text-align:center;font-family:var(--display);font-weight:800;font-size:1.7rem;margin:0}
 .plans{display:flex;flex-direction:column;gap:14px}
@@ -277,7 +282,7 @@ body:has(#gate:not([hidden])){padding-top:54px!important}
 .pdesc{margin:0;color:var(--muted);font-size:.92rem}
 .price{margin:6px 0 4px;display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 10px}
 .price s{color:var(--muted);font-size:.95rem;flex-basis:100%}
-.price b{font-family:var(--display);font-size:1.9rem;font-weight:800;letter-spacing:-.02em}
+.price b{font-family:var(--display);font-size:1.9rem;font-weight:800;letter-spacing:-.02em;line-height:1.15}
 .price span{color:var(--muted);font-size:.9rem}
 .plan ul{list-style:none;margin:0 0 8px;padding:0;display:flex;flex-direction:column;gap:7px;font-size:.94rem}
 .plan li{display:flex;gap:8px;align-items:flex-start}
@@ -293,6 +298,41 @@ body:has(#gate:not([hidden])){padding-top:54px!important}
 @media (max-width:820px){.hero{grid-template-columns:1fr;gap:34px;text-align:left}.feats{grid-template-columns:repeat(2,minmax(0,1fr))}.plan-g{grid-template-columns:1fr;max-width:440px;margin:8px auto 0;width:100%;gap:22px}}
 @media (max-width:480px){.feats{grid-template-columns:1fr;gap:10px}.feat{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:14px;row-gap:4px;padding:16px}.feat svg{grid-row:span 2}.feat h3{margin:0}.hcta .btn{flex:1 1 auto}.gate{gap:36px!important}}
 </style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap">
+<style>
+.bf{position:relative;overflow:hidden;border-radius:22px;padding:22px 22px 18px;color:#FAFAFA;text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px;
+  background:radial-gradient(120% 140% at 0% 0%,rgba(240,138,93,.30),transparent 55%),radial-gradient(110% 130% at 100% 100%,rgba(232,73,122,.26),transparent 60%),#09090B;border:1px solid rgba(255,255,255,.08);box-shadow:0 24px 50px -24px rgba(240,100,90,.45)}
+.bf-head{display:flex;flex-direction:column;align-items:center;gap:4px}
+.bf-tag{font-family:'Bebas Neue',var(--display);font-size:2.6rem;line-height:1;letter-spacing:.06em;background:linear-gradient(90deg,#FFB38A,#F08A5D 45%,#E8497A);-webkit-background-clip:text;background-clip:text;color:transparent}
+.bf-sub{font-size:.98rem;color:#D4D4D8}.bf-sub b{color:#fff}
+.bf-cd{display:flex;align-items:flex-start;justify-content:center;gap:6px}
+.bf-cd>div{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:62px}
+.bf-cd b{display:block;font-family:'Bebas Neue',var(--mono);font-weight:400;font-size:2.7rem;line-height:1;letter-spacing:.02em;font-variant-numeric:tabular-nums;background:linear-gradient(180deg,#1C1C21,#121215);border:1px solid rgba(255,255,255,.09);border-radius:12px;padding:10px 0 6px;width:62px;box-shadow:inset 0 -10px 18px rgba(0,0,0,.35)}
+.bf-cd span{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:#A1A1AA}
+.bf-cd i{font-style:normal;font-family:'Bebas Neue',sans-serif;font-size:2.2rem;color:#F08A5D;padding-top:10px}
+.bf-foot{margin:0;font-size:.84rem;color:#A1A1AA}
+.flip{animation:flip .35s ease}@keyframes flip{0%{transform:translateY(-4px);opacity:.4}100%{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.flip{animation:none}}
+.hpromo{margin:18px 0 0;display:inline-flex;align-items:center;gap:10px;text-decoration:none;background:#09090B;border:1px solid rgba(255,255,255,.1);border-radius:99px;padding:6px 8px 6px 6px;color:#FAFAFA;white-space:nowrap}
+.hp-tag{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;letter-spacing:.06em;padding:3px 10px 1px;border-radius:99px;background:linear-gradient(90deg,#F08A5D,#E8497A);color:#09090B}
+.hp-cd{font-size:.82rem;color:#A1A1AA}.hp-cd b{font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:1.15rem;color:#fff;letter-spacing:.02em;font-variant-numeric:tabular-nums}
+.btn.big{font-size:1.02rem;min-height:52px;padding:14px 22px;box-shadow:0 10px 24px -12px color-mix(in srgb,var(--cta) 70%,transparent)}
+.hcheck{margin:12px 0 0;font-size:.88rem;color:var(--muted);font-weight:600}
+.trial{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px 28px;align-items:center;background:var(--accent-soft);border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);border-radius:22px;padding:26px 28px}
+.trial-k{font-size:.75rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+.trial h2{font-family:var(--display);font-weight:800;font-size:clamp(1.4rem,3.2vw,1.9rem);line-height:1.25;margin:6px 0 8px}
+.trial p{margin:0;color:var(--muted)}
+.trial-s{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.trial-s li{display:flex;gap:12px;align-items:flex-start}.trial-s li>b{flex-shrink:0;width:34px;height:34px;border-radius:10px;background:var(--accent);color:var(--surface);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:800}
+.trial-s span{display:flex;flex-direction:column;font-size:.92rem;color:var(--muted)}.trial-s strong{color:var(--fg);font-size:1rem}
+.trial .btn{grid-column:1/-1;justify-self:center;text-decoration:none;display:inline-flex;align-items:center}
+.stickycta{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:50;display:flex;align-items:center;justify-content:center;min-height:52px;border-radius:14px;background:var(--cta);color:var(--cta-fg);font-weight:800;text-decoration:none;box-shadow:0 12px 30px -10px rgba(0,0,0,.5)}
+@media (min-width:821px){.stickycta{display:none!important}}
+@media (max-width:820px){body:has(.gate.lp){padding-bottom:96px!important}}
+.terms{flex-direction:row!important;align-items:flex-start;gap:10px!important;font-size:.88rem!important;line-height:1.45}.terms input{width:20px;height:20px;margin-top:1px;flex-shrink:0;accent-color:var(--accent)}
+@media (max-width:820px){.trial{grid-template-columns:1fr;padding:22px 20px}}
+@media (max-width:380px){.bf-cd>div{min-width:54px}.bf-cd b{width:54px;font-size:2.3rem}.bf-tag{font-size:2.2rem}}
+</style>
 
 </head>
 <body>
@@ -305,10 +345,16 @@ body:has(#gate:not([hidden])){padding-top:54px!important}
     <h1 class="logo">Arandu<span class="brandmed">Med</span></h1>
     <p class="hline">Arandu Rape · Tu ruta a una de las <span class="mark">834 plazas</span></p>
     <p class="hsub">+1.600 preguntas comentadas de los exámenes 2016–2026. Practicá todos los días, simulá el examen real y mirá en qué puesto estarías hoy.</p>
-    <p class="hpromo" id="heroPromo" hidden></p>
-    <div class="row hcta" style="justify-content:flex-start"><a class="btn cta" href="#acceso" data-go="signup">Probá 3 días gratis</a><a class="btn ghost" href="#acceso" data-go="login">Ya tengo cuenta</a></div>
+    <a class="hpromo" id="heroPromo" href="#planes" hidden><span class="hp-tag">Black Friday</span><span class="hp-cd"><b data-cd="d">00</b>d <b data-cd="h">00</b>h <b data-cd="m">00</b>m <b data-cd="s">00</b>s</span></a>
+    <div class="row hcta" style="justify-content:flex-start"><a class="btn cta big" href="#acceso" data-go="signup">🎁 Empezar mis 3 días gratis</a><a class="btn ghost" href="#acceso" data-go="login">Ya tengo cuenta</a></div>
+    <p class="hcheck">✓ Acceso completo · ✓ Sin tarjeta · ✓ Sin compromiso</p>
   </div>
   <div class="phone" aria-hidden="true"><div class="phone-in"><img src="img/app-shot.jpg" alt="" width="390" height="780" loading="eager"></div></div>
+</section>
+<section class="trial" id="trial">
+  <div class="trial-t"><span class="trial-k">Prueba gratis</span><h2>3 días con todo, sin pagar nada</h2><p>Las +1.600 preguntas, los simulacros, los resúmenes y tu puesto estimado. Si te convence, elegís tu plan y seguís en la misma cuenta con todo tu progreso.</p></div>
+  <ol class="trial-s"><li><b>1</b><span><strong>Creá tu cuenta</strong>Con tu correo, en 30 segundos.</span></li><li><b>2</b><span><strong>Tocá "Empezar mis 3 días gratis"</strong>Se activa al instante.</span></li><li><b>3</b><span><strong>Estudiá como el día del examen</strong>Plan diario, simulacro y repasos.</span></li></ol>
+  <a class="btn cta big" href="#acceso" data-go="signup">Probar gratis ahora</a>
 </section>
 <section class="feats" id="feats">
   <div class="feat"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10a2 2 0 0 1 2 2v14l-4-2.5L11 20l-4-2.5L3 20V6a2 2 0 0 1 2-2z" transform="translate(1 0)"/><path d="M9 9h6M9 12.5h4"/></svg><h3>+1.600 preguntas comentadas</h3><p>De los cuadernillos oficiales 2016–2026. Cada una con explicación, “para recordar”, por qué no las otras y la fuente.</p></div>
@@ -318,7 +364,11 @@ body:has(#gate:not([hidden])){padding-top:54px!important}
 </section>
 <section class="plans" id="planes">
   <h2 class="sec-t">Planes</h2>
-  <div class="promo" id="promoBox" hidden><span class="promo-t" id="promoT"></span><span class="promo-c" id="promoC" aria-live="off"></span></div>
+  <div class="bf" id="promoBox" hidden>
+    <div class="bf-head"><span class="bf-tag">Black Friday</span><span class="bf-sub" id="promoT"></span></div>
+    <div class="bf-cd" role="timer" aria-label="Tiempo que falta para que termine la promoción"><div><b data-cd="d">00</b><span>días</span></div><i>:</i><div><b data-cd="h">00</b><span>horas</span></div><i>:</i><div><b data-cd="m">00</b><span>min</span></div><i>:</i><div><b data-cd="s">00</b><span>seg</span></div></div>
+    <p class="bf-foot" id="promoC"></p>
+  </div>
   <p class="note" style="text-align:center"><span id="promoNote">Precio por tiempo limitado.</span> <b>Antes de pagar, probá 3 días gratis</b>, sin tarjeta.</p>
   <div class="plan-g">
     <div class="plan best"><span class="tag">Más elegido</span><h3>Completo</h3><p class="pdesc">Todo, hasta el día del examen.</p><p class="price"><span class="pnext" data-pl="fullList"></span><b data-pl="full">Gs. 240.000</b></p><ul><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Las +1.600 preguntas</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Simulacros ilimitados</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Plan diario y repasos</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Puesto estimado</li></ul><a class="btn cta" href="#acceso" data-go="signup" data-plan="Completo">Elegir Completo</a></div>
@@ -335,6 +385,7 @@ body:has(#gate:not([hidden])){padding-top:54px!important}
     <h2 id="lTitle">Ingresar</h2>
     <label>Correo<input id="email" type="email" required autocomplete="email"></label>
     <label id="passWrap">Contraseña<input id="pass" type="password" minlength="6" required autocomplete="current-password"></label>
+    <label class="terms" id="termsWrap" hidden><input type="checkbox" id="terms"> <span>Acepto los <a href="legal.html#terminos" target="_blank" rel="noopener">Términos y condiciones</a> y la <a href="legal.html#privacidad" target="_blank" rel="noopener">Política de privacidad</a>.</span></label>
     <p class="msg" id="lMsg" role="status"></p>
     <div class="row" style="justify-content:flex-start">
       <button class="btn cta" id="bMain" type="submit">Entrar</button>
@@ -366,9 +417,11 @@ body:has(#gate:not([hidden])){padding-top:54px!important}
 
   <div class="card" id="loading" hidden><p style="margin:0" id="loadTxt">Cargando preguntas…</p><div class="pbar"><i id="loadBar"></i></div></div>
   </div>
+<a class="stickycta" id="stickyCta" href="#acceso" data-go="signup" hidden>🎁 Probá 3 días gratis</a>
 <footer class="lfoot" id="lfoot">
   <div class="soc"><a class="sbtn" id="lnkIg" aria-label="Instagram" title="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="14" rx="3.5"/><circle cx="12" cy="12.5" r="3.6"/><path d="M8 5.5l1.3-2h5.4l1.3 2"/></svg><span>Instagram</span></a><a class="sbtn" id="lnkWa" aria-label="WhatsApp" title="WhatsApp" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 20l1.5-4A8 8 0 1 1 20 11.5z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5"/></svg><span>WhatsApp</span></a></div>
   <p class="note">AranduMed es un recurso independiente de preparación, sin vínculo oficial con el INS ni con la CONAREM. Las preguntas provienen de los cuadernillos publicados por el INS.</p>
+  <p class="note"><a href="legal.html#terminos">Términos y condiciones</a> · <a href="legal.html#privacidad">Privacidad</a> · <a href="legal.html#reembolsos">Reembolsos</a></p>
   <p class="note">© 2026 AranduMed</p>
 </footer>
 </div>
@@ -911,12 +964,19 @@ function paintPrices(){const p=priceNow();
     if(k==='full'||k==='month')el.textContent=gs(p[k]);
     else if(k==='fullList'||k==='monthList'){const kk=k==='fullList'?'full':'month';const nx=nextTier(p);el.hidden=!(nx&&nx[kk]>p[kk]);if(nx)el.textContent='Desde el '+nx.fromTxt+': '+gs(nx[kk])}
     else if(k==='tag')el.textContent=p.note||''});
-  const pn=document.getElementById('promoNote');if(pn)pn.textContent=p.note||'';
+  const pn=document.getElementById('promoNote');if(pn)pn.textContent=p.promo?'':(p.note||'');
   const left=new Date(p.until).getTime()-Date.now();const box=document.getElementById('promoBox'),hp=document.getElementById('heroPromo');
-  if(p.promo&&left>0){box.hidden=false;const nx=nextTier(p);document.getElementById('promoT').textContent='🖤 '+p.promo.toUpperCase()+' · Completo a '+gs(p.full)+(nx?' (desde el '+nx.fromTxt+': '+gs(nx.full)+')':'');document.getElementById('promoC').textContent='Termina en '+cdTxt(left);
-    hp.hidden=false;const dd=Math.floor(left/864e5),hh=Math.floor(left%864e5/36e5),mm=Math.floor(left%36e5/6e4);hp.innerHTML='🖤 Black Friday · quedan <b>'+(dd?dd+' d '+hh+' h':hh+' h '+mm+' min')+'</b>'}
+  if(p.promo&&left>0){box.hidden=false;hp.hidden=false;const nx=nextTier(p);
+    document.getElementById('promoT').innerHTML='Plan Completo a <b>'+gs(p.full)+'</b> · Mensual a <b>'+gs(p.month)+'</b>';
+    document.getElementById('promoC').textContent='Hasta el '+p.untilTxt+' a las 23:59'+(nx?'. Desde el '+nx.fromTxt+' el Completo pasa a '+gs(nx.full)+'.':'.');}
   else{box.hidden=true;hp.hidden=true}}
-paintPrices();setInterval(paintPrices,30000);
+function tick(){const p=priceNow();const left=new Date(p.until).getTime()-Date.now();if(!p.promo||left<=0){if(!document.getElementById('promoBox').hidden)paintPrices();return}
+  const v={d:Math.floor(left/864e5),h:Math.floor(left%864e5/36e5),m:Math.floor(left%36e5/6e4),s:Math.floor(left%6e4/1e3)};
+  document.querySelectorAll('[data-cd]').forEach(el=>{const x=String(v[el.dataset.cd]).padStart(2,'0');if(el.textContent!==x){el.textContent=x;el.classList.remove('flip');void el.offsetWidth;el.classList.add('flip')}})}
+paintPrices();tick();setInterval(tick,1000);setInterval(paintPrices,60000);
+(function(){const sc=$('stickyCta');if(!sc||!('IntersectionObserver' in window))return;let heroVis=true,formVis=false;const upd=()=>{sc.hidden=heroVis||formVis||!$('gate').classList.contains('lp')};
+  new IntersectionObserver(e=>{heroVis=e[0].isIntersecting;upd()},{threshold:0}).observe(document.querySelector('.hcta'));
+  new IntersectionObserver(e=>{formVis=e[0].isIntersecting;upd()},{threshold:0}).observe($('acceso'));})();
 function waLink(t){return 'https://wa.me/'+CONTACT.wa+'?text='+encodeURIComponent(t)}
 (function(){const ig=$('lnkIg'),wa=$('lnkWa');
   if(CONTACT.ig){ig.href='https://instagram.com/'+encodeURIComponent(CONTACT.ig);ig.target='_blank';ig.rel='noopener'}else ig.title='Instagram · próximamente';
@@ -934,11 +994,13 @@ if(!C.SUPABASE_URL||!C.SUPABASE_ANON_KEY){show('fLogin');msg('lMsg','La web toda
 const sb=window.supabase.createClient(C.SUPABASE_URL,C.SUPABASE_ANON_KEY);
 let mode='login', started=false;
 function setMode(m){mode=m;
-  $('lTitle').textContent={login:'Ingresar',signup:'Crear cuenta',forgot:'Recuperar contraseña'}[m];
+  $('lTitle').textContent={login:'Ingresar',signup:'Creá tu cuenta · 3 días gratis',forgot:'Recuperar contraseña'}[m];
+  $('termsWrap').hidden=(m!=='signup');$('terms').required=(m==='signup');$('terms').setCustomValidity('');
   $('bMain').textContent={login:'Entrar',signup:'Crear cuenta',forgot:'Enviar enlace'}[m];
   $('passWrap').hidden=(m==='forgot');$('pass').required=(m!=='forgot');
   $('pass').autocomplete=(m==='signup'?'new-password':'current-password');
   $('toSignup').hidden=(m!=='login');$('toForgot').hidden=(m!=='login');$('toLogin').hidden=(m==='login');msg('lMsg','')}
+$('terms').addEventListener('invalid',()=>$('terms').setCustomValidity('Para crear la cuenta tenés que aceptar los términos y la política de privacidad.'));$('terms').addEventListener('change',()=>$('terms').setCustomValidity(''));
 $('toSignup').onclick=()=>setMode('signup');$('toForgot').onclick=()=>setMode('forgot');$('toLogin').onclick=()=>setMode('login');
 const ERR={'Invalid login credentials':'Correo o contraseña incorrectos.','Email not confirmed':'Todavía no confirmaste tu correo. Revisá tu bandeja de entrada (y spam).','User already registered':'Ese correo ya tiene una cuenta. Ingresá con tu contraseña.'};
 function tr(e){const m=(e&&e.message)||String(e);return ERR[m]||m}
@@ -946,7 +1008,7 @@ function tr(e){const m=(e&&e.message)||String(e);return ERR[m]||m}
 $('fLogin').onsubmit=async ev=>{ev.preventDefault();const email=$('email').value.trim(),pass=$('pass').value;$('bMain').disabled=true;msg('lMsg','');
   try{
     if(mode==='login'){const {error}=await sb.auth.signInWithPassword({email,password:pass});if(error)throw error}
-    else if(mode==='signup'){const {data,error}=await sb.auth.signUp({email,password:pass,options:{emailRedirectTo:location.origin+location.pathname}});if(error)throw error;
+    else if(mode==='signup'){const {data,error}=await sb.auth.signUp({email,password:pass,options:{emailRedirectTo:location.origin+location.pathname,data:{terms_version:'1.0',terms_accepted_at:new Date().toISOString()}}});if(error)throw error;
       if(!data.session){msg('lMsg','Cuenta creada. Te enviamos un correo para confirmarla; después volvé e ingresá.',true);setMode('login');msg('lMsg','Cuenta creada. Confirmá tu correo y luego ingresá.',true)}}
     else{const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});if(error)throw error;msg('lMsg','Si el correo existe, te llegó un enlace para crear una contraseña nueva.',true)}
   }catch(e){msg('lMsg',tr(e))}finally{$('bMain').disabled=false}};
@@ -1031,7 +1093,7 @@ async function route(){
     window.startApp(bank);
     const until=prof.is_admin?'administrador':'acceso hasta el '+new Date(prof.access_until).toLocaleDateString('es-PY',{day:'numeric',month:'long',year:'numeric'});
     trialBar(prof);
-    $('acct').innerHTML='<span class="acctbar">'+prof.email+' · '+until+(prof.is_admin?' · <a href="admin.html">Panel de administración</a>':'')+' <button class="linkbtn" id="logout">Cerrar sesión</button>'+installUI()+'</span>';
+    $('acct').innerHTML='<span class="acctbar">'+prof.email+' · '+until+(prof.is_admin?' · <a href="admin.html">Panel de administración</a>':'')+' <button class="linkbtn" id="logout">Cerrar sesión</button> <a href="legal.html" class="linkbtn" style="text-decoration:underline">Términos y privacidad</a>'+installUI()+'</span>';
     const ib=document.getElementById('installBtn');if(ib)ib.onclick=async()=>{if(!installEvt)return;installEvt.prompt();await installEvt.userChoice;installEvt=null;ib.hidden=true};
     $('logout').onclick=logout;
   }catch(e){started=false;show('fLogin');msg('lMsg','No se pudieron cargar las preguntas: '+tr(e))}
