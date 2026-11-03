@@ -399,7 +399,7 @@ body:has(#gate:not([hidden])){padding-top:54px!important}
   <div class="plan-g">
     <div class="plan best"><span class="tag">Más elegido</span><h3>Completo</h3><p class="pdesc">Todo, hasta el día del examen.</p><p class="price"><span class="pnext" data-pl="fullList"></span><b data-pl="full">Gs. 240.000</b></p><ul><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Las +1.600 preguntas</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Simulacros ilimitados</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Plan diario y repasos</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Puesto estimado</li></ul><a class="btn cta" href="#acceso" data-go="signup" data-plan="Completo">Elegir Completo</a></div>
     <div class="plan"><h3>Mensual</h3><p class="pdesc">Para empezar o si ya falta poco.</p><p class="price"><span class="pnext" data-pl="monthList"></span><b data-pl="month">Gs. 100.000</b><span>/mes</span></p><ul><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Todo lo del plan Completo</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>30 días de acceso</li></ul><a class="btn ghost" href="#acceso" data-go="signup" data-plan="Mensual">Elegir Mensual</a></div>
-    <div class="plan"><h3>Grupo de estudio</h3><p class="pdesc">De 3 personas en adelante.</p><p class="price"><b>−15 %</b><span>c/u en el Completo</span></p><ul><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Cada uno con su cuenta</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Ideal para estudiar juntos</li></ul><a class="btn ghost" href="#acceso" data-go="signup" data-plan="Grupo">Armar grupo</a></div>
+    <div class="plan"><h3>2 exámenes</h3><p class="pdesc">CONAREM 2027 y 2028. Si este año no entrás a la plaza que querés, seguís sin pagar de nuevo.</p><p class="price"><span class="pnext" data-pl="twoList"></span><b data-pl="two">Gs. 380.000</b></p><ul><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Todo lo del plan Completo</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Acceso hasta el examen 2028</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Dos intentos con el mismo pago</li></ul><a class="btn ghost" href="#acceso" data-go="signup" data-plan="2 exámenes">Elegir 2 exámenes</a></div>
   </div>
   <div class="plan-free"><div><b>¿No estás seguro?</b> Creá tu cuenta y usá AranduMed completo durante 3 días, gratis.</div><a class="btn cta" href="#acceso" data-go="signup">Empezar prueba gratis</a></div>
   <p class="note" style="text-align:center">Cómo funciona: creás tu cuenta, probás 3 días gratis y, si te gusta, elegís tu plan y activás tu código. Tu progreso queda guardado.</p>
@@ -427,7 +427,7 @@ body:has(#gate:not([hidden])){padding-top:54px!important}
     <h2>Activá tu acceso</h2>
     <div class="trialbox" id="trialBox" hidden><p class="tb-t">Probá AranduMed gratis por 3 días</p><p class="note">Acceso completo: preguntas, simulacros y tu puesto estimado. Sin pagar nada ni dejar tarjeta.</p><div class="row" style="justify-content:flex-start"><button class="btn cta" type="button" id="bTrial">Empezar mis 3 días gratis</button></div><p class="msg" id="tMsg" role="status"></p></div>
     <p class="note" id="cInfo">Ingresá el código que recibiste al comprar el acceso.</p>
-    <p class="note" id="cPlans">Planes: <b>Completo <span data-pl="full">Gs. 240.000</span></b> (hasta el examen) · <b>Mensual <span data-pl="month">Gs. 100.000</span></b> · grupos de 3+ con 15 % de descuento. <span data-pl="tag"></span></p>
+    <p class="note" id="cPlans">Planes: <b>Completo <span data-pl="full">Gs. 240.000</span></b> (hasta el examen) · <b>Mensual <span data-pl="month">Gs. 100.000</span></b> · <b>2 exámenes <span data-pl="two">Gs. 380.000</span></b> (2027 y 2028). <span data-pl="tag"></span></p>
     <label>Código de acceso<input id="code" required maxlength="20" autocomplete="off" style="text-transform:uppercase;font-family:var(--mono);letter-spacing:.08em"></label>
     <p class="msg" id="cMsg" role="status"></p>
     <div class="row" style="justify-content:flex-start"><button class="btn cta" type="submit">Activar</button></div>
@@ -976,9 +976,9 @@ const CONTACT={wa:String(C.WHATSAPP||'').replace(/\D/g,''),ig:String(C.INSTAGRAM
 // ---------- Precios según la fecha (hora de Paraguay) ----------
 // Para cambiar precios o fechas, editá solo esta tabla.
 const PRICES=[
- {until:'2026-12-01T00:00:00-03:00',full:240000,month:100000,promo:'Black Friday',untilTxt:'30 de noviembre',note:'Black Friday: precio especial hasta el 30 de noviembre.'},
- {until:'2027-02-01T00:00:00-03:00',full:280000,month:110000,promo:'',untilTxt:'31 de enero',note:'Precio de verano: el 1 de febrero sube a Gs. 320.000.'},
- {until:'2099-01-01T00:00:00-03:00',full:320000,month:120000,promo:'',untilTxt:'',note:''}];
+ {until:'2026-12-01T00:00:00-03:00',full:240000,month:100000,two:380000,promo:'Black Friday',untilTxt:'30 de noviembre',note:'Black Friday: precio especial hasta el 30 de noviembre.'},
+ {until:'2027-02-01T00:00:00-03:00',full:280000,month:110000,two:420000,promo:'',untilTxt:'31 de enero',note:'Precio de verano: el 1 de febrero sube a Gs. 320.000.'},
+ {until:'2099-01-01T00:00:00-03:00',full:320000,month:120000,two:480000,promo:'',untilTxt:'',note:''}];
 const LIST={full:320000,month:120000};
 function gs(n){return 'Gs. '+n.toLocaleString('es-PY').replace(/,/g,'.')}
 function priceNow(){const now=Date.now();return PRICES.find(p=>now<new Date(p.until).getTime())||PRICES[PRICES.length-1]}
@@ -986,8 +986,8 @@ function nextTier(p){const i=PRICES.indexOf(p);const n=PRICES[i+1];if(!n)return 
 function cdTxt(ms){if(ms<=0)return '';const d=Math.floor(ms/864e5),h=Math.floor(ms%864e5/36e5),m=Math.floor(ms%36e5/6e4);return (d?d+' d ':'')+h+' h '+String(m).padStart(2,'0')+' min'}
 function paintPrices(){const p=priceNow();
   document.querySelectorAll('[data-pl]').forEach(el=>{const k=el.dataset.pl;
-    if(k==='full'||k==='month')el.textContent=gs(p[k]);
-    else if(k==='fullList'||k==='monthList'){const kk=k==='fullList'?'full':'month';const nx=nextTier(p);el.hidden=!(nx&&nx[kk]>p[kk]);if(nx)el.textContent='Desde el '+nx.fromTxt+': '+gs(nx[kk])}
+    if(k==='full'||k==='month'||k==='two')el.textContent=gs(p[k]);
+    else if(k==='fullList'||k==='monthList'||k==='twoList'){const kk=k==='fullList'?'full':k==='twoList'?'two':'month';const nx=nextTier(p);el.hidden=!(nx&&nx[kk]>p[kk]);if(nx)el.textContent='Desde el '+nx.fromTxt+': '+gs(nx[kk])}
     else if(k==='tag')el.textContent=p.note||''});
   const pn=document.getElementById('promoNote');if(pn)pn.textContent=p.promo?'':(p.note||'');
   const left=new Date(p.until).getTime()-Date.now();const box=document.getElementById('promoBox'),hp=document.getElementById('heroPromo');
@@ -1035,7 +1035,7 @@ function tr(e){const m=(e&&e.message)||String(e);return ERR[m]||m}
 $('fLogin').onsubmit=async ev=>{ev.preventDefault();const email=$('email').value.trim(),pass=$('pass').value;$('bMain').disabled=true;msg('lMsg','');
   try{
     if(mode==='login'){const {error}=await sb.auth.signInWithPassword({email,password:pass});if(error)throw error}
-    else if(mode==='signup'){const {data,error}=await sb.auth.signUp({email,password:pass,options:{emailRedirectTo:location.origin+location.pathname,data:{terms_version:'1.0',terms_accepted_at:new Date().toISOString()}}});if(error)throw error;
+    else if(mode==='signup'){const {data,error}=await sb.auth.signUp({email,password:pass,options:{emailRedirectTo:location.origin+location.pathname,data:{terms_version:'1.1',terms_accepted_at:new Date().toISOString()}}});if(error)throw error;
       if(!data.session){msg('lMsg','Cuenta creada. Te enviamos un correo para confirmarla; después volvé e ingresá.',true);setMode('login');msg('lMsg','Cuenta creada. Confirmá tu correo y luego ingresá.',true)}}
     else{const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});if(error)throw error;msg('lMsg','Si el correo existe, te llegó un enlace para crear una contraseña nueva.',true)}
   }catch(e){msg('lMsg',tr(e))}finally{$('bMain').disabled=false}};
