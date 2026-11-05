@@ -698,7 +698,7 @@ function keyPart(s){const ci=topColon(s);let lab='',body=s;if(ci>0&&ci<=60){lab=
   const L=lab?'<b>'+rich(lab)+':</b> ':'';
   if(items.length>=2)return L+'<ul class="ksub">'+items.map(x=>'<li>'+rich(x.replace(/\.$/,''))+'</li>').join('')+'</ul>';
   return L+rich(body)}
-function ktype(t){t=t.toLowerCase();if(/\b(ojo|trampa|no confund|nunca|contraindic|evitar|no se |no están|no está|no indicad|no sirve)/.test(t))return'w';if(/(tratamiento|se trata|tratar|dosis|primera línea|de elección|indicar|cirugía|drenaje|antibiótic|colecistectom|cpre|restricción|tolvaptán|reponer|administrar)/.test(t))return't';if(/(diagnóstico|se confirma|confirmar|estudio|criterio|prueba|imagen|laboratorio|sospechar|patrón|clasific|causas?|orina|sodio urinario)/.test(t))return'd';return'p'}
+function ktype(t){t=t.toLowerCase();if(/\b(ojo|trampa|no confund|nunca|contraindic|evitar|no se |no están|no está|no indicad|no sirve)/.test(t))return'w';if(/(tratamiento|se trata|tratar|\bdosis\b|primera línea|de elección|indicar|cirugía|drenaje|antibiótic|colecistectom|cpre|restricción|tolvaptán|reponer|administrar)/.test(t))return't';if(/(diagnóstico|se confirma|confirmar|estudio|criterio|prueba|imagen|laboratorio|sospechar|patrón|clasific|causas?|orina|sodio urinario)/.test(t))return'd';return'p'}
 function keyFmt(k){const ss=sentences(k);if(ss.length===1){const one=keyPart(ss[0]);return one.indexOf('<ul')>=0?'<div class="kp">'+one+'</div>':'<p>'+one+'</p>'}
   return '<ul class="klist kt">'+ss.map(s=>'<li class="k'+ktype(s)+'">'+keyPart(s)+'</li>').join('')+'</ul>'}
 const HLRX=/((?:más|menos|mayor(?:es)?|menor(?:es)?)\s+(?:de|del|que)\s+)?(?:(?:&lt;|&gt;|≤|≥)\s?)?\d+(?:[.,]\d+)?(?:\s?[–-]\s?\d+(?:[.,]\d+)?)?\s?(?:%|mg\/dL|mmol\/L|mEq\/L|mOsm\/kg|mmHg|mL\/kg|mL|U\/L|µg|mg|kg|g\b|cm|mm|h\b|horas|días|semanas|meses|años|min\b|minutos)|\d\.º\s(?:trimestre|generación)/g;
@@ -1059,7 +1059,7 @@ setSync('Progreso guardado en este dispositivo.');
 const $=id=>document.getElementById(id);
 const C=window.CONFIG||{};
 // ---------- Registro de errores (para diagnosticar cuelgues en celulares) ----------
-const VER='2026.11.05-c';let nlog=0;
+const VER='2026.11.05-d';let nlog=0;
 function tok(){try{const k=Object.keys(localStorage).find(k=>/^sb-.*-auth-token$/.test(k));const v=k&&JSON.parse(localStorage.getItem(k));return v&&v.access_token}catch(e){return null}}
 function clog(kind,msg){try{if(!C.SUPABASE_URL||nlog++>25)return;const t=tok();
   fetch(C.SUPABASE_URL+'/rest/v1/client_logs',{method:'POST',keepalive:true,headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:'Bearer '+(t||C.SUPABASE_ANON_KEY),'Content-Type':'application/json',Prefer:'return=minimal'},
