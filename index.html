@@ -368,6 +368,37 @@ body:has(#gate:not([hidden])){padding-top:54px!important}
 .sec-t{font-size:1.5rem}
 </style>
 
+<style id="ui2">
+/* B · Nativa sobria */
+@media (max-width:640px),(hover:none) and (pointer:coarse){
+ nav{background:var(--bg)!important;box-shadow:none!important;border-top:1px solid var(--line)!important;padding-top:0!important}
+ nav button{border-radius:0!important;background:none!important;position:relative;font-size:.66rem!important;font-weight:600!important;color:var(--muted)!important;padding-top:10px!important}
+ nav button::before{content:"";position:absolute;top:0;left:28%;right:28%;height:3px;border-radius:0 0 3px 3px;background:transparent}
+ nav button[aria-selected="true"]{color:var(--accent)!important;background:none!important}
+ nav button[aria-selected="true"]::before{background:var(--accent)}
+ nav button svg{stroke-width:1.6!important}
+}
+@media (min-width:641px) and (hover:hover){
+ nav{border:1px solid var(--line)!important;border-radius:14px;padding:4px;gap:4px!important;background:var(--surface);width:max-content;max-width:100%}
+ nav button{border:0!important;border-radius:10px;padding:8px 10px!important}
+ nav button[aria-selected="true"]{background:var(--accent)!important;color:var(--bg)!important}nav button[aria-selected="true"] svg{color:var(--bg)!important}
+}
+/* Menús y selectores: mismo lenguaje que la barra */
+.fc{border-radius:10px;padding:7px 14px;background:transparent;color:var(--muted);border-color:var(--line);transition:background .15s,border-color .15s,color .15s}
+.fc:hover{color:var(--fg);border-color:color-mix(in srgb,var(--accent) 45%,var(--line))}
+.fc[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--fg)}
+.fc[aria-pressed="true"]::before{content:"✓ ";color:var(--accent);font-weight:800}
+select{appearance:none;-webkit-appearance:none;font:600 .92rem var(--body);background-color:var(--surface);border-radius:10px;padding:9px 38px 9px 12px;min-height:42px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%234CC2B7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+select:hover{border-color:color-mix(in srgb,var(--accent) 45%,var(--line))}
+.planbar{flex-direction:column;align-items:stretch;gap:6px;font-size:.74rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.planbar select{text-transform:none;letter-spacing:0}
+/* Texto */
+p,li{text-wrap:pretty}
+h2{font-weight:700;letter-spacing:-.01em;line-height:1.25}
+.fgroup>strong,.nots strong,.key strong{font-size:.74rem;letter-spacing:.07em}
+.card>p:not(.stem){line-height:1.55}
+#sBlk::before{content:none!important}
+</style>
 </head>
 <body>
 
@@ -674,9 +705,9 @@ function renderHoy(){
   const remain=pool().filter(q=>!S.ans[q.id]).length;
   const pd=perDay();const daysNeeded=Math.ceil(remain/pd);const pr=S.pref||'ALL';const rt=S.rate||'auto';
   const nRev=(S.today.rev||[]).filter(id=>ids.includes(id)).length;const nNew=ids.length-nRev;
-  const sel='<label class="planbar" for="planArea">Preguntas del plan:<select id="planArea"><option value="ALL"'+(pr==='ALL'?' selected':'')+'>Todas las especialidades (en orden)</option>'+AREAS.map(([a,n])=>'<option value="'+a+'"'+(pr===a?' selected':'')+'>'+n+'</option>').join('')+'</select></label>';
+  const sel='<label class="planbar" for="planArea">Preguntas del plan<select id="planArea"><option value="ALL"'+(pr==='ALL'?' selected':'')+'>Todas las especialidades (en orden)</option>'+AREAS.map(([a,n])=>'<option value="'+a+'"'+(pr===a?' selected':'')+'>'+n+'</option>').join('')+'</select></label>';
   const autoN=(()=>{const o=S.rate;S.rate='auto';const n=perDay();S.rate=o;return n})();
-  const rsel='<label class="planbar" for="planRate">Preguntas nuevas por día:<select id="planRate"><option value="auto"'+(rt==='auto'?' selected':'')+'>Automático · '+autoN+' por día (recomendado)</option>'+[10,15,20,30].map(n=>'<option value="'+n+'"'+(String(rt)===String(n)?' selected':'')+'>'+n+' por día</option>').join('')+'</select></label>';
+  const rsel='<label class="planbar" for="planRate">Preguntas nuevas por día<select id="planRate"><option value="auto"'+(rt==='auto'?' selected':'')+'>Automático · '+autoN+' por día (recomendado)</option>'+[10,15,20,30].map(n=>'<option value="'+n+'"'+(String(rt)===String(n)?' selected':'')+'>'+n+' por día</option>').join('')+'</select></label>';
   const late=rt==='auto'&&remain>MAX_NEW*Math.max(1,daysLeft()-BUFFER)?'<p class="note">No llegás a ver todo antes del examen sin saturarte: usá Practicar para priorizar los temas que más se toman.</p>':'';
   let h='<div style="display:flex;flex-direction:column;gap:14px">'+sel+rsel+late+'<div class="day"><div class="dots" aria-hidden="true">'+dots+'</div><span class="sub">Hoy: <b>'+nRev+' repaso'+(nRev===1?'':'s')+'</b> + '+nNew+' nueva'+(nNew===1?'':'s')+' · Faltan '+remain+' preguntas'+(pr==='ALL'?'':' de '+ANAME[pr])+' · '+daysNeeded+' días a este ritmo</span></div>';
   if(cur>=ids.length){
@@ -719,7 +750,7 @@ function renderProg(){
    const dueNow=all.filter(o=>o.due<=t&&o.last!==t).length;
    const days=[...Array(7)].map((_,k)=>{const dk=addDays(t,k+1);return {k:dk,n:all.filter(o=>o.due===dk).length}});const mx=Math.max(1,...days.map(d=>d.n));
    const wd=['dom','lun','mar','mié','jue','vie','sáb'];
-   h+='<div class="card"><h2>Memoria · repetición espaciada</h2><div class="mem"><div><b>'+cons+'</b><span>consolidadas (vuelven en 2 semanas o más)</span></div><div><b>'+lear+'</b><span>en aprendizaje</span></div><div><b>'+dueNow+'</b><span>repasos pendientes hoy</span></div></div>';
+   h+='<div class="card"><h2>Método Mandu’a · repetición espaciada</h2><div class="mem"><div><b>'+cons+'</b><span>consolidadas (vuelven en 2 semanas o más)</span></div><div><b>'+lear+'</b><span>en aprendizaje</span></div><div><b>'+dueNow+'</b><span>repasos pendientes hoy</span></div></div>';
    h+='<strong class="sub">Repasos de los próximos 7 días</strong><div class="fc7" role="img" aria-label="Repasos programados: '+days.map(d=>d.n).join(', ')+'">'+days.map(d=>{const p=d.k.split('-');const w=wd[new Date(+p[0],+p[1]-1,+p[2]).getDay()];return '<div><span>'+d.n+'</span><i style="height:'+Math.round(60*d.n/mx)+'px"></i><span>'+w+'</span></div>'}).join('')+'</div>';
    h+='<p class="note">Cada pregunta vuelve justo antes de que la olvides: si la fallás, al día siguiente; si la acertás, en 3, 7, 14, 30 o 60 días según cuánto te costó. A medida que se acerca el examen los intervalos se acortan para que llegues con todo fresco.</p></div>'}
   h+='<div class="card"><h2>Empezar de nuevo</h2><p class="note">Borra todas las respuestas guardadas.</p><div class="row" style="justify-content:flex-start"><button class="btn ghost" id="reset">Borrar progreso</button></div><div id="confirm" hidden><p style="margin:0">¿Seguro? No se puede deshacer.</p><div class="row" style="justify-content:flex-start;margin-top:8px"><button class="btn" id="yes">Sí, borrar</button><button class="btn ghost" id="no">Cancelar</button></div></div></div></div>';
@@ -980,7 +1011,7 @@ setSync('Progreso guardado en este dispositivo.');
 const $=id=>document.getElementById(id);
 const C=window.CONFIG||{};
 // ---------- Registro de errores (para diagnosticar cuelgues en celulares) ----------
-const VER='2026.11.05-a';let nlog=0;
+const VER='2026.11.05-b';let nlog=0;
 function tok(){try{const k=Object.keys(localStorage).find(k=>/^sb-.*-auth-token$/.test(k));const v=k&&JSON.parse(localStorage.getItem(k));return v&&v.access_token}catch(e){return null}}
 function clog(kind,msg){try{if(!C.SUPABASE_URL||nlog++>25)return;const t=tok();
   fetch(C.SUPABASE_URL+'/rest/v1/client_logs',{method:'POST',keepalive:true,headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:'Bearer '+(t||C.SUPABASE_ANON_KEY),'Content-Type':'application/json',Prefer:'return=minimal'},
