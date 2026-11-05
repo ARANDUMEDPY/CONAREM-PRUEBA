@@ -462,6 +462,8 @@ h2{font-weight:700;letter-spacing:-.01em;line-height:1.25}
 .qrep{display:flex;flex-direction:column;gap:8px}.qrep .linkbtn{color:var(--muted);font-size:.82rem;text-decoration:none;align-self:flex-start}.qrep .linkbtn:hover{color:var(--accent)}
 .qrep textarea{font:inherit;font-size:.92rem;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-height:80px;resize:vertical}
 .qrep .row{justify-content:flex-start}.qrep .msg{margin:0;font-size:.88rem}.qrep .msg.ok{color:var(--ok)}.qrep .msg.err{color:var(--bad)}
+
+.planbox{display:flex;flex-direction:column;gap:12px;margin-top:6px;padding-top:16px;border-top:1px solid var(--line)}
 </style>
 </head>
 <body>
@@ -789,12 +791,13 @@ function renderHoy(){
   const autoN=(()=>{const o=S.rate;S.rate='auto';const n=perDay();S.rate=o;return n})();
   const rsel='<label class="planbar" for="planRate">Preguntas nuevas por día<select id="planRate"><option value="auto"'+(rt==='auto'?' selected':'')+'>Automático · '+autoN+' por día (recomendado)</option>'+[10,15,20,30].map(n=>'<option value="'+n+'"'+(String(rt)===String(n)?' selected':'')+'>'+n+' por día</option>').join('')+'</select></label>';
   const late=rt==='auto'&&remain>MAX_NEW*Math.max(1,daysLeft()-BUFFER)?'<p class="note">No llegás a ver todo antes del examen sin saturarte: usá Practicar para priorizar los temas que más se toman.</p>':'';
-  let h='<div style="display:flex;flex-direction:column;gap:14px">'+sel+rsel+late+'<div class="day"><div class="dots" aria-hidden="true">'+dots+'</div><span class="sub">Hoy: <b>'+nRev+' repaso'+(nRev===1?'':'s')+'</b> + '+nNew+' nueva'+(nNew===1?'':'s')+' · Faltan '+remain+' preguntas'+(pr==='ALL'?'':' de '+ANAME[pr])+' · '+daysNeeded+' días a este ritmo</span></div>';
+  const planBox='<div class="planbox"><div class="day"><div class="dots" aria-hidden="true">'+dots+'</div><span class="sub">Hoy: <b>'+nRev+' repaso'+(nRev===1?'':'s')+'</b> + '+nNew+' nueva'+(nNew===1?'':'s')+' · Faltan '+remain+' preguntas'+(pr==='ALL'?'':' de '+ANAME[pr])+' · '+daysNeeded+' días a este ritmo</span></div>'+sel+rsel+late+'</div>';
+  let h='<div style="display:flex;flex-direction:column;gap:14px">';
   if(cur>=ids.length){
     const doneToday=ids.filter(id=>S.ans[id]&&S.ans[id].d===S.today.date);
     const ok=doneToday.filter(id=>S.ans[id].ok).length;
     const tm=addDays(todayKey(),1);const nTm=Object.values(S.srs||{}).filter(o=>o.due<=tm).length;
-    h+='<div class="card done"><p class="sub">Sesión de hoy terminada</p><p class="big">'+ok+'/'+doneToday.length+'</p>'+endMsg(ok,doneToday.length,S.today.date+doneToday.length)+'<p class="sub">'+(ok<doneToday.length?'Las que fallaste vuelven mañana como repaso. ':'')+(nTm?'Mañana tenés <b>'+nTm+' repaso'+(nTm===1?'':'s')+'</b> programado'+(nTm===1?'':'s')+'.':'Mañana no tenés repasos pendientes.')+'</p><div class="row" style="justify-content:center"><button class="btn ghost" id="toErr">Repasar errores</button><button class="btn cta" id="more">10 preguntas más</button></div></div></div>';
+    h+='<div class="card done"><p class="sub">Sesión de hoy terminada</p><p class="big">'+ok+'/'+doneToday.length+'</p>'+endMsg(ok,doneToday.length,S.today.date+doneToday.length)+'<p class="sub">'+(ok<doneToday.length?'Las que fallaste vuelven mañana como repaso. ':'')+(nTm?'Mañana tenés <b>'+nTm+' repaso'+(nTm===1?'':'s')+'</b> programado'+(nTm===1?'':'s')+'.':'Mañana no tenés repasos pendientes.')+'</p><div class="row" style="justify-content:center"><button class="btn ghost" id="toErr">Repasar errores</button><button class="btn cta" id="more">10 preguntas más</button></div></div>'+planBox+'</div>';
     v.innerHTML=h;bindPlan();
     document.getElementById('more').onclick=addMore;
     document.getElementById('toErr').onclick=()=>go('err');
@@ -803,7 +806,7 @@ function renderHoy(){
   const q=BYID[ids[cur]];const a=S.ans[q.id];const chosen=(a&&a.d===S.today.date)?a.c:picked;
   h+=qCard(q,chosen,null,cur,ids.length,isRev(q.id)?'Repaso':'');
   if(chosen!==null&&chosen!==undefined)h+=rateRow(q.id,cur+1<ids.length?'Siguiente':'Ver resultado');
-  h+='</div></div>';
+  h+='</div>'+planBox+'</div>';
   v.innerHTML=h;bindPlan();
   v.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
     const i=+b.dataset.i;S.ans[q.id]={c:i,ok:i===q.a,d:S.today.date};srsPick(q.id,i===q.a);persist();picked=null;render();focusRate();
@@ -1091,7 +1094,7 @@ setSync('Progreso guardado en este dispositivo.');
 const $=id=>document.getElementById(id);
 const C=window.CONFIG||{};
 // ---------- Registro de errores (para diagnosticar cuelgues en celulares) ----------
-const VER='2026.11.05-h';let nlog=0;
+const VER='2026.11.05-i';let nlog=0;
 function tok(){try{const k=Object.keys(localStorage).find(k=>/^sb-.*-auth-token$/.test(k));const v=k&&JSON.parse(localStorage.getItem(k));return v&&v.access_token}catch(e){return null}}
 function clog(kind,msg){try{if(!C.SUPABASE_URL||nlog++>25)return;const t=tok();
   fetch(C.SUPABASE_URL+'/rest/v1/client_logs',{method:'POST',keepalive:true,headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:'Bearer '+(t||C.SUPABASE_ANON_KEY),'Content-Type':'application/json',Prefer:'return=minimal'},
