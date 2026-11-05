@@ -1079,7 +1079,7 @@ setSync('Progreso guardado en este dispositivo.');
 const $=id=>document.getElementById(id);
 const C=window.CONFIG||{};
 // ---------- Registro de errores (para diagnosticar cuelgues en celulares) ----------
-const VER='2026.11.05-e';let nlog=0;
+const VER='2026.11.05-f';let nlog=0;
 function tok(){try{const k=Object.keys(localStorage).find(k=>/^sb-.*-auth-token$/.test(k));const v=k&&JSON.parse(localStorage.getItem(k));return v&&v.access_token}catch(e){return null}}
 function clog(kind,msg){try{if(!C.SUPABASE_URL||nlog++>25)return;const t=tok();
   fetch(C.SUPABASE_URL+'/rest/v1/client_logs',{method:'POST',keepalive:true,headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:'Bearer '+(t||C.SUPABASE_ANON_KEY),'Content-Type':'application/json',Prefer:'return=minimal'},
@@ -1166,7 +1166,7 @@ $('fCode').onsubmit=async ev=>{ev.preventDefault();msg('cMsg','');
   msg('cMsg','¡Listo! Acceso activo hasta el '+new Date(data).toLocaleDateString('es-PY',{day:'numeric',month:'long',year:'numeric'})+'.',true);setTimeout(()=>{if(started){const tb=document.getElementById('trialBar');if(tb)tb.remove();$('gate').hidden=true;$('app').hidden=false;window.scrollTo({top:0})}else route()},900)};
 $('bTrial').onclick=async()=>{const b=$('bTrial');b.disabled=true;msg('tMsg','');const {data,error}=await sb.rpc('start_trial',{p_device:devId()});if(error){b.disabled=false;msg('tMsg',error.message.replace(/^.*?:\s*/,''));return}msg('tMsg','¡Listo! Tenés acceso hasta el '+new Date(data).toLocaleString('es-PY',{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'})+'.',true);setTimeout(()=>route(),900)};
 $('backApp').onclick=()=>{$('gate').hidden=true;$('app').hidden=false;window.scrollTo({top:0})};
-function isTrial(p){return !!(p&&p.trial_started&&p.access_until&&(new Date(p.access_until)-new Date(p.trial_started))<=3*864e5+36e5)}
+function isTrial(p){return !!(p&&p.trial_started&&p.access_until&&(new Date(p.access_until)-new Date(p.trial_started))<=7*864e5+36e5)}
 function trialBar(p){const old=document.getElementById('trialBar');if(old)old.remove();if(!isTrial(p)||p.is_admin)return;const ms=new Date(p.access_until)-Date.now();if(ms<=0)return;const h=Math.ceil(ms/36e5);const left=h>24?Math.ceil(h/24)+' días':h+' h';
   const d=document.createElement('div');d.id='trialBar';d.className='trialbar';const pr=priceNow();d.innerHTML='<span><b>Prueba gratis</b> · te quedan '+left+(pr.promo?'<br><span class="sub">'+pr.promo+': Completo a '+gs(pr.full)+' hasta el '+pr.untilTxt+'</span>':'')+'</span><button class="btn cta" type="button" id="tbGo">Activar mi plan</button>';
   const hdr=document.querySelector('#app header');hdr.parentNode.insertBefore(d,hdr.nextSibling);document.getElementById('tbGo').onclick=()=>{$('app').hidden=true;$('gate').hidden=false;show('fCode');$('trialBox').hidden=true;$('backApp').hidden=false;$('cInfo').textContent='Elegí tu plan, escribinos para pagar y activá acá tu código. Tu progreso de la prueba se mantiene.';window.scrollTo({top:0})}}
