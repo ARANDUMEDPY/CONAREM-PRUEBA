@@ -458,6 +458,10 @@ h2{font-weight:700;letter-spacing:-.01em;line-height:1.25}
 #fCode .cplans>a i{grid-column:2;font-style:normal;font-size:.74rem;font-weight:700;color:var(--accent);text-align:right}
 #fCode .cplans>a b{grid-row:1/span 2}
 #fCode .cbuyhelp{margin:0;font-size:.84rem;color:var(--muted);line-height:1.45}
+
+.qrep{display:flex;flex-direction:column;gap:8px}.qrep .linkbtn{color:var(--muted);font-size:.82rem;text-decoration:none;align-self:flex-start}.qrep .linkbtn:hover{color:var(--accent)}
+.qrep textarea{font:inherit;font-size:.92rem;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-height:80px;resize:vertical}
+.qrep .row{justify-content:flex-start}.qrep .msg{margin:0;font-size:.88rem}.qrep .msg.ok{color:var(--ok)}.qrep .msg.err{color:var(--bad)}
 </style>
 </head>
 <body>
@@ -768,6 +772,7 @@ function qCard(q,chosen,onPick,idx,total,tag){
       h+='</div>';
     }
     if(q.f)h+='<p class="src">Fuente: '+rich(q.f)+'</p>';
+    if(q.id)h+='<div class="qrep"><button class="linkbtn" type="button" data-rep="'+esc(q.id)+'">⚑ Reportar un error en esta pregunta</button></div>';
   }
   return h;
 }
@@ -1086,7 +1091,7 @@ setSync('Progreso guardado en este dispositivo.');
 const $=id=>document.getElementById(id);
 const C=window.CONFIG||{};
 // ---------- Registro de errores (para diagnosticar cuelgues en celulares) ----------
-const VER='2026.11.05-g';let nlog=0;
+const VER='2026.11.05-h';let nlog=0;
 function tok(){try{const k=Object.keys(localStorage).find(k=>/^sb-.*-auth-token$/.test(k));const v=k&&JSON.parse(localStorage.getItem(k));return v&&v.access_token}catch(e){return null}}
 function clog(kind,msg){try{if(!C.SUPABASE_URL||nlog++>25)return;const t=tok();
   fetch(C.SUPABASE_URL+'/rest/v1/client_logs',{method:'POST',keepalive:true,headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:'Bearer '+(t||C.SUPABASE_ANON_KEY),'Content-Type':'application/json',Prefer:'return=minimal'},
@@ -1140,6 +1145,14 @@ document.querySelectorAll('[data-buy]').forEach(a=>a.addEventListener('click',as
   try{await navigator.clipboard.writeText(t)}catch(_){}
   msg('cMsg','Copiamos el mensaje: pegalo en el chat de Instagram que se abre.',true);
   window.open('https://ig.me/m/'+encodeURIComponent(CONTACT.ig||'arandumedpy'),'_blank','noopener')}));
+
+document.addEventListener('click',async e=>{const b=e.target.closest&&e.target.closest('[data-rep]');if(b){e.preventDefault();const box=b.parentNode;if(box.querySelector('textarea'))return;
+  const f=document.createElement('div');f.innerHTML='<textarea maxlength="1000" placeholder="Contanos qué está mal: la respuesta, la explicación, un dato desactualizado…"></textarea><div class="row"><button class="btn cta" type="button" data-repsend="1">Enviar reporte</button><button class="btn" type="button" data-repx="1">Cancelar</button></div><p class="msg" role="status"></p>';f.style.cssText='display:flex;flex-direction:column;gap:8px';box.appendChild(f);f.querySelector('textarea').focus();return}
+  const s=e.target.closest&&e.target.closest('[data-repsend],[data-repx]');if(!s)return;const box=s.closest('.qrep');const f=s.closest('div[style]');
+  if(s.dataset.repx){f.remove();return}
+  const t=f.querySelector('textarea').value.trim();const m=f.querySelector('.msg');if(t.length<3){m.className='msg err';m.textContent='Escribí qué encontraste.';return}
+  s.disabled=true;try{const {error}=await sb.from('question_reports').insert({qid:box.querySelector('[data-rep]').dataset.rep,msg:t});if(error)throw error;
+    box.innerHTML='<p class="msg ok">¡Gracias! Recibimos tu reporte y lo vamos a revisar. 🙌</p>'}catch(err){s.disabled=false;m.className='msg err';m.textContent='No se pudo enviar: '+((err&&err.message)||err)}});
 (function(){const b=$('themeBtn'),r=document.documentElement;function lab(){const d=r.getAttribute('data-theme')==='dark';b.innerHTML=(d?'☀':'☾')+'<span class="tl"> '+(d?'Modo claro':'Modo oscuro')+'</span>';b.setAttribute('aria-label',d?'Cambiar a modo claro':'Cambiar a modo oscuro')}lab();
 b.onclick=()=>{const n=r.getAttribute('data-theme')==='dark'?'light':'dark';r.setAttribute('data-theme',n);try{localStorage.setItem('tema',n)}catch(e){}lab()}})();
 function show(id){['fLogin','fCode','fNewPass','loading'].forEach(x=>$(x).hidden=(x!==id));$('gate').classList.toggle('lp',id==='fLogin')}
