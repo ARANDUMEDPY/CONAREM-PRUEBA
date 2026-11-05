@@ -452,6 +452,12 @@ h2{font-weight:700;letter-spacing:-.01em;line-height:1.25}
 #fCode .crow{display:flex;gap:8px}#fCode .crow input{flex:1;min-width:0;text-transform:uppercase;font-family:var(--mono);letter-spacing:.1em;font-size:1rem}
 #fCode .crow input::placeholder{letter-spacing:.04em;text-transform:none;opacity:.55}
 #fCode .crow .btn{flex-shrink:0}
+
+#fCode .cplans>a{display:grid;grid-template-columns:1fr auto;column-gap:12px;align-items:center;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:inherit;text-decoration:none;transition:border-color .15s}
+#fCode .cplans>a:hover{border-color:var(--accent)}
+#fCode .cplans>a i{grid-column:2;font-style:normal;font-size:.74rem;font-weight:700;color:var(--accent);text-align:right}
+#fCode .cplans>a b{grid-row:1/span 2}
+#fCode .cbuyhelp{margin:0;font-size:.84rem;color:var(--muted);line-height:1.45}
 </style>
 </head>
 <body>
@@ -520,7 +526,8 @@ h2{font-weight:700;letter-spacing:-.01em;line-height:1.25}
     <div class="trialbox" id="trialBox" hidden><p class="tb-t">Probá AranduMed gratis por 3 días</p><p class="note">Acceso completo: preguntas, simulacros y tu puesto estimado. Sin pagar nada ni dejar tarjeta.</p><div class="row" style="justify-content:flex-start"><button class="btn cta" type="button" id="bTrial">Empezar mis 3 días gratis</button></div><p class="msg" id="tMsg" role="status"></p></div>
     <div class="cbuy">
     <p class="note" id="cInfo">Ingresá el código que recibiste al comprar el acceso.</p>
-    <div class="cplans" id="cPlans"><div><span>Completo</span><b data-pl="full">Gs. 240.000</b><small>hasta el examen</small></div><div><span>Mensual</span><b data-pl="month">Gs. 100.000</b><small>por mes</small></div><div><span>2 exámenes</span><b data-pl="two">Gs. 380.000</b><small>2027 y 2028</small></div></div>
+    <div class="cplans" id="cPlans"><a href="#" data-buy="Completo"><span>Completo</span><b data-pl="full">Gs. 240.000</b><small>hasta el examen</small><i>Comprar →</i></a><a href="#" data-buy="Mensual"><span>Mensual</span><b data-pl="month">Gs. 100.000</b><small>por mes</small><i>Comprar →</i></a><a href="#" data-buy="2 exámenes"><span>2 exámenes</span><b data-pl="two">Gs. 380.000</b><small>2027 y 2028</small><i>Comprar →</i></a></div>
+    <p class="cbuyhelp" id="cBuyHelp">Al tocar un plan se abre un mensaje directo a <b>@arandumedpy</b> en Instagram: te pasamos los datos para pagar y tu código. ¿Ya lo tenés? Escribilo abajo.</p>
     <p class="ctag"><span data-pl="tag"></span></p>
     <label class="clab" for="code">Código de acceso</label>
     <div class="crow"><input id="code" required maxlength="20" autocomplete="off" placeholder="EJ: AB12CD34"><button class="btn cta" type="submit">Activar</button></div>
@@ -1079,7 +1086,7 @@ setSync('Progreso guardado en este dispositivo.');
 const $=id=>document.getElementById(id);
 const C=window.CONFIG||{};
 // ---------- Registro de errores (para diagnosticar cuelgues en celulares) ----------
-const VER='2026.11.05-f';let nlog=0;
+const VER='2026.11.05-g';let nlog=0;
 function tok(){try{const k=Object.keys(localStorage).find(k=>/^sb-.*-auth-token$/.test(k));const v=k&&JSON.parse(localStorage.getItem(k));return v&&v.access_token}catch(e){return null}}
 function clog(kind,msg){try{if(!C.SUPABASE_URL||nlog++>25)return;const t=tok();
   fetch(C.SUPABASE_URL+'/rest/v1/client_logs',{method:'POST',keepalive:true,headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:'Bearer '+(t||C.SUPABASE_ANON_KEY),'Content-Type':'application/json',Prefer:'return=minimal'},
@@ -1127,6 +1134,12 @@ function waLink(t){return 'https://wa.me/'+CONTACT.wa+'?text='+encodeURIComponen
     e.preventDefault();if(typeof setMode==='function')setMode(b.dataset.go==='signup'?'signup':'login');
     if(pl)msg('lMsg','Creá tu cuenta y después activás el plan '+pl+' con tu código de acceso.',true);
     $('acceso').scrollIntoView({behavior:'smooth',block:'start'});setTimeout(()=>{try{$('email').focus({preventScroll:true})}catch(_){}} ,450)}))})();
+
+document.querySelectorAll('[data-buy]').forEach(a=>a.addEventListener('click',async e=>{e.preventDefault();const pl=a.dataset.buy;const t='¡Hola! Quiero el plan '+pl+' de AranduMed. Mi correo de la cuenta es: '+(window.__uEmail||'');
+  if(CONTACT.wa){window.open(waLink(t),'_blank','noopener');return}
+  try{await navigator.clipboard.writeText(t)}catch(_){}
+  msg('cMsg','Copiamos el mensaje: pegalo en el chat de Instagram que se abre.',true);
+  window.open('https://ig.me/m/'+encodeURIComponent(CONTACT.ig||'arandumedpy'),'_blank','noopener')}));
 (function(){const b=$('themeBtn'),r=document.documentElement;function lab(){const d=r.getAttribute('data-theme')==='dark';b.innerHTML=(d?'☀':'☾')+'<span class="tl"> '+(d?'Modo claro':'Modo oscuro')+'</span>';b.setAttribute('aria-label',d?'Cambiar a modo claro':'Cambiar a modo oscuro')}lab();
 b.onclick=()=>{const n=r.getAttribute('data-theme')==='dark'?'light':'dark';r.setAttribute('data-theme',n);try{localStorage.setItem('tema',n)}catch(e){}lab()}})();
 function show(id){['fLogin','fCode','fNewPass','loading'].forEach(x=>$(x).hidden=(x!==id));$('gate').classList.toggle('lp',id==='fLogin')}
@@ -1169,7 +1182,7 @@ $('backApp').onclick=()=>{$('gate').hidden=true;$('app').hidden=false;window.scr
 function isTrial(p){return !!(p&&p.trial_started&&p.access_until&&(new Date(p.access_until)-new Date(p.trial_started))<=7*864e5+36e5)}
 function trialBar(p){const old=document.getElementById('trialBar');if(old)old.remove();if(!isTrial(p)||p.is_admin)return;const ms=new Date(p.access_until)-Date.now();if(ms<=0)return;const h=Math.ceil(ms/36e5);const left=h>24?Math.ceil(h/24)+' días':h+' h';
   const d=document.createElement('div');d.id='trialBar';d.className='trialbar';const pr=priceNow();d.innerHTML='<span><b>Prueba gratis</b> · te quedan '+left+(pr.promo?'<br><span class="sub">'+pr.promo+': Completo a '+gs(pr.full)+' hasta el '+pr.untilTxt+'</span>':'')+'</span><button class="btn cta" type="button" id="tbGo">Activar mi plan</button>';
-  const hdr=document.querySelector('#app header');hdr.parentNode.insertBefore(d,hdr.nextSibling);document.getElementById('tbGo').onclick=()=>{$('app').hidden=true;$('gate').hidden=false;show('fCode');$('trialBox').hidden=true;$('backApp').hidden=false;$('cInfo').textContent='Elegí tu plan, escribinos para pagar y activá acá tu código. Tu progreso de la prueba se mantiene.';window.scrollTo({top:0})}}
+  const hdr=document.querySelector('#app header');hdr.parentNode.insertBefore(d,hdr.nextSibling);document.getElementById('tbGo').onclick=()=>{$('app').hidden=true;$('gate').hidden=false;show('fCode');$('trialBox').hidden=true;$('backApp').hidden=false;$('cInfo').textContent='Elegí tu plan: se abre un chat por Instagram para pagar y después activás acá tu código. Tu progreso se mantiene.';window.scrollTo({top:0})}}
 $('outCode').onclick=()=>logout();
 $('fNewPass').onsubmit=async ev=>{ev.preventDefault();const {error}=await sb.auth.updateUser({password:$('newpass').value});if(error){msg('nMsg',tr(error));return}msg('nMsg','Contraseña actualizada.',true);setTimeout(()=>route(),800)};
 
@@ -1240,12 +1253,13 @@ async function route(depth){depth=depth||0;
   try{const r=await withTimeout(sb.from('profiles').select('access_until,is_admin,email,trial_started').eq('id',uid).maybeSingle(),12000);
     if(r.error&&isAuthErr(r.error)){const rf=await withTimeout(sb.auth.refreshSession(),10000);if(rf.error||!rf.data.session||depth>0){recoverSession('refresh');return}return route(depth+1)}
     prof=r.data}catch(e){recoverSession('profiles '+e.message);return}
+  try{window.__uEmail=(prof&&prof.email)||session.user.email||''}catch(_){}
   const active=prof&&(prof.is_admin||(prof.access_until&&new Date(prof.access_until)>new Date()));
   if(!active){$('gate').hidden=false;$('app').hidden=true;show('fCode');
     const canTrial=prof&&!prof.trial_started;$('trialBox').hidden=!canTrial;$('backApp').hidden=true;$('cTitle').textContent=canTrial?'¡Ya casi! Te falta un paso':'Activá tu acceso';
     if(canTrial){const tt=$('trialBox').querySelector('.tb-t'),tn=$('trialBox').querySelector('.note');tt.textContent='Activá tu prueba gratis con un toque';tn.textContent='Acceso completo a las preguntas, los simulacros y tu puesto estimado. Sin tarjeta.';$('bTrial').textContent='Empezar mi prueba gratis';
       sb.rpc('trial_promo_left').then(({data})=>{if(typeof data==='number'&&data>0){$('bTrial').textContent='Empezar mi semana gratis';tn.textContent='Sos de los primeros 50: tenés 7 días en vez de 3. Quedan '+data+' lugares. Sin tarjeta.'}}).catch(()=>{})}
-    $('cInfo').textContent=canTrial?'¿Ya compraste? Ingresá el código que recibiste.':(prof&&prof.trial_started&&isTrial(prof))?'Terminó tu prueba gratis. ¡Ojalá te haya servido! Elegí un plan y activalo con tu código: tu progreso sigue guardado.':(prof&&prof.access_until)?'Tu acceso venció el '+new Date(prof.access_until).toLocaleDateString('es-PY')+'. Ingresá un código nuevo para renovarlo.':'Ingresá el código que recibiste al comprar el acceso.';return}
+    $('cInfo').textContent=canTrial?'Planes: tocá uno y te escribimos por Instagram':(prof&&prof.trial_started&&isTrial(prof))?'Terminó tu prueba gratis. ¡Ojalá te haya servido! Elegí un plan y activalo con tu código: tu progreso sigue guardado.':(prof&&prof.access_until)?'Tu acceso venció el '+new Date(prof.access_until).toLocaleDateString('es-PY')+'. Ingresá un código nuevo para renovarlo.':'Ingresá el código que recibiste al comprar el acceso.';return}
   if(started)return;started=true;show('loading');
   const slowT=setTimeout(()=>{if($('loading').hidden||$('gate').hidden)return;clog('stuck_loading',$('loadTxt').textContent);
     if(!$('loadRetry')){const d=document.createElement('p');d.id='loadRetry';d.className='sub';d.style.margin='10px 0 0';d.innerHTML='Está tardando más de lo normal. Puede ser la conexión. <button class="btn" type="button" style="margin-top:8px">Reintentar</button>';d.querySelector('button').onclick=()=>location.reload();$('loading').appendChild(d)}},20000);
