@@ -112,6 +112,7 @@ nav button:focus-visible,.opt:focus-visible,.btn:focus-visible{outline:2px solid
 .opt.right .l{color:var(--ok)}
 .opt.wrong{background:var(--bad-soft);border-color:var(--bad)}
 .opt.wrong .l{color:var(--bad)}
+.qfig{margin:2px 0}.qfig img{display:block;width:100%;height:auto;border-radius:12px;border:1px solid var(--line)}
 .why{border-left:3px solid var(--accent);padding:4px 0 4px 12px;display:flex;flex-direction:column;gap:4px}
 .why strong{font-size:1rem}
 .why p{margin:0;color:var(--fg)}
@@ -644,7 +645,7 @@ function qCard(q,chosen,onPick,idx,total,tag){
   const answered=chosen!==null&&chosen!==undefined;
   let h='<div class="card"><div class="meta">'+(tag?'<span class="rep">'+tag+'</span>':'')+'<span class="chip '+q.area+'">'+ANAME[q.area]+'</span>'+yl(q)+difB(q)+(q.t?'<span class="tagt">'+esc(q.t)+'</span>':'')+'';
   if(total)h+='<span class="yr" style="margin-left:auto">'+(idx+1)+' de '+total+'</span>';
-  h+='</div><p class="stem">'+rich(q.q)+'</p><div class="opts">';
+  h+='</div><p class="stem">'+rich(q.q)+'</p>'+(q.img?'<figure class="qfig"><img src="'+esc(q.img)+'" alt="'+esc(q.imgAlt||'Imagen de la pregunta')+'" loading="lazy"></figure>':'')+'<div class="opts">';
   q.o.forEach((o,i)=>{
     let cls='opt';if(answered){if(i===q.a)cls+=' right';else if(i===chosen)cls+=' wrong'}
     h+='<button class="'+cls+'" data-i="'+i+'"'+(answered?' disabled':'')+'><span class="l">'+L[i]+'</span><span>'+rich(o)+'</span></button>';
@@ -653,6 +654,7 @@ function qCard(q,chosen,onPick,idx,total,tag){
   if(answered){
     const ok=chosen===q.a;
     h+='<div class="why"><strong style="color:var('+(ok?'--ok':'--bad')+')">'+(ok?'Correcto':'Incorrecto · la respuesta es '+L[q.a])+'</strong><p>'+rich(q.x||q.e)+'</p></div>';
+    if(q.fig)h+='<figure class="qfig"><img src="'+esc(q.fig)+'" alt="'+esc(q.figAlt||'Esquema')+'" loading="lazy"></figure>';
     if(q.k)h+='<div class="key"><strong>Para recordar</strong>'+keyFmt(q.k)+'</div>';
     if(q.w){
       const order=q.w.map((t,i)=>i).filter(i=>q.w[i]);
@@ -978,7 +980,7 @@ setSync('Progreso guardado en este dispositivo.');
 const $=id=>document.getElementById(id);
 const C=window.CONFIG||{};
 // ---------- Registro de errores (para diagnosticar cuelgues en celulares) ----------
-const VER='2026.11.03-i';let nlog=0;
+const VER='2026.11.05-a';let nlog=0;
 function tok(){try{const k=Object.keys(localStorage).find(k=>/^sb-.*-auth-token$/.test(k));const v=k&&JSON.parse(localStorage.getItem(k));return v&&v.access_token}catch(e){return null}}
 function clog(kind,msg){try{if(!C.SUPABASE_URL||nlog++>25)return;const t=tok();
   fetch(C.SUPABASE_URL+'/rest/v1/client_logs',{method:'POST',keepalive:true,headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:'Bearer '+(t||C.SUPABASE_ANON_KEY),'Content-Type':'application/json',Prefer:'return=minimal'},
