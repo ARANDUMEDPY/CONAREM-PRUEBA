@@ -274,7 +274,10 @@ body:has(#gate:not([hidden])){padding-top:54px!important}
 .gate{max-width:1040px!important;margin:2vh auto 0!important;gap:44px!important}
 .gate .formwrap{max-width:440px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:16px;scroll-margin-top:24px}
 .gate.lp #miniBrand{display:none}
-.gate:not(.lp) .hero,.gate:not(.lp) .feats,.gate:not(.lp) .plans,.gate:not(.lp) .lfoot{display:none}
+.gate:not(.lp) .hero,.gate:not(.lp) .feats,.gate:not(.lp) .plans,.gate:not(.lp) .lfoot,.gate:not(.lp) .trial{display:none}
+#fCode .trialbox{background:var(--accent-soft);border:1px solid color-mix(in srgb,var(--accent) 40%,transparent);border-radius:14px;padding:16px 18px}
+#fCode .trialbox .btn.cta{font-size:1.05rem;padding:12px 20px;width:100%;justify-content:center}
+#fCode .tb-t{font-family:var(--display);font-weight:800;font-size:1.15rem;margin:0 0 4px}
 .gate:not(.lp) #miniBrand{max-width:440px;width:100%;margin:0 auto}
 .hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:40px;align-items:center}
 .kick{margin:0 0 6px;font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
@@ -435,6 +438,20 @@ h2{font-weight:700;letter-spacing:-.01em;line-height:1.25}
 .nots li .l{display:grid;place-items:center;width:22px;height:22px;min-width:22px;border-radius:50%;border:1px solid var(--line);padding:0;font-size:.72rem}
 .nots li.mine .l{background:var(--bad);border-color:var(--bad);color:var(--bg)}
 .key{border-radius:14px;background:color-mix(in srgb,var(--accent) 9%,var(--surface))!important;border:1px solid color-mix(in srgb,var(--accent) 22%,transparent)!important}
+
+#fCode .cbuy{display:flex;flex-direction:column;gap:10px;margin-top:6px;padding-top:18px;border-top:1px solid var(--line)}
+#fCode #cInfo{margin:0;font-family:var(--display);font-weight:700;font-size:1rem;color:var(--fg)}
+#fCode .cplans{display:flex;flex-direction:column;gap:6px}
+#fCode .cplans>div{display:grid;grid-template-columns:1fr auto;column-gap:12px;align-items:center;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+#fCode .cplans span{font-size:.72rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+#fCode .cplans b{grid-column:2;grid-row:1/span 2;font-family:var(--display);font-size:1.02rem;color:var(--fg);white-space:nowrap}
+#fCode .cplans span,#fCode .cplans small{grid-column:1}#fCode .msg:empty{display:none}
+#fCode .cplans small{font-size:.74rem;color:var(--muted);line-height:1.3}
+#fCode .ctag{margin:0;font-size:.82rem;color:var(--cta);font-weight:600}#fCode .ctag:empty{display:none}
+#fCode .clab{font-size:.74rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+#fCode .crow{display:flex;gap:8px}#fCode .crow input{flex:1;min-width:0;text-transform:uppercase;font-family:var(--mono);letter-spacing:.1em;font-size:1rem}
+#fCode .crow input::placeholder{letter-spacing:.04em;text-transform:none;opacity:.55}
+#fCode .crow .btn{flex-shrink:0}
 </style>
 </head>
 <body>
@@ -499,13 +516,16 @@ h2{font-weight:700;letter-spacing:-.01em;line-height:1.25}
   </form>
 
   <form class="card" id="fCode" hidden>
-    <h2>Activá tu acceso</h2>
+    <h2 id="cTitle">Activá tu acceso</h2>
     <div class="trialbox" id="trialBox" hidden><p class="tb-t">Probá AranduMed gratis por 3 días</p><p class="note">Acceso completo: preguntas, simulacros y tu puesto estimado. Sin pagar nada ni dejar tarjeta.</p><div class="row" style="justify-content:flex-start"><button class="btn cta" type="button" id="bTrial">Empezar mis 3 días gratis</button></div><p class="msg" id="tMsg" role="status"></p></div>
+    <div class="cbuy">
     <p class="note" id="cInfo">Ingresá el código que recibiste al comprar el acceso.</p>
-    <p class="note" id="cPlans">Planes: <b>Completo <span data-pl="full">Gs. 240.000</span></b> (hasta el examen) · <b>Mensual <span data-pl="month">Gs. 100.000</span></b> · <b>2 exámenes <span data-pl="two">Gs. 380.000</span></b> (2027 y 2028). <span data-pl="tag"></span></p>
-    <label>Código de acceso<input id="code" required maxlength="20" autocomplete="off" style="text-transform:uppercase;font-family:var(--mono);letter-spacing:.08em"></label>
+    <div class="cplans" id="cPlans"><div><span>Completo</span><b data-pl="full">Gs. 240.000</b><small>hasta el examen</small></div><div><span>Mensual</span><b data-pl="month">Gs. 100.000</b><small>por mes</small></div><div><span>2 exámenes</span><b data-pl="two">Gs. 380.000</b><small>2027 y 2028</small></div></div>
+    <p class="ctag"><span data-pl="tag"></span></p>
+    <label class="clab" for="code">Código de acceso</label>
+    <div class="crow"><input id="code" required maxlength="20" autocomplete="off" placeholder="EJ: AB12CD34"><button class="btn cta" type="submit">Activar</button></div>
     <p class="msg" id="cMsg" role="status"></p>
-    <div class="row" style="justify-content:flex-start"><button class="btn cta" type="submit">Activar</button></div>
+    </div>
     <div class="acctbar"><button class="linkbtn" type="button" id="backApp" hidden>← Volver a la app</button><button class="linkbtn" type="button" id="outCode">Cerrar sesión</button></div>
   </form>
 
@@ -1059,7 +1079,7 @@ setSync('Progreso guardado en este dispositivo.');
 const $=id=>document.getElementById(id);
 const C=window.CONFIG||{};
 // ---------- Registro de errores (para diagnosticar cuelgues en celulares) ----------
-const VER='2026.11.05-d';let nlog=0;
+const VER='2026.11.05-e';let nlog=0;
 function tok(){try{const k=Object.keys(localStorage).find(k=>/^sb-.*-auth-token$/.test(k));const v=k&&JSON.parse(localStorage.getItem(k));return v&&v.access_token}catch(e){return null}}
 function clog(kind,msg){try{if(!C.SUPABASE_URL||nlog++>25)return;const t=tok();
   fetch(C.SUPABASE_URL+'/rest/v1/client_logs',{method:'POST',keepalive:true,headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:'Bearer '+(t||C.SUPABASE_ANON_KEY),'Content-Type':'application/json',Prefer:'return=minimal'},
@@ -1222,7 +1242,9 @@ async function route(depth){depth=depth||0;
     prof=r.data}catch(e){recoverSession('profiles '+e.message);return}
   const active=prof&&(prof.is_admin||(prof.access_until&&new Date(prof.access_until)>new Date()));
   if(!active){$('gate').hidden=false;$('app').hidden=true;show('fCode');
-    const canTrial=prof&&!prof.trial_started;$('trialBox').hidden=!canTrial;$('backApp').hidden=true;
+    const canTrial=prof&&!prof.trial_started;$('trialBox').hidden=!canTrial;$('backApp').hidden=true;$('cTitle').textContent=canTrial?'¡Ya casi! Te falta un paso':'Activá tu acceso';
+    if(canTrial){const tt=$('trialBox').querySelector('.tb-t'),tn=$('trialBox').querySelector('.note');tt.textContent='Activá tu prueba gratis con un toque';tn.textContent='Acceso completo a las preguntas, los simulacros y tu puesto estimado. Sin tarjeta.';$('bTrial').textContent='Empezar mi prueba gratis';
+      sb.rpc('trial_promo_left').then(({data})=>{if(typeof data==='number'&&data>0){$('bTrial').textContent='Empezar mi semana gratis';tn.textContent='Sos de los primeros 50: tenés 7 días en vez de 3. Quedan '+data+' lugares. Sin tarjeta.'}}).catch(()=>{})}
     $('cInfo').textContent=canTrial?'¿Ya compraste? Ingresá el código que recibiste.':(prof&&prof.trial_started&&isTrial(prof))?'Terminó tu prueba gratis. ¡Ojalá te haya servido! Elegí un plan y activalo con tu código: tu progreso sigue guardado.':(prof&&prof.access_until)?'Tu acceso venció el '+new Date(prof.access_until).toLocaleDateString('es-PY')+'. Ingresá un código nuevo para renovarlo.':'Ingresá el código que recibiste al comprar el acceso.';return}
   if(started)return;started=true;show('loading');
   const slowT=setTimeout(()=>{if($('loading').hidden||$('gate').hidden)return;clog('stuck_loading',$('loadTxt').textContent);
