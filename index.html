@@ -699,7 +699,8 @@ function rateRow(id,nextLabel){
   const o=S.srs&&S.srs[id];
   if(!o||!o.ok)return '<div class="row" style="align-items:center"><span class="sub" style="margin-right:auto">Vuelve mañana para repasarla.</span><button class="btn" data-next>'+nextLabel+'</button></div>';
   const lab=['Difícil','Bien','Fácil'];
-  return '<div class="rate"><span class="sub">¿Cuánto te costó? Eso define cuándo vuelve.</span><div class="row">'+[0,1,2].map(r=>'<button class="btn'+(r===1?'':' ghost')+'" data-rate="'+r+'">'+lab[r]+' · '+fmtD(capD(STEPS[srsIdx(o.pi,true,r)]))+'</button>').join('')+'</div></div>';
+  const em=['😓','🙂','😎'],cl=['rt-h','rt-m','rt-e'];
+  return '<div class="rate2"><span class="sub"><b>Método Mandu’a</b> · ¿Cuánto te costó? Eso define cuándo vuelve.</span><div class="rgrid">'+[0,1,2].map(r=>'<button class="rbtn '+cl[r]+'" data-rate="'+r+'"><span class="re">'+em[r]+'</span><b>'+lab[r]+'</b><small>vuelve en<br>'+fmtD(capD(STEPS[srsIdx(o.pi,true,r)]))+'</small></button>').join('')+'</div></div>';
 }
 function bindRate(id,adv){document.querySelectorAll('[data-rate]').forEach(b=>b.onclick=()=>{srsRate(id,+b.dataset.rate);adv()});const n=document.querySelector('[data-next]');if(n)n.onclick=adv}
 function focusRate(){const b=document.querySelector('[data-rate="1"]')||document.querySelector('[data-next]');if(b)b.focus({preventScroll:true})}
@@ -1117,7 +1118,7 @@ setSync('Progreso guardado en este dispositivo.');
 const $=id=>document.getElementById(id);
 const C=window.CONFIG||{};
 // ---------- Registro de errores (para diagnosticar cuelgues en celulares) ----------
-const VER='2026.11.05-k';let nlog=0;
+const VER='2026.11.05-l';let nlog=0;
 function tok(){try{const k=Object.keys(localStorage).find(k=>/^sb-.*-auth-token$/.test(k));const v=k&&JSON.parse(localStorage.getItem(k));return v&&v.access_token}catch(e){return null}}
 function clog(kind,msg){try{if(!C.SUPABASE_URL||nlog++>25)return;const t=tok();
   fetch(C.SUPABASE_URL+'/rest/v1/client_logs',{method:'POST',keepalive:true,headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:'Bearer '+(t||C.SUPABASE_ANON_KEY),'Content-Type':'application/json',Prefer:'return=minimal'},
