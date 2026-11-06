@@ -475,6 +475,7 @@ h2{font-weight:700;letter-spacing:-.01em;line-height:1.25}
 .planbox{display:flex;flex-direction:column;gap:12px;margin-top:6px;padding-top:16px;border-top:1px solid var(--line)}
 
 .rate2{display:flex;flex-direction:column;gap:8px;margin:16px 0 4px}.rate2 .sub{font-size:.82rem}
+.rbtn:disabled{cursor:default;transform:none}.rbtn:disabled:hover{box-shadow:none;transform:none}.rbtn:disabled:not([aria-pressed="true"]){opacity:.35;filter:grayscale(.6)}
 .rbtn[aria-pressed="true"]{background:color-mix(in srgb,var(--c) 30%,var(--surface));border-width:2px;box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 25%,transparent)}
 .nextrow{display:flex;flex-direction:column;align-items:stretch;gap:10px;margin-top:20px;padding-top:16px;border-top:1px solid var(--line)}.nextrow .sub{font-size:.85rem;text-align:center}.nextrow .btn{width:100%;justify-content:center;padding:13px 16px;font-size:1rem}
 .rate2 .sub b{color:var(--accent)}
@@ -701,12 +702,12 @@ let pendRate={};
 function putRate(h,id,nextLabel){const o=S.srs&&S.srs[id];
   if(!o||!o.ok)return h+'<div class="nextrow"><span class="sub">Vuelve mañana para repasarla.</span><button class="btn cta" data-next>'+nextLabel+' →</button></div>';
   const lab=['Difícil','Bien','Fácil'],em=['😓','🙂','😎'],cl=['rt-h','rt-m','rt-e'];const pr=pendRate[id];
-  const top='<div class="rate2"><span class="sub"><b>Método Mandu’a</b> · ¿Cuánto te costó?</span><div class="rgrid">'+[0,1,2].map(r=>{const d=fmtD(capD(STEPS[srsIdx(o.pi,true,r)]));return '<button type="button" class="rbtn '+cl[r]+'" data-rate="'+r+'" data-d="'+d+'" aria-pressed="'+(pr===r)+'"><span class="re">'+em[r]+'</span><b>'+lab[r]+'</b><small>'+d+'</small></button>'}).join('')+'</div></div>';
+  const top='<div class="rate2"><span class="sub"><b>Método Mandu’a</b> · ¿Cuánto te costó?</span><div class="rgrid">'+[0,1,2].map(r=>{const d=fmtD(capD(STEPS[srsIdx(o.pi,true,r)]));return '<button type="button" class="rbtn '+cl[r]+'" data-rate="'+r+'" data-d="'+d+'" aria-pressed="'+(pr===r)+'"'+(pr!==undefined?' disabled':'')+'><span class="re">'+em[r]+'</span><b>'+lab[r]+'</b><small>'+d+'</small></button>'}).join('')+'</div></div>';
   const dB=fmtD(capD(STEPS[srsIdx(o.pi,true,pr===undefined?1:pr)]));
   const bot='<div class="nextrow"><span class="sub" id="rateHint">'+(pr===undefined?'Si no elegís, cuenta como <b>Bien</b> · vuelve en '+dB:'✓ '+lab[pr]+' · vuelve en '+dB)+'</span><button class="btn cta" data-next>'+nextLabel+' →</button></div>';
   return h.replace('<!--RATE-->',top)+bot}
 function bindRate(id,adv){const lab=['Difícil','Bien','Fácil'];
-  document.querySelectorAll('[data-rate]').forEach(b=>b.onclick=()=>{const r=+b.dataset.rate;pendRate[id]=r;document.querySelectorAll('[data-rate]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));const hn=document.getElementById('rateHint');if(hn)hn.innerHTML='✓ '+lab[r]+' · vuelve en '+b.dataset.d});
+  document.querySelectorAll('[data-rate]').forEach(b=>b.onclick=()=>{if(pendRate[id]!==undefined)return;const r=+b.dataset.rate;pendRate[id]=r;document.querySelectorAll('[data-rate]').forEach(x=>{x.setAttribute('aria-pressed',String(x===b));x.disabled=true});const hn=document.getElementById('rateHint');if(hn)hn.innerHTML='✓ '+lab[r]+' · vuelve en '+b.dataset.d});
   const n=document.querySelector('[data-next]');if(n)n.onclick=()=>{const o=S.srs&&S.srs[id];if(o&&o.ok)srsRate(id,pendRate[id]===undefined?1:pendRate[id]);delete pendRate[id];adv()}}
 function focusRate(){const b=document.querySelector('[data-next]');if(b)b.focus({preventScroll:true})}
 // Quien ya venía respondiendo: sus respuestas entran al sistema, repartidas en los próximos días para no amontonarse.
@@ -1123,7 +1124,7 @@ setSync('Progreso guardado en este dispositivo.');
 const $=id=>document.getElementById(id);
 const C=window.CONFIG||{};
 // ---------- Registro de errores (para diagnosticar cuelgues en celulares) ----------
-const VER='2026.11.05-n';let nlog=0;
+const VER='2026.11.05-o';let nlog=0;
 function tok(){try{const k=Object.keys(localStorage).find(k=>/^sb-.*-auth-token$/.test(k));const v=k&&JSON.parse(localStorage.getItem(k));return v&&v.access_token}catch(e){return null}}
 function clog(kind,msg){try{if(!C.SUPABASE_URL||nlog++>25)return;const t=tok();
   fetch(C.SUPABASE_URL+'/rest/v1/client_logs',{method:'POST',keepalive:true,headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:'Bearer '+(t||C.SUPABASE_ANON_KEY),'Content-Type':'application/json',Prefer:'return=minimal'},
