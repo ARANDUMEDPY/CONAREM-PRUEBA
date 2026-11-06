@@ -95,6 +95,15 @@ nav button:focus-visible,.opt:focus-visible,.btn:focus-visible{outline:2px solid
 .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:16px}
 .meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:.8rem}
 .chip{font-weight:700;letter-spacing:.04em;text-transform:uppercase;font-size:.72rem;padding:3px 8px;border-radius:999px;border:1px solid currentColor}
+:root{--car:#B23A48;--nml:#2E7FA8;--gas:#8A6A12;--nef:#3D6FB0;--end:#7A4FA8;--hem:#C0392B;--inf:#2E8B57;--reu:#B5651D;--neu:#5B5FC7}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--car:#F08A96;--nml:#7CC4E8;--gas:#E0C060;--nef:#8DB4F0;--end:#C4A0F0;--hem:#F28B82;--inf:#7FD3A0;--reu:#F0B07A;--neu:#A5A8F5}}
+:root[data-theme="dark"]{--car:#F08A96;--nml:#7CC4E8;--gas:#E0C060;--nef:#8DB4F0;--end:#C4A0F0;--hem:#F28B82;--inf:#7FD3A0;--reu:#F0B07A;--neu:#A5A8F5}
+.chip.CAR{color:var(--car)}.chip.NML{color:var(--nml)}.chip.GAS{color:var(--gas)}.chip.NEF{color:var(--nef)}.chip.END{color:var(--end)}.chip.HEM{color:var(--hem)}.chip.INF{color:var(--inf)}.chip.REU{color:var(--reu)}.chip.NEU{color:var(--neu)}
+.dud{font-size:.72rem;font-weight:700;padding:3px 8px;border-radius:999px;color:var(--bad);border:1px dashed var(--bad)}
+.banksel{align-self:flex-start;display:inline-flex;gap:4px;padding:3px;border-radius:999px;border:1px solid var(--line);background:var(--surface)}
+.banksel button{font:inherit;font-size:.8rem;font-weight:700;padding:5px 12px;border-radius:999px;border:0;background:transparent;color:var(--muted);cursor:pointer}
+.banksel button[aria-pressed="true"]{background:var(--accent);color:var(--bg)}
+.banksel button{white-space:nowrap}@media (max-width:360px){.banksel .bl{display:none}}
 .chip.MI{color:var(--mi)}.chip.CIR{color:var(--cir)}.chip.PED{color:var(--ped)}.chip.GO{color:var(--go)}.chip.SP{color:var(--sp)}
 .yr{font-family:var(--mono);color:var(--muted)}
 .yr.own{color:var(--accent);font-weight:600}
@@ -464,6 +473,18 @@ h2{font-weight:700;letter-spacing:-.01em;line-height:1.25}
 .qrep .row{justify-content:flex-start}.qrep .msg{margin:0;font-size:.88rem}.qrep .msg.ok{color:var(--ok)}.qrep .msg.err{color:var(--bad)}
 
 .planbox{display:flex;flex-direction:column;gap:12px;margin-top:6px;padding-top:16px;border-top:1px solid var(--line)}
+
+.rate2{display:flex;flex-direction:column;gap:10px}
+.rate2 .sub b{color:var(--accent)}
+.rgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.rbtn{--c:var(--accent);display:flex;flex-direction:column;align-items:center;gap:2px;padding:12px 6px 11px;border-radius:14px;cursor:pointer;font:inherit;color:var(--fg);background:color-mix(in srgb,var(--c) 12%,var(--surface));border:1.5px solid color-mix(in srgb,var(--c) 55%,transparent);transition:transform .12s,background .15s,box-shadow .15s}
+.rbtn .re{font-size:1.5rem;line-height:1.1}
+.rbtn b{font-family:var(--display);font-weight:800;font-size:1.02rem;color:var(--c)}
+.rbtn small{font-size:.74rem;color:var(--muted);line-height:1.3;text-align:center}
+.rbtn:hover{background:color-mix(in srgb,var(--c) 22%,var(--surface));box-shadow:0 6px 18px color-mix(in srgb,var(--c) 22%,transparent);transform:translateY(-1px)}
+.rbtn:active{transform:translateY(0) scale(.98)}
+.rbtn:focus-visible{outline:2px solid var(--c);outline-offset:2px}
+.rt-h{--c:var(--bad)}.rt-m{--c:var(--accent)}.rt-e{--c:var(--ok)}
 </style>
 </head>
 <body>
@@ -613,12 +634,13 @@ function terere(pc){return '<p class="terere">'+TERERE.find(x=>pc>=x[0])[1]+'</p
 const RNOTE='<p class="note">Puesto estimado con los puntajes del CONAREM 2026; el puntaje final también pondera tus antecedentes académicos y cambia cada año.</p>';
 function endMsg(ok,n,seed){
   const pj=proj();const pcS=n?Math.round(100*ok/n):0;
+  if(window.__SMI)return cheer(ok,n,seed)+terere(pcS);
   if(pj.pc===undefined)return cheer(ok,n,seed)+terere(pcS)+'<p class="sub">Respondé '+pj.need+' pregunta'+(pj.need===1?'':'s')+' más y te muestro en qué puesto estarías en la CONAREM.</p>';
   const tr=RTIERS.find(x=>pj.pc>=x[0]);const r=rankOf(pj.pc);
   return '<p class="cheer">'+tr[1]+'</p><p class="cheer-t">'+tr[2].replace('{N}',r?roundR(r):'')+'</p><p class="sub">Hoy: '+ok+'/'+n+' ('+pcS+' %) · tus últimas '+pj.n+': '+pj.pc+' %</p>'+terere(pj.pc)+RNOTE;
 }
 const REACH=[[85,'Neurocirugía, Otorrino, Fisiatría, Paliativa, Oncología Radiante'],[80,'Oftalmología, Neumología, Anatomía Patológica, Urología, Imágenes, Psiquiatría'],[75,'Anestesiología, Traumatología, Emergentología, Cirugía de Trauma'],[70,'Medicina Interna, Pediatría, Gineco-Obstetricia y Cirugía, con sede a elección'],[60,'Medicina Familiar y troncales en sedes con plazas libres']];
-const AREAS=[['MI','Medicina Interna'],['CIR','Cirugía'],['PED','Pediatría'],['GO','Gineco-Obstetricia'],['SP','Salud Pública']];
+const AREAS=window.__SMI?window.__SMI_AREAS.filter(([a])=>BANK.some(q=>q.area===a)):[['MI','Medicina Interna'],['CIR','Cirugía'],['PED','Pediatría'],['GO','Gineco-Obstetricia'],['SP','Salud Pública']];
 const ANAME=Object.fromEntries(AREAS);
 const ORDER=[];AREAS.forEach(([a])=>{BANK.filter(q=>q.area===a).sort((x,y)=>y.y-x.y||x.id.localeCompare(y.id)).forEach(q=>ORDER.push(q))});
 const BYID=Object.fromEntries(BANK.map(q=>[q.id,q]));
@@ -643,8 +665,8 @@ let docRef=null, saveTimer=null;
 function dkey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function todayKey(){return dkey(new Date())}
 function addDays(k,n){const p=k.split('-');const d=new Date(+p[0],+p[1]-1,+p[2]);d.setDate(d.getDate()+n);return dkey(d)}
-function lsGet(){try{const t=localStorage.getItem('conarem2027:'+(window.__uid||''));return t?JSON.parse(t):null}catch(e){return null}}
-function lsSet(){try{localStorage.setItem('conarem2027:'+(window.__uid||''),JSON.stringify(S))}catch(e){}}
+function lsGet(){try{const t=localStorage.getItem('conarem2027:'+(window.__uid||'')+(window.__SMI?':smi':''));return t?JSON.parse(t):null}catch(e){return null}}
+function lsSet(){try{localStorage.setItem('conarem2027:'+(window.__uid||'')+(window.__SMI?':smi':''),JSON.stringify(S))}catch(e){}}
 function persist(now){lsSet();if(!docRef)return;clearTimeout(saveTimer);saveTimer=setTimeout(()=>{docRef.set({ans:S.ans,today:S.today,pref:S.pref||'ALL',flt:S.flt||null,srs:S.srs||{},rate:S.rate||'auto',sims:S.sims||[],simCfg:S.simCfg||null,docs:S.docs||{},resRead:S.resRead||{},v:3}).then(()=>setSync('Progreso guardado en tu cuenta.')).catch(()=>setSync('Progreso guardado solo en este dispositivo.'))},now?0:600)}
 function setSync(t){document.getElementById('sync').textContent=t}
 
@@ -748,7 +770,7 @@ const DNAME={1:'Básica',2:'Intermedia',3:'Difícil'};
 function difB(q){if(!q.d)return'';return'<span class="dif d'+q.d+'" title="Dificultad"><i>'+[1,2,3].map(k=>'<b'+(k<=q.d?' class="on"':'')+'></b>').join('')+'</i>'+DNAME[q.d]+'</span>'}
 function qCard(q,chosen,onPick,idx,total,tag){
   const answered=chosen!==null&&chosen!==undefined;
-  let h='<div class="card"><div class="meta">'+(tag?'<span class="rep">'+tag+'</span>':'')+'<span class="chip '+q.area+'">'+ANAME[q.area]+'</span>'+yl(q)+difB(q)+(q.t?'<span class="tagt">'+esc(q.t)+'</span>':'')+'';
+  let h='<div class="card"><div class="meta">'+(tag?'<span class="rep">'+tag+'</span>':'')+'<span class="chip '+q.area+'">'+ANAME[q.area]+'</span>'+yl(q)+difB(q)+(q.t&&q.t!==ANAME[q.area]?'<span class="tagt">'+esc(q.t)+'</span>':'')+(q.dudosa?'<span class="dud" title="El PDF marca esta clave como la que suele aceptar el examen, no como definitiva">⚠️ Clave dudosa</span>':'')+'';
   if(total)h+='<span class="yr" style="margin-left:auto">'+(idx+1)+' de '+total+'</span>';
   h+='</div><p class="stem">'+rich(q.q)+'</p>'+(q.img?'<figure class="qfig"><img src="'+esc(q.img)+'" alt="'+esc(q.imgAlt||'Imagen de la pregunta')+'" loading="lazy"></figure>':'')+'<div class="opts">';
   q.o.forEach((o,i)=>{
@@ -824,8 +846,8 @@ function renderProg(){
   });
   const remain=ORDER.filter(q=>!S.ans[q.id]).length;const pdP=perDay();const dn=Math.ceil(remain/pdP);const dl=daysLeft();
   const end=new Date();end.setDate(end.getDate()+dn);
-  h+='</div></div><div class="card"><h2>Calendario</h2><p style="margin:0">A '+pdP+' preguntas nuevas por día terminás el banco el <b>'+end.toLocaleDateString('es-PY',{day:'numeric',month:'long',year:'numeric'})+'</b>. '+(dn<=dl?'Te quedan <b>'+(dl-dn)+' días</b> antes del examen para repasar errores.':'Para llegar al examen tendrías que hacer unas <b>'+Math.ceil(remain/Math.max(1,dl))+' por día</b>.')+'</p><p class="note">Orden por defecto: Medicina Interna, Cirugía, Pediatría, Gineco-Obstetricia y Salud Pública; dentro de cada una, del examen más reciente al más antiguo. En Hoy podés elegir una sola especialidad, y en Practicar armar tandas con filtros.</p></div>';
-  {const pj=proj();h+='<div class="card"><h2>Dónde estarías hoy</h2>';
+  h+='</div></div><div class="card"><h2>Calendario</h2><p style="margin:0">A '+pdP+' preguntas nuevas por día terminás el banco el <b>'+end.toLocaleDateString('es-PY',{day:'numeric',month:'long',year:'numeric'})+'</b>. '+(dn<=dl?'Te quedan <b>'+(dl-dn)+' días</b> antes del examen para repasar errores.':'Para llegar al examen tendrías que hacer unas <b>'+Math.ceil(remain/Math.max(1,dl))+' por día</b>.')+'</p><p class="note">Orden por defecto: '+(window.__SMI?AREAS.map(a=>a[1]).join(', '):'Medicina Interna, Cirugía, Pediatría, Gineco-Obstetricia y Salud Pública')+'; dentro de cada una, del examen más reciente al más antiguo. En Hoy podés elegir una sola especialidad, y en Practicar armar tandas con filtros.</p></div>';
+  if(!window.__SMI){const pj=proj();h+='<div class="card"><h2>Dónde estarías hoy</h2>';
    if(pj.pc===undefined)h+='<p style="margin:0">Respondé '+pj.need+' preguntas más y te muestro tu puesto estimado en la CONAREM.</p>';
    else{const r=rankOf(pj.pc);h+='<p style="margin:0">Con <b>'+pj.pc+' %</b> en tus últimas '+pj.n+' preguntas '+(r?'estarías cerca del <b>puesto ~'+roundR(r)+'</b>.':'todavía no llegás al mínimo de 60.')+'</p><ul class="reach">'+REACH.map(([p,s])=>'<li class="'+(pj.pc>=p?'in':'')+'"><b>'+(pj.pc>=p?'✓':'Desde '+p+' %')+'</b><span>'+s+'</span></li>').join('')+'</ul>'+RNOTE}
    h+='</div>'}
@@ -922,10 +944,11 @@ let simIdx=0,simTick=null,simRev=null,simRcur=0,simConfirm=false;
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function fmtT(s){s=Math.max(0,Math.round(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return (h?h+':'+String(m).padStart(2,'0'):m)+':'+String(x).padStart(2,'0')}
 function simOrder(cfg){return blkOn(cfg)?BLK[0].concat(BLK[1]):AREAS.map(a=>a[0])}
-function blkOn(cfg){return !!cfg.blk&&(cfg.src==='year'||cfg.size>=70)}
+function smiMix(n){const tot=BANK.length;const m={};let s=0;AREAS.forEach(([a])=>{m[a]=Math.floor(n*BANK.filter(q=>q.area===a).length/tot);s+=m[a]});let i=0;while(s<n&&AREAS.length){m[AREAS[i%AREAS.length][0]]++;s++;i++}return m}
+function blkOn(cfg){return !window.__SMI&&!!cfg.blk&&(cfg.src==='year'||cfg.size>=70)}
 function simBuild(cfg){let ids=[];
   if(cfg.src==='year'){simOrder(cfg).forEach(a=>{ids=ids.concat(BANK.filter(q=>q.y===cfg.year&&!q.p&&q.area===a).sort((x,y)=>x.id.localeCompare(y.id)).map(q=>q.id))})}
-  else{const mix=SIM_MIX[cfg.size];simOrder(cfg).forEach(a=>{const all=BANK.filter(q=>q.area===a);const fresh=shuffle(all.filter(q=>!S.ans[q.id])),seen=shuffle(all.filter(q=>S.ans[q.id]));ids=ids.concat(fresh.concat(seen).slice(0,mix[a]).map(q=>q.id))})}
+  else{const mix=window.__SMI?smiMix(cfg.size):SIM_MIX[cfg.size];simOrder(cfg).forEach(a=>{const all=BANK.filter(q=>q.area===a);const fresh=shuffle(all.filter(q=>!S.ans[q.id])),seen=shuffle(all.filter(q=>S.ans[q.id]));ids=ids.concat(fresh.concat(seen).slice(0,mix[a]).map(q=>q.id))})}
   return ids}
 function simStart(cfg){const ids=simBuild(cfg);if(!ids.length)return;const now=Date.now();
   let blocks=null;if(blkOn(cfg)){blocks=[ids.filter(id=>BLK[0].includes(BYID[id].area)),ids.filter(id=>BLK[1].includes(BYID[id].area))]}
@@ -984,7 +1007,7 @@ function renderSim(){const v=document.getElementById('view');const r=S.simRun;
   h+='<div class="fgroup"><strong>Preguntas</strong><div class="row" style="justify-content:flex-start">'+[['mix','Mezcla estilo CONAREM'],['year','Examen de un año']].map(([k,t])=>'<button class="fc" data-src="'+k+'" aria-pressed="'+(c.src===k)+'">'+t+'</button>').join('')+'</div></div>';
   if(c.src==='mix')h+='<div class="fgroup"><strong>Tamaño</strong><div class="row" style="justify-content:flex-start">'+[[140,'Completo · 140'],[70,'Medio · 70'],[30,'Rápido · 30']].map(([k,t])=>'<button class="fc" data-size="'+k+'" aria-pressed="'+(c.size===k)+'">'+t+'</button>').join('')+'</div><p class="note">Misma proporción que el examen: 30 de cada troncal y 20 de Salud Pública. Primero salen las que todavía no respondiste.</p></div>';
   else h+='<div class="fgroup"><strong>Año</strong><select id="sYear">'+SYEARS.map(y=>'<option value="'+y+'"'+(y===c.year?' selected':'')+'>CONAREM '+y+' · '+BANK.filter(q=>q.y===y&&!q.p).length+' preguntas</option>').join('')+'</select></div>';
-  if(c.src==='year'||c.size>=70)h+='<div class="fgroup"><strong>Formato</strong><div class="row" style="justify-content:flex-start"><button class="fc" id="sBlk" aria-pressed="'+!!c.blk+'">'+(c.blk?'✓ ':'')+'Dos bloques, como el examen real</button></div><p class="note">Bloque I: Cirugía, Medicina Interna y Salud Pública. Bloque II: Pediatría y Gineco-Obstetricia. Pausa entre los dos; la nota sale al final.</p></div>';
+  if(!window.__SMI&&(c.src==='year'||c.size>=70))h+='<div class="fgroup"><strong>Formato</strong><div class="row" style="justify-content:flex-start"><button class="fc" id="sBlk" aria-pressed="'+!!c.blk+'">'+(c.blk?'✓ ':'')+'Dos bloques, como el examen real</button></div><p class="note">Bloque I: Cirugía, Medicina Interna y Salud Pública. Bloque II: Pediatría y Gineco-Obstetricia. Pausa entre los dos; la nota sale al final.</p></div>';
   h+='<div class="fgroup"><strong>Tiempo</strong><select id="sSec">'+SIM_SEC.map(([k,t])=>'<option value="'+k+'"'+(k===c.sec?' selected':'')+'>'+t+'</option>').join('')+'</select></div>';
   const n=simBuild(c).length;h+='<div class="row" style="justify-content:flex-end;align-items:center"><span class="sub" style="margin-right:auto">'+n+' preguntas'+(c.sec?' · '+fmtT(n*c.sec)+' de tiempo':'')+'</span><button class="btn cta" id="sGo">Empezar simulacro</button></div></div>';
   if(sims.length){h+='<div class="card"><h2>Tus simulacros</h2><div class="simhist">'+sims.slice().reverse().slice(0,10).map(s=>{const pc=Math.round(100*s.ok/s.n);const k=s.n>=100?rankOf(pc):null;return '<div class="sh"><span>'+s.date.split('-').reverse().slice(0,2).join('/')+' · '+esc(s.src)+' · '+s.n+'</span><b>'+pc+'%</b><span class="sub">'+(k?'≈ puesto '+k:fmtT(s.used))+'</span></div>'}).join('')+'</div>';
@@ -1094,7 +1117,7 @@ setSync('Progreso guardado en este dispositivo.');
 const $=id=>document.getElementById(id);
 const C=window.CONFIG||{};
 // ---------- Registro de errores (para diagnosticar cuelgues en celulares) ----------
-const VER='2026.11.05-i';let nlog=0;
+const VER='2026.11.05-k';let nlog=0;
 function tok(){try{const k=Object.keys(localStorage).find(k=>/^sb-.*-auth-token$/.test(k));const v=k&&JSON.parse(localStorage.getItem(k));return v&&v.access_token}catch(e){return null}}
 function clog(kind,msg){try{if(!C.SUPABASE_URL||nlog++>25)return;const t=tok();
   fetch(C.SUPABASE_URL+'/rest/v1/client_logs',{method:'POST',keepalive:true,headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:'Bearer '+(t||C.SUPABASE_ANON_KEY),'Content-Type':'application/json',Prefer:'return=minimal'},
@@ -1219,6 +1242,19 @@ async function loadBank(){
   prog('Guardando en tu dispositivo para que la próxima vez abra al instante…',100);
   await cacheSet('bank',{ver,data:all});return all}
 
+// ---- Dos bancos: troncal y subespecialidad de Medicina Interna (SMI) ----
+const SMI_AREAS=[['CAR','Cardiología'],['NML','Neumología'],['GAS','Gastroenterología'],['NEF','Nefrología'],['END','Endocrinología'],['HEM','Hematología'],['INF','Infectología'],['REU','Reumatología'],['NEU','Neurología']];
+const SMI_CODE=Object.fromEntries(SMI_AREAS.map(([c,n])=>[n,c]));
+function bankMode(uid){try{return localStorage.getItem('am_bank:'+uid)||'T'}catch(e){return 'T'}}
+function pickBank(all,uid){const smi=all.filter(q=>q.area==='SMI');const tr=all.filter(q=>q.area!=='SMI');window.__HAS_SMI=smi.length>0;
+  if(window.__HAS_SMI&&bankMode(uid)==='SMI'){window.__SMI=true;window.__SMI_AREAS=SMI_AREAS;return smi.map(q=>Object.assign({},q,{area:SMI_CODE[q.t]||'CAR'}))}
+  window.__SMI=false;return tr}
+function bankSelUI(){if(!window.__HAS_SMI)return;const tb=document.querySelector('header .topbar');if(!tb||document.getElementById('bankSel'))return;
+  const d=document.createElement('div');d.className='banksel';d.id='bankSel';d.setAttribute('role','group');d.setAttribute('aria-label','Banco de preguntas');
+  d.innerHTML='<button type="button" data-bk="T" aria-pressed="'+!window.__SMI+'">Troncal</button><button type="button" data-bk="SMI" aria-pressed="'+!!window.__SMI+'" title="Subespecialidad de Medicina Interna">Sub<span class="bl">especialidad</span> MI</button>';
+  d.onclick=e=>{const b=e.target.closest('[data-bk]');if(!b)return;const m=b.dataset.bk;if((m==='SMI')===!!window.__SMI)return;try{localStorage.setItem('am_bank:'+window.__uid,m)}catch(_){}location.reload()};
+  tb.after(d)}
+
 // ---- App instalable (PWA) ----
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}
 let installEvt=null;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvt=e;const b=document.getElementById('installBtn');if(b)b.hidden=false});
@@ -1282,17 +1318,18 @@ async function route(depth){depth=depth||0;
   try{await withTimeout(sb.rpc('register_device',{p_device:devId(),p_label:devLabel()}),6000)}catch(e){clog('register_device',(e&&e.message)||e)}
   startPing();
   try{
-    const bank=await loadBank();
+    const bank0=await loadBank();
     window.__uid=uid;
+    const bank=pickBank(bank0,uid);
     window.__docRef={
-      get:async()=>{const {data,error}=await sb.from('progress').select('data').eq('user_id',uid).maybeSingle();if(error)throw error;return {exists:!!data,data:()=>data?data.data:null}},
-      set:async(obj)=>{const {error}=await sb.from('progress').upsert({user_id:uid,data:obj,updated_at:new Date().toISOString()});if(error)throw error}
+      get:async()=>{const {data,error}=await sb.from(window.__SMI?'progress_smi':'progress').select('data').eq('user_id',uid).maybeSingle();if(error)throw error;return {exists:!!data,data:()=>data?data.data:null}},
+      set:async(obj)=>{const {error}=await sb.from(window.__SMI?'progress_smi':'progress').upsert({user_id:uid,data:obj,updated_at:new Date().toISOString()});if(error)throw error}
     };
     $('gate').hidden=true;$('app').hidden=false;{const tb=document.querySelector('.tbr'),th=$('themeBtn');if(tb&&th&&th.parentNode!==tb)tb.appendChild(th)}
     try{const {data:rs}=await withTimeout(sb.from('summaries').select('id,area,ord,data,published').order('area').order('ord'),10000);window.__RES=(rs||[]).map(r=>Object.assign({},r.data,{id:r.id,area:r.area,draft:!r.published}))}catch(e){window.__RES=[]}
     clearTimeout(slowT);window.startApp(bank);
     const until=prof.is_admin?'administrador':'acceso hasta el '+new Date(prof.access_until).toLocaleDateString('es-PY',{day:'numeric',month:'long',year:'numeric'});
-    trialBar(prof);
+    trialBar(prof);bankSelUI();
     $('acct').innerHTML='<span class="acctbar">'+prof.email+' · '+until+(prof.is_admin?' · <a href="admin.html">Panel de administración</a>':'')+' <button class="linkbtn" id="logout">Cerrar sesión</button> <a href="legal.html" class="linkbtn" style="text-decoration:underline">Términos y privacidad</a> <span class="sub">v'+VER+'</span>'+installUI()+'</span>';
     const ib=document.getElementById('installBtn');if(ib)ib.onclick=async()=>{if(!installEvt)return;installEvt.prompt();await installEvt.userChoice;installEvt=null;ib.hidden=true};
     $('logout').onclick=logout;
