@@ -470,7 +470,8 @@ h2{font-weight:700;letter-spacing:-.01em;line-height:1.25}
 
 .qrep{display:flex;flex-direction:column;gap:8px}.qrep .linkbtn{color:var(--muted);font-size:.82rem;text-decoration:none;align-self:flex-start}.qrep .linkbtn:hover{color:var(--accent)}
 .qrep textarea{font:inherit;font-size:.92rem;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-height:80px;resize:vertical}
-.qrep .row{justify-content:flex-start}.qrep .msg{margin:0;font-size:.88rem}.qrep .msg.ok{color:var(--ok)}.qrep .msg.err{color:var(--bad)}
+.qrep .row{justify-content:flex-start}
+.msg.mchk{display:flex;flex-direction:column;gap:10px;text-align:left;padding:14px;border:1px solid var(--accent);border-radius:14px;background:color-mix(in srgb,var(--accent) 8%,var(--surface));color:var(--fg)}.mchk-e{font-size:1.05rem;word-break:break-all}.mchk-s{color:var(--accent);font-weight:600}.mchk-w{color:var(--bad);font-size:.88rem}.mchk-b{display:flex;gap:8px;flex-wrap:wrap}.mchk-b .btn{flex:1 1 140px}.qrep .msg{margin:0;font-size:.88rem}.qrep .msg.ok{color:var(--ok)}.qrep .msg.err{color:var(--bad)}
 
 .planbox{display:flex;flex-direction:column;gap:12px;margin-top:6px;padding-top:16px;border-top:1px solid var(--line)}
 
@@ -1124,7 +1125,7 @@ setSync('Progreso guardado en este dispositivo.');
 const $=id=>document.getElementById(id);
 const C=window.CONFIG||{};
 // ---------- Registro de errores (para diagnosticar cuelgues en celulares) ----------
-const VER='2026.11.05-o';let nlog=0;
+const VER='2026.11.05-p';let nlog=0;
 function tok(){try{const k=Object.keys(localStorage).find(k=>/^sb-.*-auth-token$/.test(k));const v=k&&JSON.parse(localStorage.getItem(k));return v&&v.access_token}catch(e){return null}}
 function clog(kind,msg){try{if(!C.SUPABASE_URL||nlog++>25)return;const t=tok();
   fetch(C.SUPABASE_URL+'/rest/v1/client_logs',{method:'POST',keepalive:true,headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:'Bearer '+(t||C.SUPABASE_ANON_KEY),'Content-Type':'application/json',Prefer:'return=minimal'},
@@ -1198,7 +1199,7 @@ let hiddenAt=0,stalls=0;
 // Si la app estuvo más de 30 minutos en segundo plano, se recarga al volver (el progreso está guardado y las preguntas en el dispositivo)
 document.addEventListener('visibilitychange',()=>{if(document.hidden){hiddenAt=Date.now();return}if(hiddenAt&&Date.now()-hiddenAt>30*60e3&&started&&!leaving){clog('reload','resume');location.reload()}});
 let mode='login', started=false;
-function setMode(m){mode=m;
+function setMode(m){mode=m;okMail=null;$('bMain').hidden=false;
   $('lTitle').textContent={login:'Ingresar',signup:'Creá tu cuenta · 3 días gratis',forgot:'Recuperar contraseña'}[m];
   $('termsWrap').hidden=(m!=='signup');$('terms').required=(m==='signup');$('terms').setCustomValidity('');
   $('bMain').textContent={login:'Entrar',signup:'Crear cuenta',forgot:'Enviar enlace'}[m];
@@ -1210,7 +1211,24 @@ $('toSignup').onclick=()=>setMode('signup');$('toForgot').onclick=()=>setMode('f
 const ERR={'Invalid login credentials':'Correo o contraseña incorrectos.','Email not confirmed':'Todavía no confirmaste tu correo. Revisá tu bandeja de entrada (y spam).','User already registered':'Ese correo ya tiene una cuenta. Ingresá con tu contraseña.'};
 function tr(e){const m=(e&&e.message)||String(e);return ERR[m]||m}
 
-$('fLogin').onsubmit=async ev=>{ev.preventDefault();const email=$('email').value.trim(),pass=$('pass').value;$('bMain').disabled=true;msg('lMsg','');
+// ---- Antes de crear la cuenta: confirmar el correo y detectar errores de tipeo ----
+const GOODD=['gmail.com','hotmail.com','outlook.com','yahoo.com','icloud.com','live.com','outlook.es','hotmail.es','yahoo.es'];
+function lev(a,b){const m=a.length,n=b.length;const d=[...Array(m+1)].map((_,i)=>[i,...Array(n).fill(0)]);for(let j=1;j<=n;j++)d[0][j]=j;for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[m][n]}
+function mailSugg(e){const at=e.lastIndexOf('@');if(at<1)return null;const dom=e.slice(at+1).toLowerCase();if(GOODD.includes(dom))return null;
+  let best=null,bd=3;GOODD.forEach(g=>{const x=lev(dom,g);if(x<bd){bd=x;best=g}});
+  if(!best&&/^(gmail|hotmail|outlook|yahoo|icloud|live)\.(con|cm|om|co|cmo|comm)$/.test(dom))best=dom.split('.')[0]+'.com';
+  return best?e.slice(0,at+1)+best:null}
+function trialMailOk(e){const d=(e.split('@')[1]||'').toLowerCase();return /^(gmail\.com|googlemail\.com|(hotmail|outlook|live|yahoo)(\.[a-z]{2,3}){1,2}|msn\.com|icloud\.com|me\.com|mac\.com|proton\.me|protonmail\.com|.+\.edu\.py|.+\.gov\.py|.+\.una\.py|una\.py)$/.test(d)}
+var okMail=null;
+function askMail(email){const el=$('lMsg');$('bMain').hidden=true;const sg=mailSugg(email);el.className='msg mchk';
+  el.innerHTML='<span>Vas a crear tu cuenta con<br><b class="mchk-e">'+email.replace(/[<>&"]/g,'')+'</b></span>'+(sg?'<span class="mchk-s">¿Quisiste decir <b>'+sg+'</b>?</span>':'<span>¿Está bien escrito? Lo vas a necesitar para recuperar tu contraseña.</span>')+(trialMailOk(sg||email)?'':'<span class="mchk-w">Con este correo no vas a poder usar la prueba gratis. Usá Gmail, Hotmail, Outlook, Yahoo o iCloud.</span>')+
+  '<span class="mchk-b">'+(sg?'<button type="button" class="btn cta" id="mFix">Sí, usar '+sg.split('@')[1]+'</button><button type="button" class="btn ghost" id="mKeep">No, está bien</button>':'<button type="button" class="btn cta" id="mOk">Sí, crear cuenta</button><button type="button" class="btn ghost" id="mEdit">Corregir</button>')+'</span>';
+  const go=v=>{$('email').value=v;okMail=v;$('bMain').hidden=false;$('fLogin').requestSubmit()};
+  if(sg){$('mFix').onclick=()=>go(sg);$('mKeep').onclick=()=>go(email)}else{$('mOk').onclick=()=>go(email);$('mEdit').onclick=()=>{el.innerHTML='';el.className='msg';$('bMain').hidden=false;$('email').focus();$('email').select()}}}
+$('email').addEventListener('input',()=>{okMail=null;if($('lMsg').classList.contains('mchk')){$('lMsg').innerHTML='';$('lMsg').className='msg';$('bMain').hidden=false}});
+$('fLogin').onsubmit=async ev=>{ev.preventDefault();const email=$('email').value.trim(),pass=$('pass').value;
+  if(mode==='signup'&&okMail!==email){if(!$('fLogin').checkValidity()){$('fLogin').reportValidity();return}askMail(email);return}
+  $('bMain').disabled=true;msg('lMsg','');
   try{
     clog('auth_'+mode,'inicio');
     if(mode==='login'){const {error}=await withTimeout(sb.auth.signInWithPassword({email,password:pass}),20000);if(error)throw error}
