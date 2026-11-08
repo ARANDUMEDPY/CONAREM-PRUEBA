@@ -1125,7 +1125,7 @@ setSync('Progreso guardado en este dispositivo.');
 const $=id=>document.getElementById(id);
 const C=window.CONFIG||{};
 // ---------- Registro de errores (para diagnosticar cuelgues en celulares) ----------
-const VER='2026.11.05-p';let nlog=0;
+const VER='2026.11.08-a';let nlog=0;
 function tok(){try{const k=Object.keys(localStorage).find(k=>/^sb-.*-auth-token$/.test(k));const v=k&&JSON.parse(localStorage.getItem(k));return v&&v.access_token}catch(e){return null}}
 function clog(kind,msg){try{if(!C.SUPABASE_URL||nlog++>25)return;const t=tok();
   fetch(C.SUPABASE_URL+'/rest/v1/client_logs',{method:'POST',keepalive:true,headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:'Bearer '+(t||C.SUPABASE_ANON_KEY),'Content-Type':'application/json',Prefer:'return=minimal'},
@@ -1327,20 +1327,20 @@ async function route(depth){depth=depth||0;
   if(!session){$('app').hidden=true;$('gate').hidden=false;show('fLogin');let k=null;try{k=sessionStorage.getItem('am_kicked');sessionStorage.removeItem('am_kicked')}catch(e){}let rc=null;try{rc=sessionStorage.getItem('am_recover');sessionStorage.removeItem('am_recover')}catch(e){}if(rc&&!k)msg('lMsg','Por seguridad tu sesión se reinició. Ingresá de nuevo: tu progreso está guardado.',true);if(k)msg('lMsg','Tu cuenta se abrió en otro dispositivo. Cada cuenta puede estar abierta en un solo dispositivo a la vez; si ingresás acá, se cerrará en el otro. Tu progreso está guardado.');return}
   const uid=session.user.id;
   let prof=null;
-  try{const r=await withTimeout(sb.from('profiles').select('access_until,is_admin,email,trial_started').eq('id',uid).maybeSingle(),12000);
+  try{const r=await withTimeout(sb.from('profiles').select('access_until,is_admin,email,trial_started,revoked_reason').eq('id',uid).maybeSingle(),12000);
     if(r.error&&isAuthErr(r.error)){const rf=await withTimeout(sb.auth.refreshSession(),10000);if(rf.error||!rf.data.session||depth>0){recoverSession('refresh');return}return route(depth+1)}
     prof=r.data}catch(e){recoverSession('profiles '+e.message);return}
   try{window.__uEmail=(prof&&prof.email)||session.user.email||''}catch(_){}
   const active=prof&&(prof.is_admin||(prof.access_until&&new Date(prof.access_until)>new Date()));
   if(!active){$('gate').hidden=false;$('app').hidden=true;show('fCode');
-    const canTrial=prof&&!prof.trial_started;$('trialBox').hidden=!canTrial;$('backApp').hidden=true;$('cTitle').textContent=canTrial?'¡Ya casi! Te falta un paso':'Activá tu acceso';
+    const canTrial=prof&&!prof.trial_started;$('trialBox').hidden=!canTrial;$('backApp').hidden=true;$('cTitle').textContent=(prof&&prof.revoked_reason==='dispositivos')?'Acceso retirado':canTrial?'¡Ya casi! Te falta un paso':'Activá tu acceso';
     if(canTrial){const tt=$('trialBox').querySelector('.tb-t'),tn=$('trialBox').querySelector('.note');tt.textContent='Activá tu prueba gratis con un toque';tn.textContent='Acceso completo a las preguntas, los simulacros y tu puesto estimado. Sin tarjeta.';$('bTrial').textContent='Empezar mi prueba gratis';
       sb.rpc('trial_promo_left').then(({data})=>{if(typeof data==='number'&&data>0){$('bTrial').textContent='Empezar mi semana gratis';tn.textContent='Sos de los primeros 50: tenés 7 días en vez de 3. Quedan '+data+' lugares. Sin tarjeta.'}}).catch(()=>{})}
-    $('cInfo').textContent=canTrial?'Planes: tocá uno y te escribimos por Instagram':(prof&&prof.trial_started&&isTrial(prof))?'Terminó tu prueba gratis. ¡Ojalá te haya servido! Elegí un plan y activalo con tu código: tu progreso sigue guardado.':(prof&&prof.access_until)?'Tu acceso venció el '+new Date(prof.access_until).toLocaleDateString('es-PY')+'. Ingresá un código nuevo para renovarlo.':'Ingresá el código que recibiste al comprar el acceso.';return}
+    $('cInfo').textContent=(prof&&prof.revoked_reason==='dispositivos')?'Se te retiró el acceso porque tu cuenta se usó en más de 2 dispositivos, que es el máximo permitido por cuenta. Si creés que es un error, escribinos por Instagram (@arandumedpy). Tu progreso sigue guardado.':canTrial?'Planes: tocá uno y te escribimos por Instagram':(prof&&prof.trial_started&&isTrial(prof))?'Terminó tu prueba gratis. ¡Ojalá te haya servido! Elegí un plan y activalo con tu código: tu progreso sigue guardado.':(prof&&prof.access_until)?'Tu acceso venció el '+new Date(prof.access_until).toLocaleDateString('es-PY')+'. Ingresá un código nuevo para renovarlo.':'Ingresá el código que recibiste al comprar el acceso.';return}
   if(started)return;started=true;show('loading');
   const slowT=setTimeout(()=>{if($('loading').hidden||$('gate').hidden)return;clog('stuck_loading',$('loadTxt').textContent);
     if(!$('loadRetry')){const d=document.createElement('p');d.id='loadRetry';d.className='sub';d.style.margin='10px 0 0';d.innerHTML='Está tardando más de lo normal. Puede ser la conexión. <button class="btn" type="button" style="margin-top:8px">Reintentar</button>';d.querySelector('button').onclick=()=>location.reload();$('loading').appendChild(d)}},20000);
-  try{await withTimeout(sb.rpc('register_device',{p_device:devId(),p_label:devLabel()}),6000)}catch(e){clog('register_device',(e&&e.message)||e)}
+  try{const rd=await withTimeout(sb.rpc('register_device',{p_device:devId(),p_label:devLabel()}),6000);if(rd&&rd.data===-1){clearTimeout(slowT);started=false;return route()}}catch(e){clog('register_device',(e&&e.message)||e)}
   startPing();
   try{
     const bank0=await loadBank();
