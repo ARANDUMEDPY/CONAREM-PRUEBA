@@ -199,6 +199,14 @@ nav{box-shadow:none!important}
 .btn.buy{background:#F08A5D;border-color:#F08A5D;color:#0E161B;font-weight:800}.btn.buy:hover{filter:brightness(1.06)}.btn.try{background:transparent;border:2px solid var(--accent);color:var(--accent);font-weight:800;box-shadow:none}
 .hlogin{margin:12px 0 0;font-size:.92rem;color:var(--muted)}.hlogin a{color:var(--accent);font-weight:700}
 .ptry{display:block;text-align:center;margin-top:10px;font-size:.88rem;color:var(--muted);text-decoration:underline;text-underline-offset:3px}
+.bsheet{position:fixed;inset:0;z-index:98;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;justify-content:center;padding:16px}
+.bs-in{position:relative;width:100%;max-width:460px;background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:22px 20px 18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+@media (min-width:700px){.bsheet{align-items:center}}
+.bs-in h3{margin:0;font-size:1.3rem}.bs-k{font-size:.75rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#F08A5D}
+.bs-s{margin:0;color:var(--muted);font-size:.92rem;line-height:1.45}.bs-s b{color:var(--fg)}
+.bs-msg{background:var(--bg);border:1px dashed var(--accent);border-radius:14px;padding:14px;font-size:1rem;line-height:1.45;user-select:text;-webkit-user-select:text}
+.bs-in .btn{width:100%;display:flex;align-items:center;justify-content:center;text-align:center;text-decoration:none}.bs-in .btn.done{background:#5CC98A;border-color:#5CC98A}
+.bs-x{position:absolute;top:10px;right:12px;border:0;background:transparent;color:var(--muted);font-size:1.6rem;line-height:1;cursor:pointer;padding:4px 8px}
 #toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;pointer-events:none;z-index:99;max-width:min(92vw,460px);background:var(--surface);color:var(--fg);border:1px solid var(--accent);border-radius:14px;padding:12px 16px;font-size:.92rem;box-shadow:0 12px 32px rgba(0,0,0,.35);transition:.25s}#toast.on{opacity:1;transform:translate(-50%,0)}
 .done{text-align:center;align-items:center}
 .big{font-family:var(--display);font-weight:800;font-size:2.6rem;line-height:1.1}
@@ -1130,7 +1138,7 @@ setSync('Progreso guardado en este dispositivo.');
 const $=id=>document.getElementById(id);
 const C=window.CONFIG||{};
 // ---------- Registro de errores (para diagnosticar cuelgues en celulares) ----------
-const VER='2026.11.11-a';let nlog=0;
+const VER='2026.11.11-b';let nlog=0;
 function tok(){try{const k=Object.keys(localStorage).find(k=>/^sb-.*-auth-token$/.test(k));const v=k&&JSON.parse(localStorage.getItem(k));return v&&v.access_token}catch(e){return null}}
 function clog(kind,msg){try{if(!C.SUPABASE_URL||nlog++>25)return;const t=tok();
   fetch(C.SUPABASE_URL+'/rest/v1/client_logs',{method:'POST',keepalive:true,headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:'Bearer '+(t||C.SUPABASE_ANON_KEY),'Content-Type':'application/json',Prefer:'return=minimal'},
@@ -1179,11 +1187,18 @@ function waLink(t){return 'https://wa.me/'+CONTACT.wa+'?text='+encodeURIComponen
     if(pl)msg('lMsg','Creá tu cuenta y después activás el plan '+pl+' con tu código de acceso.',true);
     $('acceso').scrollIntoView({behavior:'smooth',block:'start'});setTimeout(()=>{try{$('email').focus({preventScroll:true})}catch(_){}} ,450)}))})();
 
-document.querySelectorAll('[data-buy]').forEach(a=>a.addEventListener('click',async e=>{e.preventDefault();const pl=a.dataset.buy;const t='¡Hola! Quiero comprar el plan '+pl+' de AranduMed.'+(window.__uEmail?' Mi correo de la cuenta es: '+window.__uEmail:' Todavía no tengo cuenta.');
+// Copia confiable (también en iPhone y en el navegador de Instagram): primero por selección, después por la API
+function copyNow(t){let ok=false;try{const ta=document.createElement('textarea');ta.value=t;ta.setAttribute('readonly','');ta.style.cssText='position:fixed;top:0;left:0;opacity:0;font-size:16px';document.body.appendChild(ta);ta.focus();ta.select();ta.setSelectionRange(0,t.length);ok=document.execCommand('copy');ta.remove()}catch(_){}
+  try{if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(t).then(()=>{},()=>{})}catch(_){}return ok}
+function buySheet(pl){const t='¡Hola! Quiero comprar el plan '+pl+' de AranduMed.'+(window.__uEmail?' Mi correo de la cuenta es: '+window.__uEmail:' Todavía no tengo cuenta.');
   if(CONTACT.wa){window.open(waLink(t),'_blank','noopener');return}
-  try{navigator.clipboard.writeText(t).catch(()=>{})}catch(_){}
-  msg('cMsg','Copiamos el mensaje: pegalo en el chat de Instagram que se abre.',true);toast('Te abrimos el chat de Instagram. Ya copiamos tu mensaje: solo pegalo y envialo.');
-  window.open('https://ig.me/m/'+encodeURIComponent(CONTACT.ig||'arandumedpy'),'_blank','noopener')}));
+  let m=document.getElementById('buySheet');if(m)m.remove();m=document.createElement('div');m.id='buySheet';m.className='bsheet';m.setAttribute('role','dialog');m.setAttribute('aria-modal','true');m.setAttribute('aria-label','Comprar '+pl);
+  m.innerHTML='<div class="bs-in"><button type="button" class="bs-x" aria-label="Cerrar">×</button><span class="bs-k">Plan '+pl+'</span><h3>Escribinos por Instagram</h3><p class="bs-s"><b>1.</b> Copiá este mensaje · <b>2.</b> Abrí el chat y pegalo</p><div class="bs-msg" id="bsMsg"></div><button type="button" class="btn buy big" id="bsCopy">Copiar mensaje</button><a class="btn try big" id="bsGo" href="https://ig.me/m/'+encodeURIComponent(CONTACT.ig||'arandumedpy')+'" target="_blank" rel="noopener">Abrir chat de Instagram</a><p class="bs-s" style="font-size:.85rem">¿No se copia? Mantené apretado el mensaje para copiarlo, o escribí el plan que querés en el chat de <b>@'+(CONTACT.ig||'arandumedpy')+'</b>.</p></div>';
+  document.body.appendChild(m);$('bsMsg').textContent=t;
+  const close=()=>m.remove();m.querySelector('.bs-x').onclick=close;m.onclick=e=>{if(e.target===m)close()};
+  $('bsCopy').onclick=()=>{const ok=copyNow(t);const b=$('bsCopy');b.textContent=ok?'✓ Mensaje copiado':'✓ Listo, ahora abrí el chat';b.classList.add('done');try{const r=document.createRange();r.selectNodeContents($('bsMsg'));const sl=getSelection();sl.removeAllRanges();sl.addRange(r)}catch(_){}};
+  $('bsGo').onclick=()=>{copyNow(t)};}
+document.querySelectorAll('[data-buy]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();buySheet(a.dataset.buy)}));
 
 document.addEventListener('click',async e=>{const b=e.target.closest&&e.target.closest('[data-rep]');if(b){e.preventDefault();const box=b.parentNode;if(box.querySelector('textarea'))return;
   const f=document.createElement('div');f.innerHTML='<textarea maxlength="1000" placeholder="Contanos qué está mal: la respuesta, la explicación, un dato desactualizado…"></textarea><div class="row"><button class="btn cta" type="button" data-repsend="1">Enviar reporte</button><button class="btn" type="button" data-repx="1">Cancelar</button></div><p class="msg" role="status"></p>';f.style.cssText='display:flex;flex-direction:column;gap:8px';box.appendChild(f);f.querySelector('textarea').focus();return}
