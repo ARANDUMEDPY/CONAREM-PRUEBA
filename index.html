@@ -1138,7 +1138,7 @@ setSync('Progreso guardado en este dispositivo.');
 const $=id=>document.getElementById(id);
 const C=window.CONFIG||{};
 // ---------- Registro de errores (para diagnosticar cuelgues en celulares) ----------
-const VER='2026.11.11-b';let nlog=0;
+const VER='2026.11.11-c';let nlog=0;
 function tok(){try{const k=Object.keys(localStorage).find(k=>/^sb-.*-auth-token$/.test(k));const v=k&&JSON.parse(localStorage.getItem(k));return v&&v.access_token}catch(e){return null}}
 function clog(kind,msg){try{if(!C.SUPABASE_URL||nlog++>25)return;const t=tok();
   fetch(C.SUPABASE_URL+'/rest/v1/client_logs',{method:'POST',keepalive:true,headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:'Bearer '+(t||C.SUPABASE_ANON_KEY),'Content-Type':'application/json',Prefer:'return=minimal'},
@@ -1190,7 +1190,7 @@ function waLink(t){return 'https://wa.me/'+CONTACT.wa+'?text='+encodeURIComponen
 // Copia confiable (también en iPhone y en el navegador de Instagram): primero por selección, después por la API
 function copyNow(t){let ok=false;try{const ta=document.createElement('textarea');ta.value=t;ta.setAttribute('readonly','');ta.style.cssText='position:fixed;top:0;left:0;opacity:0;font-size:16px';document.body.appendChild(ta);ta.focus();ta.select();ta.setSelectionRange(0,t.length);ok=document.execCommand('copy');ta.remove()}catch(_){}
   try{if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(t).then(()=>{},()=>{})}catch(_){}return ok}
-function buySheet(pl){const t='¡Hola! Quiero comprar el plan '+pl+' de AranduMed.'+(window.__uEmail?' Mi correo de la cuenta es: '+window.__uEmail:' Todavía no tengo cuenta.');
+function buySheet(pl){trk('buy',pl);const t='¡Hola! Quiero comprar el plan '+pl+' de AranduMed.'+(window.__uEmail?' Mi correo de la cuenta es: '+window.__uEmail:' Todavía no tengo cuenta.');
   if(CONTACT.wa){window.open(waLink(t),'_blank','noopener');return}
   let m=document.getElementById('buySheet');if(m)m.remove();m=document.createElement('div');m.id='buySheet';m.className='bsheet';m.setAttribute('role','dialog');m.setAttribute('aria-modal','true');m.setAttribute('aria-label','Comprar '+pl);
   m.innerHTML='<div class="bs-in"><button type="button" class="bs-x" aria-label="Cerrar">×</button><span class="bs-k">Plan '+pl+'</span><h3>Escribinos por Instagram</h3><p class="bs-s"><b>1.</b> Copiá este mensaje · <b>2.</b> Abrí el chat y pegalo</p><div class="bs-msg" id="bsMsg"></div><button type="button" class="btn buy big" id="bsCopy">Copiar mensaje</button><a class="btn try big" id="bsGo" href="https://ig.me/m/'+encodeURIComponent(CONTACT.ig||'arandumedpy')+'" target="_blank" rel="noopener">Abrir chat de Instagram</a><p class="bs-s" style="font-size:.85rem">¿No se copia? Mantené apretado el mensaje para copiarlo, o escribí el plan que querés en el chat de <b>@'+(CONTACT.ig||'arandumedpy')+'</b>.</p></div>';
@@ -1214,6 +1214,15 @@ function msg(id,t,ok){const m=$(id);m.textContent=t||'';m.className='msg'+(t?(ok
 if(!C.SUPABASE_URL||!C.SUPABASE_ANON_KEY){show('fLogin');msg('lMsg','La web todavía no está conectada a la base de datos (falta completar config.js).');$('bMain').disabled=true;return}
 // Candado propio: evita que la sesión quede trabada al volver a la pestaña (problema conocido de supabase-js con navigator.locks)
 const sb=window.supabase.createClient(C.SUPABASE_URL,C.SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,lock:async(name,acquireTimeout,fn)=>await fn()}});
+// ---- Contador de visitas (anónimo: sin datos personales; solo día, fuente y un id al azar del navegador) ----
+function trkSid(){let v=null;try{v=localStorage.getItem('am_sid')}catch(_){}if(!v){v=(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2,12));try{localStorage.setItem('am_sid',v)}catch(_){}}return v}
+function trkSrc(){let s=null;try{s=sessionStorage.getItem('am_src')}catch(_){}if(s)return s;
+  const q=new URLSearchParams(location.search),u=(q.get('utm_source')||q.get('src')||'').toLowerCase(),r=(document.referrer||'').toLowerCase(),ua=navigator.userAgent||'';
+  s=u?(/^(ig|insta)/.test(u)?'instagram':/^(wa|whats)/.test(u)?'whatsapp':/^(fb|face)/.test(u)?'facebook':u.replace(/[^a-z0-9_-]/g,'').slice(0,20)||'otro')
+   :/instagram/i.test(ua)||/instagram\.com/.test(r)?'instagram':/FBAN|FBAV|FB_IAB/.test(ua)||/facebook\.com/.test(r)?'facebook':/whatsapp/.test(r)||/WhatsApp/i.test(ua)?'whatsapp':/google\./.test(r)?'google':(r&&!r.includes(location.host))?'otro':'directo';
+  try{sessionStorage.setItem('am_src',s)}catch(_){}return s}
+function trk(ev,info){try{sb.rpc('track',{p_ev:ev,p_src:trkSrc(),p_sid:trkSid(),p_info:info||null}).then(()=>{},()=>{})}catch(_){}}
+trk('visit');
 const withTimeout=(p,ms)=>Promise.race([p,new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),ms))]);
 let hiddenAt=0,stalls=0;
 // Si la app estuvo más de 30 minutos en segundo plano, se recarga al volver (el progreso está guardado y las preguntas en el dispositivo)
@@ -1252,7 +1261,7 @@ $('fLogin').onsubmit=async ev=>{ev.preventDefault();const email=$('email').value
   try{
     clog('auth_'+mode,'inicio');
     if(mode==='login'){const {error}=await withTimeout(sb.auth.signInWithPassword({email,password:pass}),20000);if(error)throw error}
-    else if(mode==='signup'){const {data,error}=await withTimeout(sb.auth.signUp({email,password:pass,options:{emailRedirectTo:location.origin+location.pathname,data:{terms_version:'1.1',terms_accepted_at:new Date().toISOString()}}}),20000);if(error)throw error;
+    else if(mode==='signup'){const {data,error}=await withTimeout(sb.auth.signUp({email,password:pass,options:{emailRedirectTo:location.origin+location.pathname,data:{terms_version:'1.1',terms_accepted_at:new Date().toISOString()}}}),20000);if(error)throw error;trk('signup');
       if(!data.session){msg('lMsg','Cuenta creada. Te enviamos un correo para confirmarla; después volvé e ingresá.',true);setMode('login');msg('lMsg','Cuenta creada. Confirmá tu correo y luego ingresá.',true)}}
     else{const {error}=await withTimeout(sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname}),20000);if(error)throw error;msg('lMsg','Si el correo existe, te llegó un enlace para crear una contraseña nueva.',true)}
   }catch(e){if(e&&e.message==='timeout'){clog('auth_timeout',mode);msg('lMsg','La conexión está muy lenta o se cortó. Revisá tu internet (probá con Wi-Fi) y tocá de nuevo el botón.')}else{clog('auth_err',mode+': '+((e&&e.message)||e));msg('lMsg',tr(e))}}finally{$('bMain').disabled=false}};
@@ -1261,7 +1270,7 @@ $('fCode').onsubmit=async ev=>{ev.preventDefault();msg('cMsg','');
   const {data,error}=await sb.rpc('redeem_code',{p_code:$('code').value.trim().toUpperCase()});
   if(error){msg('cMsg',error.message.replace(/^.*?:\s*/,''));return}
   msg('cMsg','¡Listo! Acceso activo hasta el '+new Date(data).toLocaleDateString('es-PY',{day:'numeric',month:'long',year:'numeric'})+'.',true);setTimeout(()=>{if(started){const tb=document.getElementById('trialBar');if(tb)tb.remove();$('gate').hidden=true;$('app').hidden=false;window.scrollTo({top:0})}else route()},900)};
-$('bTrial').onclick=async()=>{const b=$('bTrial');b.disabled=true;msg('tMsg','');const {data,error}=await sb.rpc('start_trial',{p_device:devId()});if(error){b.disabled=false;msg('tMsg',error.message.replace(/^.*?:\s*/,''));return}msg('tMsg','¡Listo! Tenés acceso hasta el '+new Date(data).toLocaleString('es-PY',{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'})+'.',true);setTimeout(()=>route(),900)};
+$('bTrial').onclick=async()=>{const b=$('bTrial');b.disabled=true;msg('tMsg','');const {data,error}=await sb.rpc('start_trial',{p_device:devId()});if(error){b.disabled=false;msg('tMsg',error.message.replace(/^.*?:\s*/,''));return}trk('trial');msg('tMsg','¡Listo! Tenés acceso hasta el '+new Date(data).toLocaleString('es-PY',{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'})+'.',true);setTimeout(()=>route(),900)};
 $('backApp').onclick=()=>{$('gate').hidden=true;$('app').hidden=false;window.scrollTo({top:0})};
 function isTrial(p){return !!(p&&p.trial_started&&p.access_until&&(new Date(p.access_until)-new Date(p.trial_started))<=7*864e5+36e5)}
 function toast(t){let el=document.getElementById('toast');if(!el){el=document.createElement('div');el.id='toast';el.setAttribute('role','status');document.body.appendChild(el)}el.textContent=t;el.classList.add('on');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('on'),6000)}
