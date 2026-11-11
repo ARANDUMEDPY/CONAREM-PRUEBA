@@ -207,6 +207,10 @@ nav{box-shadow:none!important}
 .bs-msg{background:var(--bg);border:1px dashed var(--accent);border-radius:14px;padding:14px;font-size:1rem;line-height:1.45;user-select:text;-webkit-user-select:text}
 .bs-in .btn{width:100%;display:flex;align-items:center;justify-content:center;text-align:center;text-decoration:none}.bs-in .btn.done{background:#5CC98A;border-color:#5CC98A}
 .bs-x{position:absolute;top:10px;right:12px;border:0;background:transparent;color:var(--muted);font-size:1.6rem;line-height:1;cursor:pointer;padding:4px 8px}
+.amodal .bs-in{max-height:calc(100vh - 32px);overflow:auto}
+.wel-e{font-size:2.6rem;line-height:1}.wel-s{list-style:none;margin:4px 0;padding:0;display:flex;flex-direction:column;gap:10px}.wel-s li{display:flex;gap:12px;align-items:flex-start}.wel-s b{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:.9rem}.wel-s strong{display:block}.wel-s span{color:var(--muted);font-size:.92rem;line-height:1.4}.wel-s span strong{color:var(--fg)}
+.rec{display:flex;flex-direction:column;gap:12px}.rec-h{display:flex;justify-content:space-between;align-items:center}.rec-l{font-family:var(--display);font-weight:800;font-size:1.25rem}.rec-l span{color:var(--accent)}.rec-ok{font-size:.8rem;font-weight:700;color:var(--ok);background:var(--ok-soft);padding:4px 10px;border-radius:999px}.rec h3{margin:0}
+.rec dl{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;margin:0;background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:14px 16px}.rec dt{color:var(--muted);font-size:.88rem}.rec dd{margin:0;text-align:right;font-weight:600;word-break:break-all}
 #toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;pointer-events:none;z-index:99;max-width:min(92vw,460px);background:var(--surface);color:var(--fg);border:1px solid var(--accent);border-radius:14px;padding:12px 16px;font-size:.92rem;box-shadow:0 12px 32px rgba(0,0,0,.35);transition:.25s}#toast.on{opacity:1;transform:translate(-50%,0)}
 .done{text-align:center;align-items:center}
 .big{font-family:var(--display);font-weight:800;font-size:2.6rem;line-height:1.1}
@@ -1140,7 +1144,7 @@ setSync('Progreso guardado en este dispositivo.');
 const $=id=>document.getElementById(id);
 const C=window.CONFIG||{};
 // ---------- Registro de errores (para diagnosticar cuelgues en celulares) ----------
-const VER='2026.11.11-f';let nlog=0;
+const VER='2026.11.11-g';let nlog=0;
 function tok(){try{const k=Object.keys(localStorage).find(k=>/^sb-.*-auth-token$/.test(k));const v=k&&JSON.parse(localStorage.getItem(k));return v&&v.access_token}catch(e){return null}}
 function clog(kind,msg){try{if(!C.SUPABASE_URL||nlog++>25)return;const t=tok();
   fetch(C.SUPABASE_URL+'/rest/v1/client_logs',{method:'POST',keepalive:true,headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:'Bearer '+(t||C.SUPABASE_ANON_KEY),'Content-Type':'application/json',Prefer:'return=minimal'},
@@ -1299,6 +1303,37 @@ async function loadBank(){
   prog('Guardando en tu dispositivo para que la próxima vez abra al instante…',100);
   await cacheSet('bank',{ver,data:all});return all}
 
+// ---- Compra: pantalla de bienvenida (una vez por compra) y constancia de acceso ----
+const escH=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fGs=n=>'Gs. '+(+n||0).toLocaleString('es-PY');
+const fDay=d=>new Date(d).toLocaleDateString('es-PY',{day:'numeric',month:'long',year:'numeric'});
+function recNo(p){return 'AM-'+String(p.id).padStart(5,'0')}
+async function purchaseUI(prof){let p=null;
+  try{const r=await withTimeout(sb.rpc('my_purchase'),8000);p=r.data&&r.data[0]}catch(_){}
+  if(!p)return;window.__PURCHASE=p;
+  const bar=document.querySelector('#acct .acctbar');if(bar&&!document.getElementById('myPlan')){const b=document.createElement('button');b.className='linkbtn';b.id='myPlan';b.type='button';b.textContent='Mi constancia';b.onclick=()=>receiptModal(p);bar.insertBefore(b,document.getElementById('logout'))}
+  const k='am_wel:'+p.id;let seen=null;try{seen=localStorage.getItem(k)}catch(_){}
+  if(seen&&!/[?&]wel/.test(location.search))return;
+  if(new Date(p.until)<new Date())return;
+  welcomeModal(p);try{localStorage.setItem(k,'1')}catch(_){}}
+function modal(html,cls){let m=document.getElementById('amModal');if(m)m.remove();m=document.createElement('div');m.id='amModal';m.className='bsheet amodal '+(cls||'');m.setAttribute('role','dialog');m.setAttribute('aria-modal','true');m.innerHTML='<div class="bs-in">'+html+'</div>';document.body.appendChild(m);const close=()=>m.remove();m.onclick=e=>{if(e.target===m||e.target.closest('[data-x]'))close()};return m}
+function welcomeModal(p){const m=modal('<button type="button" class="bs-x" data-x aria-label="Cerrar">×</button><div class="wel-e">🎉</div><span class="bs-k">Compra confirmada</span><h3>¡Bienvenido/a al plan '+escH(p.plan)+'!</h3><p class="bs-s">Tenés acceso completo hasta el <b>'+fDay(p.until)+'</b>. Gracias por confiar en AranduMed 🩺</p><ol class="wel-s"><li><b>1</b><span><strong>Medí dónde estás</strong>Hacé un simulacro antes de arrancar.</span></li><li><b>2</b><span><strong>Seguí tu plan diario</strong>En «Hoy» tenés las preguntas del día.</span></li><li><b>3</b><span><strong>Calificá cada pregunta</strong>El Método Mandu’a te la vuelve a mostrar antes de que la olvides.</span></li></ol><button type="button" class="btn buy big" data-x id="welGo">¡Empezar a estudiar!</button><button type="button" class="btn try big" id="welRec">Ver mi constancia</button>','wel');
+  $('welRec').onclick=e=>{e.stopPropagation();receiptModal(p)}}
+function receiptModal(p){const rows=[['N.º',recNo(p)],['Cuenta',p.email],['Plan',p.plan],['Fecha de compra',fDay(p.at)],['Monto',fGs(p.amount)],['Medio de pago',p.method||'—'],['Acceso hasta',fDay(p.until)]];
+  modal('<button type="button" class="bs-x" data-x aria-label="Cerrar">×</button><div class="rec"><div class="rec-h"><span class="rec-l">Arandu<span>Med</span></span><span class="rec-ok">✓ Acceso activo</span></div><h3>Constancia de acceso</h3><dl>'+rows.map(r=>'<dt>'+r[0]+'</dt><dd>'+escH(String(r[1]))+'</dd>').join('')+'</dl><p class="bs-s" style="font-size:.78rem">Esta constancia confirma tu plan en AranduMed. No es una factura.</p></div><button type="button" class="btn buy big" id="recDl">Descargar constancia</button>','rec');
+  $('recDl').onclick=()=>recImage(p,rows)}
+function recImage(p,rows){const W=1080,H=1350,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
+  x.fillStyle='#0E161B';x.fillRect(0,0,W,H);const g=x.createRadialGradient(200,200,10,200,200,700);g.addColorStop(0,'rgba(76,194,183,.35)');g.addColorStop(1,'rgba(76,194,183,0)');x.fillStyle=g;x.fillRect(0,0,W,H);
+  const F='"Plus Jakarta Sans",Inter,system-ui,sans-serif';
+  x.font='800 64px '+F;x.fillStyle='#E3EAEE';x.fillText('Arandu',90,170);const w=x.measureText('Arandu').width;x.fillStyle='#4CC2B7';x.fillText('Med',90+w,170);
+  x.fillStyle='#163626';x.beginPath();x.roundRect(700,118,290,66,33);x.fill();x.fillStyle='#5CC98A';x.font='700 30px '+F;x.fillText('✓ Acceso activo',728,162);
+  x.fillStyle='#E3EAEE';x.font='800 72px '+F;x.fillText('Constancia de acceso',90,320);
+  x.fillStyle='#152129';x.strokeStyle='#26353F';x.lineWidth=3;x.beginPath();x.roundRect(90,380,900,rows.length*104+40,32);x.fill();x.stroke();
+  rows.forEach((r,i)=>{const y=450+i*104;x.fillStyle='#93A4AE';x.font='600 30px '+F;x.fillText(r[0],130,y);x.fillStyle='#E3EAEE';x.font='700 38px '+F;let v=String(r[1]);while(x.measureText(v).width>520&&v.length>4)v=v.slice(0,-2);if(v!==String(r[1]))v+='…';x.textAlign='right';x.fillText(v,950,y);x.textAlign='left';if(i<rows.length-1){x.strokeStyle='#26353F';x.lineWidth=2;x.beginPath();x.moveTo(130,y+40);x.lineTo(950,y+40);x.stroke()}});
+  x.fillStyle='#93A4AE';x.font='500 28px '+F;x.fillText('Esta constancia confirma tu plan en AranduMed. No es una factura.',90,H-150);
+  x.fillStyle='#F08A5D';x.font='800 32px '+F;x.fillText('¡Vamos por esa plaza! 🩺',90,H-90);
+  c.toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='AranduMed-constancia-'+recNo(p)+'.png';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},2000)},'image/png')}
+
 // ---- Dos bancos: troncal y subespecialidad de Medicina Interna (SMI) ----
 const SMI_AREAS=[['CAR','Cardiología'],['NML','Neumología'],['GAS','Gastroenterología'],['NEF','Nefrología'],['END','Endocrinología'],['HEM','Hematología'],['INF','Infectología'],['REU','Reumatología'],['NEU','Neurología']];
 const SMI_CODE=Object.fromEntries(SMI_AREAS.map(([c,n])=>[n,c]));
@@ -1389,6 +1424,7 @@ async function route(depth){depth=depth||0;
     $('acct').innerHTML='<span class="acctbar">'+prof.email+' · '+until+(prof.is_admin?' · <a href="admin.html">Panel de administración</a>':'')+' <button class="linkbtn" id="logout">Cerrar sesión</button> <a href="legal.html" class="linkbtn" style="text-decoration:underline">Términos y privacidad</a> <span class="sub">v'+VER+'</span>'+installUI()+'</span>';
     const ib=document.getElementById('installBtn');if(ib)ib.onclick=async()=>{if(!installEvt)return;installEvt.prompt();await installEvt.userChoice;installEvt=null;ib.hidden=true};
     $('logout').onclick=logout;
+    if(!prof.is_admin||/[?&]wel/.test(location.search))purchaseUI(prof);
   }catch(e){clearTimeout(slowT);started=false;clog('load_fail',(e&&e.message)||e);show('fLogin');msg('lMsg',e&&e.message==='timeout'?'La conexión está muy lenta y no se pudieron descargar las preguntas. Revisá tu internet y volvé a entrar.':'No se pudieron cargar las preguntas: '+tr(e))}
 }
 sb.auth.onAuthStateChange((ev)=>{
