@@ -264,6 +264,9 @@ h2{font-family:var(--display);font-weight:600;font-size:1.2rem;margin:0}
 .fc7 span{font-size:.72rem;color:var(--muted);font-variant-numeric:tabular-nums}
 @media (max-width:420px){.count b{font-size:1rem}.count span{font-size:.66rem}.count>div{padding:7px 12px}.simbar{flex-wrap:nowrap;gap:8px;padding:8px 10px}.simbar .clock{min-width:0;font-size:1.2rem}.simbar .sub{font-size:.8rem}.simbar .btn{padding:9px 12px}body{font-size:17px}.count b{font-size:1.15rem}.card{padding:16px}}
 @media (prefers-reduced-motion:no-preference){.why{animation:in .2s ease-out}@keyframes in{from{opacity:.4;transform:translateY(-3px)}to{opacity:1;transform:none}}}
+.lockban{display:flex;align-items:center;gap:12px;width:100%;text-align:left;margin:0 0 14px;padding:12px 14px;border-radius:14px;border:1.5px dashed var(--cta);background:color-mix(in srgb,var(--cta) 9%,transparent);color:inherit;font:inherit;cursor:pointer}
+.lockban .lk{font-size:22px;flex-shrink:0}.lockban b{display:block;font-size:15px}.lockban .sub{display:block;font-size:13px;margin-top:2px}.lockban .lg{display:block;margin-top:6px;font-weight:700;font-size:14px;color:var(--cta)}
+.fc.lockc{opacity:.62;border-style:dashed}
 </style>
 <style>
 [hidden]{display:none!important}
@@ -527,7 +530,7 @@ h2{font-weight:700;letter-spacing:-.01em;line-height:1.25}
   <div class="phone" aria-hidden="true"><div class="phone-in"><img src="img/app-shot.jpg" alt="" width="390" height="780" loading="eager"></div></div>
 </section>
 <section class="trial" id="trial">
-  <div class="trial-t"><span class="trial-k">Prueba gratis</span><h2>3 días con todo, sin pagar nada</h2><p>Las +1.600 preguntas, los simulacros, los resúmenes y tu puesto estimado. Si te convence, elegís tu plan y seguís en la misma cuenta con todo tu progreso.</p></div>
+  <div class="trial-t"><span class="trial-k">Prueba gratis</span><h2>3 días gratis, sin pagar nada</h2><p>Los exámenes 2025 y 2026 completos y comentados, los simulacros, los resúmenes y tu puesto estimado. Si te convence, elegís tu plan y seguís en la misma cuenta con todo tu progreso.</p></div>
   <ol class="trial-s"><li><b>1</b><span><strong>Creá tu cuenta</strong>Con tu correo, en 30 segundos.</span></li><li><b>2</b><span><strong>Tocá "Empezar mis 3 días gratis"</strong>Se activa al instante.</span></li><li><b>3</b><span><strong>Estudiá como el día del examen</strong>Plan diario, simulacro y repasos.</span></li></ol>
   <a class="btn cta big" href="#acceso" data-go="signup">Probar gratis ahora</a>
 </section>
@@ -573,7 +576,7 @@ h2{font-weight:700;letter-spacing:-.01em;line-height:1.25}
 
   <form class="card" id="fCode" hidden>
     <h2 id="cTitle">Activá tu acceso</h2>
-    <div class="trialbox" id="trialBox" hidden><p class="tb-t">Probá AranduMed gratis por 3 días</p><p class="note">Acceso completo: preguntas, simulacros y tu puesto estimado. Sin pagar nada ni dejar tarjeta.</p><div class="row" style="justify-content:flex-start"><button class="btn cta" type="button" id="bTrial">Empezar mis 3 días gratis</button></div><p class="msg" id="tMsg" role="status"></p></div>
+    <div class="trialbox" id="trialBox" hidden><p class="tb-t">Probá AranduMed gratis por 3 días</p><p class="note">Los exámenes 2025 y 2026 completos y comentados, simulacros y tu puesto estimado. Sin pagar nada ni dejar tarjeta.</p><div class="row" style="justify-content:flex-start"><button class="btn cta" type="button" id="bTrial">Empezar mis 3 días gratis</button></div><p class="msg" id="tMsg" role="status"></p></div>
     <div class="cbuy">
     <p class="note" id="cInfo">Ingresá el código que recibiste al comprar el acceso.</p>
     <div class="cplans" id="cPlans"><a href="#" data-buy="Completo"><span>Completo</span><b data-pl="full">Gs. 240.000</b><small>hasta el examen</small><i>Comprar →</i></a><a href="#" data-buy="Mensual"><span>Mensual</span><b data-pl="month">Gs. 100.000</b><small>por mes</small><i>Comprar →</i></a><a href="#" data-buy="2 exámenes"><span>2 exámenes</span><b data-pl="two">Gs. 380.000</b><small>2027 y 2028</small><i>Comprar →</i></a></div>
@@ -690,7 +693,7 @@ function todayKey(){return dkey(new Date())}
 function addDays(k,n){const p=k.split('-');const d=new Date(+p[0],+p[1]-1,+p[2]);d.setDate(d.getDate()+n);return dkey(d)}
 function lsGet(){try{const t=localStorage.getItem('conarem2027:'+(window.__uid||'')+(window.__SMI?':smi':''));return t?JSON.parse(t):null}catch(e){return null}}
 function lsSet(){try{localStorage.setItem('conarem2027:'+(window.__uid||'')+(window.__SMI?':smi':''),JSON.stringify(S))}catch(e){}}
-function persist(now){lsSet();if(!docRef)return;clearTimeout(saveTimer);saveTimer=setTimeout(()=>{docRef.set({ans:S.ans,today:S.today,pref:S.pref||'ALL',flt:S.flt||null,srs:S.srs||{},rate:S.rate||'auto',sims:S.sims||[],simCfg:S.simCfg||null,docs:S.docs||{},resRead:S.resRead||{},v:3}).then(()=>setSync('Progreso guardado en tu cuenta.')).catch(()=>setSync('Progreso guardado solo en este dispositivo.'))},now?0:600)}
+function persist(now){lsSet();try{window.__nudge&&window.__nudge(S)}catch(_){}if(!docRef)return;clearTimeout(saveTimer);saveTimer=setTimeout(()=>{docRef.set({ans:S.ans,today:S.today,pref:S.pref||'ALL',flt:S.flt||null,srs:S.srs||{},rate:S.rate||'auto',sims:S.sims||[],simCfg:S.simCfg||null,docs:S.docs||{},resRead:S.resRead||{},v:3}).then(()=>setSync('Progreso guardado en tu cuenta.')).catch(()=>setSync('Progreso guardado solo en este dispositivo.'))},now?0:600)}
 function setSync(t){document.getElementById('sync').textContent=t}
 
 function ensureToday(){
@@ -948,7 +951,7 @@ function renderPrac(){
   let h='<div class="card"><h2>Armá tu práctica</h2>';
   h+='<div class="fgroup"><strong>Especialidad</strong>'+chipRow('areas',AREAS,'Especialidad')+'</div>';
   h+='<div class="fgroup"><strong>Tema</strong><select id="ftopic"><option value="">Todos los temas</option>'+tops.map(([a,t])=>'<option value="'+a+'|'+esc(t)+'"'+(f.topic===a+'|'+t?' selected':'')+'>'+(areasSel.length>1?ANAME[a]+' · ':'')+esc(t)+' ('+BANK.filter(q=>q.area===a&&q.t===t).length+')</option>').join('')+'</select></div>';
-  h+='<div class="fgroup"><strong>Año del examen</strong>'+chipRow('years',YEARS.map(y=>[y,y?String(y):'Propias']),'Año')+'</div>';
+  h+='<div class="fgroup"><strong>Año del examen</strong>'+chipRow('years',YEARS.map(y=>[y,y?String(y):'Propias']),'Año')+lockChips()+'</div>';
   h+='<div class="fgroup"><strong>Dificultad</strong>'+chipRow('difs',[[1,'Básica'],[2,'Intermedia'],[3,'Difícil']],'Dificultad')+'</div>';
   h+='<div class="fgroup"><strong>Cuáles</strong><div class="chips" role="radiogroup">'+[['all','Todas'],['new','Sin responder'],['wrong','Las que fallé']].map(([k,t])=>'<button class="fc" data-st="'+k+'" aria-pressed="'+(f.status===k)+'">'+t+'</button>').join('')+'</div></div>';
   h+='<label class="planbar"><input type="checkbox" id="fshuf"'+(f.shuffle?' checked':'')+'> Mezclar el orden</label>';
@@ -957,13 +960,14 @@ function renderPrac(){
   v.innerHTML=h;
   v.querySelectorAll('.fc[data-g]').forEach(b=>b.onclick=()=>{const g=b.dataset.g;let val=b.dataset.v;if(g!=='areas')val=+val;const arr=f[g];const i=arr.indexOf(val);if(i<0)arr.push(val);else arr.splice(i,1);persist();render()});
   v.querySelectorAll('.fc[data-st]').forEach(b=>b.onclick=()=>{f.status=b.dataset.st;persist();render()});
+  v.querySelectorAll('[data-lock]').forEach(b=>b.onclick=()=>window.__lockSheet&&window.__lockSheet());
   document.getElementById('ftopic').onchange=e=>{f.topic=e.target.value;persist();render()};
   document.getElementById('fshuf').onchange=e=>{f.shuffle=e.target.checked;persist()};
   document.getElementById('fclear').onclick=()=>{S.flt=null;persist();render()};
   document.getElementById('fgo').onclick=()=>{let ids=list.map(q=>q.id);if(f.shuffle){for(let i=ids.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[ids[i],ids[j]]=[ids[j],ids[i]]}}pIds=ids.slice(0,20);pcur=0;pRes={ok:0,n:0};ppicked=null;render();window.scrollTo({top:0})};
 }
 // ---------- Simulacro con cronómetro ----------
-const SIM_MIX={140:{MI:30,CIR:30,PED:30,GO:30,SP:20},70:{MI:15,CIR:15,PED:15,GO:15,SP:10},30:{MI:6,CIR:6,PED:6,GO:6,SP:6}};
+const SIM_MIX={140:{MI:30,CIR:30,PED:30,GO:30,SP:20},70:{MI:15,CIR:15,PED:15,GO:15,SP:10},30:{MI:6,CIR:6,PED:6,GO:6,SP:6},10:{MI:2,CIR:2,PED:2,GO:2,SP:2}};
 const SIM_SEC=[[60,'1 min por pregunta · como el examen'],[75,'1 min 15 s por pregunta'],[90,'1 min 30 s por pregunta'],[0,'Sin límite de tiempo']];
 const BLK=[['CIR','MI','SP'],['PED','GO']];
 const SYEARS=[...new Set(BANK.filter(q=>!q.p&&q.y).map(q=>q.y))].sort((a,b)=>b-a);
@@ -990,12 +994,12 @@ function simFinish(auto){const r=S.simRun;if(!r)return;
   r.ids.forEach(id=>{const q=BYID[id];if(!q)return;const c=r.ch[id];const a=area[q.area]||(area[q.area]=[0,0]);a[1]++;
     if(c!==undefined){ans++;const good=c===q.a;if(good){ok++;a[0]++}S.ans[id]={c,ok:good,d:t};srsPick(id,good)}});
   const used=(r.used||0)+Math.round((((auto&&r.end)?r.end:Date.now())-r.start)/1000);const lim=(r.lim0||0)+(r.end?Math.round((r.end-r.start)/1000):0);
-  const res={date:t,ts:Date.now(),n:r.ids.length,ok,ans,used:Math.round(used),lim,area,src:(r.cfg.src==='year'?'CONAREM '+r.cfg.year:'Mezcla')+(r.blocks?' · 2 bloques':''),auto:!!(auto||r.autoI),ids:r.ids,ch:r.ch};
+  const res={date:t,ts:Date.now(),n:r.ids.length,ok,ans,used:Math.round(used),lim,area,mini:!!r.cfg.mini,src:r.cfg.mini?'Mini simulacro':(r.cfg.src==='year'?'CONAREM '+r.cfg.year:'Mezcla')+(r.blocks?' · 2 bloques':''),auto:!!(auto||r.autoI),ids:r.ids,ch:r.ch};
   S.sims=(S.sims||[]).concat([res]).slice(-30);S.simRun=null;simRev=null;persist(true);if(view==='sim')render();else{header()}}
 function simQ(q,chosen,mk,i,n){let h='<div class="card"><div class="meta"><span class="chip '+q.area+'">'+ANAME[q.area]+'</span><span class="yr" style="margin-left:auto">'+(i+1)+' de '+n+'</span></div><p class="stem">'+rich(q.q)+'</p><div class="opts">';
   q.o.forEach((o,k)=>{h+='<button class="opt'+(chosen===k?' sel':'')+'" data-i="'+k+'" aria-pressed="'+(chosen===k)+'"><span class="l">'+L[k]+'</span><span>'+rich(o)+'</span></button>'});
   return h+'</div><div class="row" style="justify-content:space-between;align-items:center"><button class="btn ghost" id="sPrev"'+(i?'':' disabled')+'>← Anterior</button><button class="fc" id="sMark" aria-pressed="'+!!mk+'">'+(mk?'★ Marcada':'☆ Marcar para revisar')+'</button><button class="btn" id="sNext">'+(i+1<n?'Siguiente →':'Ir a entregar')+'</button></div></div>'}
-function simRanks(r){if(r.n<100)return '<p class="sub">El puesto estimado se calcula en simulacros de 100 preguntas o más.</p>';const pc=Math.round(100*r.ok/r.n);const k=rankOf(pc);
+function simRanks(r){if(r.mini){const pc=Math.round(100*r.ok/r.n);const k=rankOf(pc);return '<p class="cheer-t">'+(k?'Si mantenés este '+pc+' % en el examen, estarías cerca del <b>puesto '+k+'</b> de 834 plazas.':'Con '+pc+' % todavía estás por debajo del 60 % que hace falta para entrar. Para eso estamos: cada día que practiques vas a subir. 🧉')+'</p><p class="sub">Es una estimación con solo 10 preguntas. Para tu puesto real, hacé un simulacro de 100 o más.</p>'}if(r.n<100)return '<p class="sub">El puesto estimado se calcula en simulacros de 100 preguntas o más.</p>';const pc=Math.round(100*r.ok/r.n);const k=rankOf(pc);
   return k?'<p class="cheer-t">Con este puntaje estarías cerca del <b>puesto '+k+'</b> de 834 plazas <span class="sub">(estimado con los puntajes de 2026)</span>.</p>':'<p class="cheer-t">Todavía por debajo del 60 %, que es lo que hace falta para entrar. Cada simulacro te acerca. 🧉</p>'}
 function renderSim(){const v=document.getElementById('view');const r=S.simRun;
   if(r&&r.pause){const b2=r.blocks[1];const nA=r.blocks[0].filter(id=>r.ch[id]!==undefined).length;
@@ -1108,11 +1112,15 @@ function renderRes(){const v=document.getElementById('view');const R=RESL;
   v.querySelectorAll('[data-ra]').forEach(b=>b.onclick=()=>{resArea=b.dataset.ra;render()});
   v.querySelectorAll('[data-rs]').forEach(b=>b.onclick=()=>{resOpen=b.dataset.rs;render();window.scrollTo({top:0})});
 }
-function render(){header();if(view==='hoy')renderHoy();else if(view==='prog')renderProg();else if(view==='prac')renderPrac();else if(view==='sim')renderSim();else if(view==='guia')renderGuia();else if(view==='res')renderRes();else renderErr()}
+function lockInfo(){const L=window.__LOCK||{};const all=Object.keys(L).map(Number).sort((a,b)=>b-a);const ys=all.filter(Boolean);return {ys,all,prop:all.includes(0),n:all.reduce((t,y)=>t+L[y],0)}}
+function lockChips(){const k=lockInfo();if(!k.ys.length)return '';return '<div class="chips" style="margin-top:8px">'+k.all.map(y=>'<button class="fc lockc" type="button" data-lock="'+y+'">🔒 '+(y?y:'Propias')+'</button>').join('')+'</div>'}
+function lockBanner(){const k=lockInfo();if(!k.ys.length||!(view==='hoy'||view==='sim'||view==='prac')||(view==='sim'&&S.simRun))return;const v=document.getElementById('view');const d=document.createElement('button');d.type='button';d.className='lockban';d.innerHTML='<span class="lk">🔒</span><span><b>+'+k.n.toLocaleString('es-PY')+' preguntas bloqueadas</b><span class="sub">Tu prueba incluye los exámenes 2025 y 2026. Con el plan sumás '+k.ys[k.ys.length-1]+'–'+k.ys[0]+(k.prop?' y las preguntas propias':'')+'. </span><span class="lg">Ver planes →</span></span>';d.onclick=()=>window.__lockSheet&&window.__lockSheet();v.insertBefore(d,v.firstChild)}
+function render(){header();if(view==='hoy')renderHoy();else if(view==='prog')renderProg();else if(view==='prac')renderPrac();else if(view==='sim')renderSim();else if(view==='guia')renderGuia();else if(view==='res')renderRes();else renderErr();lockBanner()}
 function go(v){if(v!==view){simRev=null;if(v!=='res')resOpen=null}view=v;document.getElementById('tab-guia').classList.toggle('on',v==='guia');document.querySelectorAll('nav button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.v===v)));render()}
 document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>go(b.dataset.v));
 document.getElementById('tab-guia').onclick=()=>go('guia');
 
+window.__AM={st:()=>S,simStart,go,ans:()=>S.ans,bank:BANK};
 const saved=lsGet();if(saved&&saved.ans)S=Object.assign({pref:'ALL',flt:null,srs:{}},saved);
 migrateSrs();ensureToday();fixToday();cur=firstOpen();if(S.simRun){view='sim';document.querySelectorAll('nav button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.v==='sim')));startTick()}render();
 setSync('Progreso guardado en este dispositivo.');
@@ -1131,8 +1139,8 @@ setSync('Progreso guardado en este dispositivo.');
       if(rt&&rt.ids){if(!lt||!lt.ids||rt.date>lt.date)S.today=rt;else if(rt.date===lt.date){const seen=new Set(lt.ids);const rv=new Set((lt.rev||[]).concat(rt.rev||[]));S.today={date:lt.date,ids:lt.ids.concat(rt.ids.filter(x=>!seen.has(x))),rev:(lt.rev||rt.rev)?[...rv]:undefined}}}
       migrateSrs();ensureToday();fixToday();lsSet();cur=firstOpen();render();
     }
-    persist();setSync('Progreso guardado en tu cuenta.');
-  }catch(e){setSync('Progreso guardado solo en este dispositivo.')}
+    persist();setSync('Progreso guardado en tu cuenta.');window.__amReady&&window.__amReady();
+  }catch(e){setSync('Progreso guardado solo en este dispositivo.');window.__amReady&&window.__amReady()}
 })();
 };
 </script>
@@ -1144,7 +1152,7 @@ setSync('Progreso guardado en este dispositivo.');
 const $=id=>document.getElementById(id);
 const C=window.CONFIG||{};
 // ---------- Registro de errores (para diagnosticar cuelgues en celulares) ----------
-const VER='2026.11.11-g';let nlog=0;
+const VER='2026.11.11-h';let nlog=0;
 function tok(){try{const k=Object.keys(localStorage).find(k=>/^sb-.*-auth-token$/.test(k));const v=k&&JSON.parse(localStorage.getItem(k));return v&&v.access_token}catch(e){return null}}
 function clog(kind,msg){try{if(!C.SUPABASE_URL||nlog++>25)return;const t=tok();
   fetch(C.SUPABASE_URL+'/rest/v1/client_logs',{method:'POST',keepalive:true,headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:'Bearer '+(t||C.SUPABASE_ANON_KEY),'Content-Type':'application/json',Prefer:'return=minimal'},
@@ -1282,7 +1290,12 @@ function isTrial(p){return !!(p&&p.trial_started&&p.access_until&&(new Date(p.ac
 function toast(t){let el=document.getElementById('toast');if(!el){el=document.createElement('div');el.id='toast';el.setAttribute('role','status');document.body.appendChild(el)}el.textContent=t;el.classList.add('on');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('on'),6000)}
 function trialBar(p){const old=document.getElementById('trialBar');if(old)old.remove();if(!isTrial(p)||p.is_admin)return;const ms=new Date(p.access_until)-Date.now();if(ms<=0)return;const h=Math.ceil(ms/36e5);const left=h>24?Math.ceil(h/24)+' días':h+' h';
   const d=document.createElement('div');d.id='trialBar';d.className='trialbar';const pr=priceNow();d.innerHTML='<span><b>Prueba gratis</b> · te quedan '+left+(pr.promo?'<br><span class="sub">'+pr.promo+': Completo a '+gs(pr.full)+' hasta el '+pr.untilTxt+'</span>':'')+'</span><button class="btn buy" type="button" id="tbGo">Comprar ahora</button>';
-  const hdr=document.querySelector('#app header');hdr.parentNode.insertBefore(d,hdr.nextSibling);document.getElementById('tbGo').onclick=()=>{$('app').hidden=true;$('gate').hidden=false;show('fCode');$('trialBox').hidden=true;$('backApp').hidden=false;$('cInfo').textContent='Elegí tu plan: se abre un chat por Instagram para pagar y después activás acá tu código. Tu progreso se mantiene.';window.scrollTo({top:0})}}
+  const hdr=document.querySelector('#app header');hdr.parentNode.insertBefore(d,hdr.nextSibling);document.getElementById('tbGo').onclick=openPlans}
+function openPlans(){const m=document.getElementById('amModal');if(m)m.remove();$('app').hidden=true;$('gate').hidden=false;show('fCode');$('trialBox').hidden=true;$('backApp').hidden=false;$('cInfo').textContent='Elegí tu plan: se abre un chat por Instagram para pagar y después activás acá tu código. Tu progreso se mantiene.';window.scrollTo({top:0})}
+function lsFlag(k,v){try{if(v===undefined)return localStorage.getItem('am_'+k+'_'+(window.__uid||''));localStorage.setItem('am_'+k+'_'+(window.__uid||''),v)}catch(_){return null}}
+window.__lockSheet=function(){const n=Object.values(window.__LOCK||{}).reduce((a,b)=>a+b,0);const m=modal('<button type="button" class="bs-x" data-x aria-label="Cerrar">×</button><div class="wel-e">🔒</div><span class="bs-k">Plan completo</span><h3>Desbloqueá los 11 exámenes</h3><p class="bs-s">En tu prueba tenés <b>2025 y 2026</b> completos y comentados. Con el plan se suman <b>'+n.toLocaleString('es-PY')+' preguntas</b>: los exámenes de 2016 a 2024 y las preguntas propias, y seguís con todo tu progreso.</p><button type="button" class="btn buy big" id="lkBuy">Ver planes</button><button type="button" class="btn try big" data-x>Seguir con mi prueba</button>','lock');m.querySelector('#lkBuy').onclick=openPlans};
+window.__nudge=function(S){if(!window.__TRIAL||S.simRun||lsFlag('n100'))return;const a=Object.values(S.ans||{});if(a.length<100)return;lsFlag('n100','1');const pc=Math.round(100*a.filter(x=>x.ok).length/a.length);setTimeout(()=>{const m=modal('<button type="button" class="bs-x" data-x aria-label="Cerrar">×</button><div class="wel-e">🔥</div><span class="bs-k">¡Vas con todo!</span><h3>Ya respondiste '+a.length+' preguntas</h3><p class="bs-s">Acertaste el <b>'+pc+' %</b>. Te quedan más de 1.000 preguntas por delante, y si comprás seguís con todo tu progreso y tus repasos.</p><button type="button" class="btn buy big" id="nBuy">Ver planes</button><button type="button" class="btn try big" data-x>Seguir probando</button>','lock');m.querySelector('#nBuy').onclick=openPlans},900)};
+window.__amReady=function(){const AM=window.__AM;if(!window.__TRIAL||!AM||lsFlag('onb'))return;if(Object.keys(AM.ans()).length||AM.st().simRun)return;lsFlag('onb','1');const m=modal('<button type="button" class="bs-x" data-x aria-label="Cerrar">×</button><div class="wel-e">🎯</div><span class="bs-k">Primer paso</span><h3>¿Cómo te iría hoy en el CONAREM?</h3><p class="bs-s">Hacé un <b>mini simulacro de 10 preguntas</b>: 2 de cada especialidad, 1 minuto por pregunta, como el examen. Al terminar ves cuántas acertaste y en qué puesto estarías.</p><button type="button" class="btn buy big" id="onbGo">Empezar mini simulacro</button><button type="button" class="btn try big" data-x>Ahora no, prefiero explorar</button>','lock');m.querySelector('#onbGo').onclick=()=>{m.remove();AM.go('sim');AM.simStart({src:'mix',size:10,sec:60,blk:false,mini:true})}};
 $('outCode').onclick=()=>logout();
 $('fNewPass').onsubmit=async ev=>{ev.preventDefault();const {error}=await sb.auth.updateUser({password:$('newpass').value});if(error){msg('nMsg',tr(error));return}msg('nMsg','Contraseña actualizada.',true);setTimeout(()=>route(),800)};
 
@@ -1401,7 +1414,7 @@ async function route(depth){depth=depth||0;
   const active=prof&&(prof.is_admin||(prof.access_until&&new Date(prof.access_until)>new Date()));
   if(!active){$('gate').hidden=false;$('app').hidden=true;show('fCode');
     const canTrial=prof&&!prof.trial_started;$('trialBox').hidden=!canTrial;$('backApp').hidden=true;$('cTitle').textContent=(prof&&prof.revoked_reason==='dispositivos')?'Acceso retirado':canTrial?'¡Ya casi! Te falta un paso':'Activá tu acceso';
-    if(canTrial){const tt=$('trialBox').querySelector('.tb-t'),tn=$('trialBox').querySelector('.note');tt.textContent='Activá tu prueba gratis con un toque';tn.textContent='3 días con acceso completo a las preguntas, los simulacros y tu puesto estimado. Sin tarjeta.';$('bTrial').textContent='Empezar mis 3 días gratis';}
+    if(canTrial){const tt=$('trialBox').querySelector('.tb-t'),tn=$('trialBox').querySelector('.note');tt.textContent='Activá tu prueba gratis con un toque';tn.textContent='3 días con los exámenes 2025 y 2026 completos y comentados, los simulacros y tu puesto estimado. Sin tarjeta.';$('bTrial').textContent='Empezar mis 3 días gratis';}
     $('cInfo').textContent=(prof&&prof.revoked_reason==='dispositivos')?'Se te retiró el acceso porque tu cuenta se usó en más de 2 dispositivos, que es el máximo permitido por cuenta. Si creés que es un error, escribinos por Instagram (@arandumedpy). Tu progreso sigue guardado.':canTrial?'Planes: tocá uno y te escribimos por Instagram':(prof&&prof.trial_started&&isTrial(prof))?'Terminó tu prueba gratis. ¡Ojalá te haya servido! Elegí un plan y activalo con tu código: tu progreso sigue guardado.':(prof&&prof.access_until)?'Tu acceso venció el '+new Date(prof.access_until).toLocaleDateString('es-PY')+'. Ingresá un código nuevo para renovarlo.':'Ingresá el código que recibiste al comprar el acceso.';return}
   if(started)return;started=true;show('loading');
   const slowT=setTimeout(()=>{if($('loading').hidden||$('gate').hidden)return;clog('stuck_loading',$('loadTxt').textContent);
@@ -1418,6 +1431,8 @@ async function route(depth){depth=depth||0;
     };
     $('gate').hidden=true;$('app').hidden=false;{const tb=document.querySelector('.tbr'),th=$('themeBtn');if(tb&&th&&th.parentNode!==tb)tb.appendChild(th)}
     try{const {data:rs}=await withTimeout(sb.from('summaries').select('id,area,ord,data,published').order('area').order('ord'),10000);window.__RES=(rs||[]).map(r=>Object.assign({},r.data,{id:r.id,area:r.area,draft:!r.published}))}catch(e){window.__RES=[]}
+    window.__TRIAL=isTrial(prof)&&!prof.is_admin;window.__LOCK={};
+    if(window.__TRIAL&&!window.__SMI){try{const {data:lk}=await withTimeout(sb.rpc('trial_locked'),6000);window.__LOCK=(lk&&typeof lk==='object')?lk:{}}catch(e){window.__LOCK={}}}
     clearTimeout(slowT);window.startApp(bank);
     const until=prof.is_admin?'administrador':'acceso hasta el '+new Date(prof.access_until).toLocaleDateString('es-PY',{day:'numeric',month:'long',year:'numeric'});
     trialBar(prof);bankSelUI();
