@@ -514,7 +514,7 @@ h2{font-weight:700;letter-spacing:-.01em;line-height:1.25}
     <p class="hline">Arandu Rape · Tu ruta a una de las <span class="mark">834 plazas</span></p>
     <p class="hsub">+1.600 preguntas comentadas de los exámenes 2016–2026. Practicá todos los días, simulá el examen real y mirá en qué puesto estarías hoy.</p>
     <a class="hpromo" id="heroPromo" href="#planes" hidden><span class="hp-tag">Black Friday</span><span class="hp-cd"><b data-cd="d">00</b>d <b data-cd="h">00</b>h <b data-cd="m">00</b>m <b data-cd="s">00</b>s</span></a>
-    <div class="row hcta" style="justify-content:flex-start"><a class="btn buy big" href="#planes">Comprar ahora</a><a class="btn try big" href="#acceso" data-go="signup">Empezar mis 3 días gratis</a></div>
+    <div class="row hcta" style="justify-content:flex-start"><a class="btn buy big" href="#planes">Comprar ahora</a><a class="btn try big" href="#acceso" data-go="signup">Crear cuenta y probar 3 días gratis</a></div>
     <p class="hlogin">¿Ya tenés cuenta? <a href="#acceso" data-go="login">Ingresá</a></p>
     <ul class="hcheck"><li>Acceso completo</li><li>Sin tarjeta</li><li>Sin compromiso</li></ul>
   </div>
@@ -1138,7 +1138,7 @@ setSync('Progreso guardado en este dispositivo.');
 const $=id=>document.getElementById(id);
 const C=window.CONFIG||{};
 // ---------- Registro de errores (para diagnosticar cuelgues en celulares) ----------
-const VER='2026.11.11-d';let nlog=0;
+const VER='2026.11.11-e';let nlog=0;
 function tok(){try{const k=Object.keys(localStorage).find(k=>/^sb-.*-auth-token$/.test(k));const v=k&&JSON.parse(localStorage.getItem(k));return v&&v.access_token}catch(e){return null}}
 function clog(kind,msg){try{if(!C.SUPABASE_URL||nlog++>25)return;const t=tok();
   fetch(C.SUPABASE_URL+'/rest/v1/client_logs',{method:'POST',keepalive:true,headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:'Bearer '+(t||C.SUPABASE_ANON_KEY),'Content-Type':'application/json',Prefer:'return=minimal'},
