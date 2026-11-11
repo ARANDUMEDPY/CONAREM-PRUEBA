@@ -267,6 +267,8 @@ h2{font-family:var(--display);font-weight:600;font-size:1.2rem;margin:0}
 .lockban{display:flex;align-items:center;gap:12px;width:100%;text-align:left;margin:0 0 14px;padding:12px 14px;border-radius:14px;border:1.5px dashed var(--cta);background:color-mix(in srgb,var(--cta) 9%,transparent);color:inherit;font:inherit;cursor:pointer}
 .lockban .lk{font-size:22px;flex-shrink:0}.lockban b{display:block;font-size:15px}.lockban .sub{display:block;font-size:13px;margin-top:2px}.lockban .lg{display:block;margin-top:6px;font-weight:700;font-size:14px;color:var(--cta)}
 .fc.lockc{opacity:.62;border-style:dashed}
+.cuadban{display:flex;gap:12px;align-items:flex-start;text-align:left;margin:0 0 18px;padding:14px 16px;border-radius:16px;border:1.5px solid var(--cta);background:color-mix(in srgb,var(--cta) 10%,transparent)}
+.cuadban a{text-decoration:none}.cuadban .ce{font-size:28px;line-height:1}.cuadban b{display:block;font-size:16px}.cuadban .sub{display:block;font-size:14px;margin-top:3px}
 </style>
 <style>
 [hidden]{display:none!important}
@@ -518,6 +520,7 @@ h2{font-weight:700;letter-spacing:-.01em;line-height:1.25}
 <a class="loginbtn" href="#acceso" data-go="login">Iniciar sesión</a>
 <section class="hero" id="landing">
   <div class="hero-t">
+    <div class="cuadban" id="cuadBan" hidden><span class="ce">📘</span><span><b>Tu resumen gratis de Cardiología está listo</b><span class="sub">«Cardiología: lo que más pregunta el CONAREM». 31 páginas con las 46 preguntas de 2016 a 2026. Creá tu cuenta gratis en 30 segundos y descargalo al instante.</span><span class="row" style="justify-content:flex-start;margin-top:8px"><a class="btn buy" href="#acceso" data-go="signup">Crear cuenta y descargar</a><a class="btn ghost" href="#acceso" data-go="login">Ya tengo cuenta</a></span></span></div>
     <p class="kick">Banco de preguntas CONAREM · troncales</p>
     <h1 class="logo">Arandu<span class="brandmed">Med</span></h1>
     <p class="hline">Arandu Rape · Tu ruta a una de las <span class="mark">834 plazas</span></p>
@@ -1153,7 +1156,7 @@ setSync('Progreso guardado en este dispositivo.');
 const $=id=>document.getElementById(id);
 const C=window.CONFIG||{};
 // ---------- Registro de errores (para diagnosticar cuelgues en celulares) ----------
-const VER='2026.11.11-i';let nlog=0;
+const VER='2026.11.11-j';let nlog=0;
 function tok(){try{const k=Object.keys(localStorage).find(k=>/^sb-.*-auth-token$/.test(k));const v=k&&JSON.parse(localStorage.getItem(k));return v&&v.access_token}catch(e){return null}}
 function clog(kind,msg){try{if(!C.SUPABASE_URL||nlog++>25)return;const t=tok();
   fetch(C.SUPABASE_URL+'/rest/v1/client_logs',{method:'POST',keepalive:true,headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:'Bearer '+(t||C.SUPABASE_ANON_KEY),'Content-Type':'application/json',Prefer:'return=minimal'},
@@ -1236,8 +1239,12 @@ function trkSrc(){let s=null;try{s=sessionStorage.getItem('am_src')}catch(_){}if
   s=u?(/^(ig|insta)/.test(u)?'instagram':/^(wa|whats)/.test(u)?'whatsapp':/^(fb|face)/.test(u)?'facebook':u.replace(/[^a-z0-9_-]/g,'').slice(0,20)||'otro')
    :/instagram/i.test(ua)||/instagram\.com/.test(r)?'instagram':/FBAN|FBAV|FB_IAB/.test(ua)||/facebook\.com/.test(r)?'facebook':/whatsapp/.test(r)||/WhatsApp/i.test(ua)?'whatsapp':/google\./.test(r)?'google':(r&&!r.includes(location.host))?'otro':'directo';
   try{sessionStorage.setItem('am_src',s)}catch(_){}return s}
+try{if(/[?&](src=cuad|c=mi)/i.test(location.search))localStorage.setItem('am_cuad','mi')}catch(_){}
+const CUAD_URL='cuadernillo/AranduMed-Cuadernillo-MI-Vol1.pdf',CUAD_PRINT='cuadernillo/AranduMed-Cuadernillo-MI-Vol1-imprimir.pdf';
+function cuadPending(){try{return localStorage.getItem('am_cuad')==='mi'}catch(_){return false}}
+function cuadModal(canTrial){if(!cuadPending())return;const m=modal('<button type="button" class="bs-x" data-x aria-label="Cerrar">×</button><div class="wel-e">📘</div><span class="bs-k">Tu resumen gratis</span><h3>Cardiología: lo que más pregunta el CONAREM</h3><p class="bs-s">Las 46 preguntas de 2016 a 2026 en 31 páginas: qué se pregunta, cómo lo pregunta el examen, guías actuales y 21 preguntas reales.</p><a class="btn buy big" id="cuDl" href="'+CUAD_URL+'" download target="_blank" rel="noopener">Descargar (versión celular)</a><a class="btn try big" href="'+CUAD_PRINT+'" download target="_blank" rel="noopener" onclick="trk(\'pdf\',\'print\')">Versión para imprimir</a>'+(canTrial?'<button type="button" class="btn try big" id="cuTr">Y de paso, empezar mis 3 días gratis</button>':'<button type="button" class="btn try big" data-x>Cerrar</button>'),'lock');m.querySelector('#cuDl').onclick=()=>{trk('pdf','mi');try{localStorage.removeItem('am_cuad')}catch(_){}setTimeout(()=>m.remove(),400)};const t=m.querySelector('#cuTr');if(t)t.onclick=()=>{trk('pdf','mi');try{localStorage.removeItem('am_cuad')}catch(_){}window.open(CUAD_URL,'_blank');m.remove();const b=$('bTrial');if(b)b.click()}}
 function trk(ev,info){try{sb.rpc('track',{p_ev:ev,p_src:trkSrc(),p_sid:trkSid(),p_info:info||null}).then(()=>{},()=>{})}catch(_){}}
-trk('visit');
+trk('visit');try{if(cuadPending())$('cuadBan').hidden=false}catch(_){}
 const withTimeout=(p,ms)=>Promise.race([p,new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),ms))]);
 let hiddenAt=0,stalls=0;
 // Si la app estuvo más de 30 minutos en segundo plano, se recarga al volver (el progreso está guardado y las preguntas en el dispositivo)
@@ -1296,7 +1303,7 @@ function openPlans(){const m=document.getElementById('amModal');if(m)m.remove();
 function lsFlag(k,v){try{if(v===undefined)return localStorage.getItem('am_'+k+'_'+(window.__uid||''));localStorage.setItem('am_'+k+'_'+(window.__uid||''),v)}catch(_){return null}}
 window.__lockSheet=function(){const n=Object.values(window.__LOCK||{}).reduce((a,b)=>a+b,0);const m=modal('<button type="button" class="bs-x" data-x aria-label="Cerrar">×</button><div class="wel-e">🔒</div><span class="bs-k">Plan completo</span><h3>Desbloqueá los 11 exámenes</h3><p class="bs-s">En tu prueba tenés <b>2025 y 2026</b> completos y comentados. Con el plan se suman <b>'+n.toLocaleString('es-PY')+' preguntas</b>: los exámenes de 2016 a 2024 y las preguntas propias, y seguís con todo tu progreso.</p><button type="button" class="btn buy big" id="lkBuy">Ver planes</button><button type="button" class="btn try big" data-x>Seguir con mi prueba</button>','lock');m.querySelector('#lkBuy').onclick=openPlans};
 window.__nudge=function(S){if(!window.__TRIAL||S.simRun||lsFlag('n100'))return;const a=Object.values(S.ans||{});if(a.length<100)return;lsFlag('n100','1');const pc=Math.round(100*a.filter(x=>x.ok).length/a.length);setTimeout(()=>{const m=modal('<button type="button" class="bs-x" data-x aria-label="Cerrar">×</button><div class="wel-e">🔥</div><span class="bs-k">¡Vas con todo!</span><h3>Ya respondiste '+a.length+' preguntas</h3><p class="bs-s">Acertaste el <b>'+pc+' %</b>. Te quedan más de 1.000 preguntas por delante, y si comprás seguís con todo tu progreso y tus repasos.</p><button type="button" class="btn buy big" id="nBuy">Ver planes</button><button type="button" class="btn try big" data-x>Seguir probando</button>','lock');m.querySelector('#nBuy').onclick=openPlans},900)};
-window.__amReady=function(){const AM=window.__AM;if(!window.__TRIAL||!AM||lsFlag('onb'))return;if(Object.keys(AM.ans()).length||AM.st().simRun)return;lsFlag('onb','1');const m=modal('<button type="button" class="bs-x" data-x aria-label="Cerrar">×</button><div class="wel-e">🎯</div><span class="bs-k">Primer paso</span><h3>¿Cómo te iría hoy en el CONAREM?</h3><p class="bs-s">Hacé un <b>mini simulacro de 10 preguntas</b>: 2 de cada especialidad, 1 minuto por pregunta, como el examen. Al terminar ves cuántas acertaste y en qué puesto estarías.</p><button type="button" class="btn buy big" id="onbGo">Empezar mini simulacro</button><button type="button" class="btn try big" data-x>Ahora no, prefiero explorar</button>','lock');m.querySelector('#onbGo').onclick=()=>{m.remove();AM.go('sim');AM.simStart({src:'mix',size:10,sec:60,blk:false,mini:true})}};
+window.__amReady=function(){const AM=window.__AM;if(!window.__TRIAL||!AM||lsFlag('onb')||cuadPending()||document.getElementById('amModal'))return;if(Object.keys(AM.ans()).length||AM.st().simRun)return;lsFlag('onb','1');const m=modal('<button type="button" class="bs-x" data-x aria-label="Cerrar">×</button><div class="wel-e">🎯</div><span class="bs-k">Primer paso</span><h3>¿Cómo te iría hoy en el CONAREM?</h3><p class="bs-s">Hacé un <b>mini simulacro de 10 preguntas</b>: 2 de cada especialidad, 1 minuto por pregunta, como el examen. Al terminar ves cuántas acertaste y en qué puesto estarías.</p><button type="button" class="btn buy big" id="onbGo">Empezar mini simulacro</button><button type="button" class="btn try big" data-x>Ahora no, prefiero explorar</button>','lock');m.querySelector('#onbGo').onclick=()=>{m.remove();AM.go('sim');AM.simStart({src:'mix',size:10,sec:60,blk:false,mini:true})}};
 $('outCode').onclick=()=>logout();
 $('fNewPass').onsubmit=async ev=>{ev.preventDefault();const {error}=await sb.auth.updateUser({password:$('newpass').value});if(error){msg('nMsg',tr(error));return}msg('nMsg','Contraseña actualizada.',true);setTimeout(()=>route(),800)};
 
@@ -1413,7 +1420,7 @@ async function route(depth){depth=depth||0;
     prof=r.data}catch(e){recoverSession('profiles '+e.message);return}
   try{window.__uEmail=(prof&&prof.email)||session.user.email||''}catch(_){}
   const active=prof&&(prof.is_admin||(prof.access_until&&new Date(prof.access_until)>new Date()));
-  if(!active){$('gate').hidden=false;$('app').hidden=true;show('fCode');
+  if(!active){$('gate').hidden=false;$('app').hidden=true;show('fCode');setTimeout(()=>cuadModal(prof&&!prof.trial_started),300);
     const canTrial=prof&&!prof.trial_started;$('trialBox').hidden=!canTrial;$('backApp').hidden=true;$('cTitle').textContent=(prof&&prof.revoked_reason==='dispositivos')?'Acceso retirado':canTrial?'¡Ya casi! Te falta un paso':'Activá tu acceso';
     if(canTrial){const tt=$('trialBox').querySelector('.tb-t'),tn=$('trialBox').querySelector('.note');tt.textContent='Activá tu prueba gratis con un toque';tn.textContent='3 días con los exámenes 2025 y 2026 completos y comentados, los simulacros y tu puesto estimado. Sin tarjeta.';$('bTrial').textContent='Empezar mis 3 días gratis';}
     $('cInfo').textContent=(prof&&prof.revoked_reason==='dispositivos')?'Se te retiró el acceso porque tu cuenta se usó en más de 2 dispositivos, que es el máximo permitido por cuenta. Si creés que es un error, escribinos por Instagram (@arandumedpy). Tu progreso sigue guardado.':canTrial?'Planes: tocá uno y te escribimos por Instagram':(prof&&prof.trial_started&&isTrial(prof))?'Terminó tu prueba gratis. ¡Ojalá te haya servido! Elegí un plan y activalo con tu código: tu progreso sigue guardado.':(prof&&prof.access_until)?'Tu acceso venció el '+new Date(prof.access_until).toLocaleDateString('es-PY')+'. Ingresá un código nuevo para renovarlo.':'Ingresá el código que recibiste al comprar el acceso.';return}
@@ -1437,10 +1444,11 @@ async function route(depth){depth=depth||0;
     clearTimeout(slowT);window.startApp(bank);
     const until=prof.is_admin?'administrador':'acceso hasta el '+new Date(prof.access_until).toLocaleDateString('es-PY',{day:'numeric',month:'long',year:'numeric'});
     trialBar(prof);bankSelUI();
-    $('acct').innerHTML='<span class="acctbar">'+prof.email+' · '+until+(prof.is_admin?' · <a href="admin.html">Panel de administración</a>':'')+' <button class="linkbtn" id="logout">Cerrar sesión</button> <a href="legal.html" class="linkbtn" style="text-decoration:underline">Términos y privacidad</a> <span class="sub">v'+VER+'</span>'+installUI()+'</span>';
+    $('acct').innerHTML='<span class="acctbar">'+prof.email+' · '+until+(prof.is_admin?' · <a href="admin.html">Panel de administración</a>':'')+' <a class="linkbtn" style="text-decoration:underline" href="'+CUAD_URL+'" target="_blank" rel="noopener">❤️ Resumen de Cardiología</a> <button class="linkbtn" id="logout">Cerrar sesión</button> <a href="legal.html" class="linkbtn" style="text-decoration:underline">Términos y privacidad</a> <span class="sub">v'+VER+'</span>'+installUI()+'</span>';
     const ib=document.getElementById('installBtn');if(ib)ib.onclick=async()=>{if(!installEvt)return;installEvt.prompt();await installEvt.userChoice;installEvt=null;ib.hidden=true};
     $('logout').onclick=logout;
     if(!prof.is_admin||/[?&]wel/.test(location.search))purchaseUI(prof);
+    setTimeout(()=>cuadModal(false),500);
   }catch(e){clearTimeout(slowT);started=false;clog('load_fail',(e&&e.message)||e);show('fLogin');msg('lMsg',e&&e.message==='timeout'?'La conexión está muy lenta y no se pudieron descargar las preguntas. Revisá tu internet y volvé a entrar.':'No se pudieron cargar las preguntas: '+tr(e))}
 }
 sb.auth.onAuthStateChange((ev)=>{

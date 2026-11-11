@@ -150,7 +150,7 @@ td.nw{white-space:nowrap}.num{font-variant-numeric:tabular-nums}
   </div>
   <div class="card"><div class="ahead"><h2>Uso de la app</h2><span class="hint">últimos 7 días</span></div><div class="kpis" id="kpiU"></div></div>
   <div class="card"><div class="ahead"><h2>Visitas a la página</h2><span class="hint" id="trTot"></span></div><div class="kpis" id="kpiT"></div>
-    <div class="scroll"><table><thead><tr><th>Día</th><th class="num">Visitas</th><th class="num">Instagram</th><th class="num">WhatsApp</th><th class="num">Facebook</th><th class="num">Google</th><th class="num">Directo</th><th class="num">Otros</th><th class="num">«Comprar»</th><th class="num">Cuentas</th><th class="num">Pruebas</th></tr></thead><tbody id="trBody"></tbody></table></div>
+    <div class="scroll"><table><thead><tr><th>Día</th><th class="num">Visitas</th><th class="num">Instagram</th><th class="num">WhatsApp</th><th class="num">Facebook</th><th class="num">Google</th><th class="num">Directo</th><th class="num">Otros</th><th class="num">Cuadernillo</th><th class="num">«Comprar»</th><th class="num">Cuentas</th><th class="num">Pruebas</th><th class="num">PDF bajados</th></tr></thead><tbody id="trBody"></tbody></table></div>
     <p class="hint">Visitas = navegadores distintos por día (sin datos personales). «Comprar» = toques en «Comprar ahora». Se cuenta desde el 11/11/2026.</p></div>
 </section>
 
@@ -318,10 +318,10 @@ async function loadAll(){
 var TR=[];
 function renderTraffic(){const sum=k=>TR.reduce((a,r)=>a+(r[k]||0),0),last7=TR.slice(0,7),s7=k=>last7.reduce((a,r)=>a+(r[k]||0),0);
   const k=(v,l)=>'<div class="kpi"><b>'+v+'</b><span>'+l+'</span></div>';
-  $('kpiT').innerHTML=k(s7('visitas'),'visitas (7 días)')+k(s7('instagram'),'desde Instagram')+k(s7('compras'),'toques en «Comprar»')+k(s7('registros'),'cuentas nuevas');
+  $('kpiT').innerHTML=k(s7('visitas'),'visitas (7 días)')+k(s7('instagram'),'desde Instagram')+k(s7('compras'),'toques en «Comprar»')+k(s7('registros'),'cuentas nuevas')+k(s7('descargas'),'cuadernillos bajados');
   $('trTot').textContent=sum('visitas')+' visitas en 14 días';
   const fd=d=>{const x=new Date(d+'T12:00:00');return x.toLocaleDateString('es-PY',{weekday:'short',day:'numeric',month:'numeric'})};
-  $('trBody').innerHTML=TR.map(r=>'<tr><td class="nw">'+fd(r.day)+'</td>'+['visitas','instagram','whatsapp','facebook','google','directo','otros','compras','registros','pruebas'].map(c=>'<td class="num">'+(r[c]||'·')+'</td>').join('')+'</tr>').join('')}
+  $('trBody').innerHTML=TR.map(r=>'<tr><td class="nw">'+fd(r.day)+'</td>'+['visitas','instagram','whatsapp','facebook','google','directo','otros','cuadernillo','compras','registros','pruebas','descargas'].map(c=>'<td class="num">'+(r[c]||'·')+'</td>').join('')+'</tr>').join('')}
 function renderRes(){try{renderTraffic()}catch(e){}const now=Date.now(),day=864e5;const U=P.filter(p=>!p.is_admin);
   const cnt=k=>U.filter(p=>status(p)===k).length;
   const today=new Date();today.setHours(0,0,0,0);
