@@ -282,6 +282,7 @@ body{letter-spacing:-.005em}
 <style>
 body:has(#gate:not([hidden])){padding-top:54px!important}
 .tbr .themebtn{position:static;width:40px;height:40px;padding:0;font-size:1rem;display:inline-flex;align-items:center;justify-content:center}.tbr .themebtn .tl{display:none}
+.loginbtn{position:absolute;top:10px;left:10px;z-index:30;font:700 .85rem var(--body);color:var(--accent);background:var(--surface);border:1.5px solid var(--accent);border-radius:999px;padding:6px 14px;text-decoration:none}.loginbtn:hover{background:var(--accent-soft)}.gate:not(.lp) .loginbtn{display:none}
 .themebtn{position:absolute;top:10px;right:10px;z-index:30;font:600 .82rem var(--body);color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 12px;cursor:pointer}
 .trialbox{background:var(--accent-soft);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}.tb-t{margin:0;font-family:var(--display);font-weight:800;font-size:1.1rem}
 .trialbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:var(--accent-soft);border:1px solid var(--accent);border-radius:12px;padding:10px 14px;font-size:.94rem}.trialbar .btn{padding:8px 14px;min-height:40px}
@@ -507,6 +508,7 @@ h2{font-weight:700;letter-spacing:-.01em;line-height:1.25}
 
 <button class="themebtn" id="themeBtn" type="button"></button>
 <div class="gate" id="gate">
+<a class="loginbtn" href="#acceso" data-go="login">Iniciar sesión</a>
 <section class="hero" id="landing">
   <div class="hero-t">
     <p class="kick">Banco de preguntas CONAREM · troncales</p>
@@ -1138,7 +1140,7 @@ setSync('Progreso guardado en este dispositivo.');
 const $=id=>document.getElementById(id);
 const C=window.CONFIG||{};
 // ---------- Registro de errores (para diagnosticar cuelgues en celulares) ----------
-const VER='2026.11.11-e';let nlog=0;
+const VER='2026.11.11-f';let nlog=0;
 function tok(){try{const k=Object.keys(localStorage).find(k=>/^sb-.*-auth-token$/.test(k));const v=k&&JSON.parse(localStorage.getItem(k));return v&&v.access_token}catch(e){return null}}
 function clog(kind,msg){try{if(!C.SUPABASE_URL||nlog++>25)return;const t=tok();
   fetch(C.SUPABASE_URL+'/rest/v1/client_logs',{method:'POST',keepalive:true,headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:'Bearer '+(t||C.SUPABASE_ANON_KEY),'Content-Type':'application/json',Prefer:'return=minimal'},
