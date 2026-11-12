@@ -293,6 +293,17 @@ body{letter-spacing:-.005em}
 <style>
 body:has(#gate:not([hidden])){padding-top:54px!important}
 .tbr .themebtn{position:static;width:40px;height:40px;padding:0;font-size:1rem;display:inline-flex;align-items:center;justify-content:center}.tbr .themebtn .tl{display:none}
+.rhero{position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);align-items:center;gap:10px;padding:34px 34px 26px;border-radius:26px;color:#fff;background:radial-gradient(900px 600px at 85% 0%,#1F4C80 0%,#173E6B 45%,#0F2A4A 100%)}
+.rh-k{display:inline-block;background:#FFC94A;color:#0D1321;font-weight:900;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;border-radius:99px;padding:5px 12px}
+.rh-t{min-width:0}.rhero h2{font-family:var(--display);font-weight:800;font-size:clamp(2rem,4.6vw,3rem);line-height:1.02;letter-spacing:-.02em;margin:14px 0 10px;color:#fff}.rhero h2 em{font-style:normal;color:#FF8A50}
+.rhero p{margin:0;color:#DCE4F0;max-width:30em}.rh-bf{display:inline-block;margin-top:16px;font-weight:800;color:#FFC94A}
+.rh-free{display:flex;width:max-content;max-width:100%;margin-top:14px;padding:10px 16px;border-radius:14px;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,201,74,.55);color:#fff;font-weight:700;text-decoration:none}.rh-free:hover{background:rgba(255,255,255,.16)}
+.rh-img{width:100%;height:auto;display:block;margin:-6px -10px -18px 0}
+.resl .shop-bf{display:none}
+.resl .shop-pk{background:linear-gradient(160deg,#173E6B,#0F2A4A);border-color:rgba(255,255,255,.12);color:#fff;padding:20px}.resl .shop-pk .note{color:#C9D3E2}.resl .shop-pk .shop-p{font-size:1.5rem;color:#fff}.resl .shop-pk .shop-p s{color:rgba(255,255,255,.5)}
+.resl .shop-pk.best{border:2px solid #FFC94A}.resl .shop-pk.best .tag{background:#FFC94A;color:#0D1321}.resl .shop-pk.top{border-color:rgba(255,138,80,.7)}.resl .shop-pk .tag.t2{background:#FF8A50;color:#0D1321}.resl .pk-save{color:#FFC94A}
+.resl .shop-pk .btn.ghost{color:#fff;border-color:rgba(255,255,255,.5)}
+@media (max-width:820px){.rhero{grid-template-columns:minmax(0,1fr);padding:26px 20px 10px}.rh-free{width:auto;display:block}.rh-img{margin:6px auto -10px;max-width:440px}}
 .lnav{position:sticky;top:8px;z-index:25;align-self:center;display:flex;gap:4px;margin:34px auto 0;padding:5px;border-radius:999px;background:color-mix(in srgb,var(--surface) 88%,transparent);border:1px solid var(--line);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 10px 30px -14px rgba(0,0,0,.5)}
 .lnav a{color:var(--muted);text-decoration:none;font-weight:700;font-size:.92rem;padding:9px 18px;border-radius:999px;white-space:nowrap}.lnav a.on{background:var(--accent);color:#0B1214}.lnav a:not(.on):hover{color:var(--fg)}
 .gate:not(.lp) .lnav{display:none}
@@ -583,11 +594,8 @@ h2{font-weight:700;letter-spacing:-.01em;line-height:1.25}
   <p class="note" style="text-align:center">Cómo funciona: creás tu cuenta, probás 3 días gratis y, si te gusta, elegís tu plan y activás tu código. Tu progreso queda guardado.</p>
 </section>
 <section class="resl" id="resumenes">
-  <p class="blk-k">Resúmenes en PDF · Edición 2027</p>
-  <h2 class="sec-t">Medicina Interna en 10 resúmenes</h2>
   <div class="cuadban" id="cuadBan" hidden><span class="ce">📘</span><span><b>Tu resumen gratis de Cardiología está listo</b><span class="sub">«Cardiología: lo que más pregunta el CONAREM». 31 páginas con las 46 preguntas de 2016 a 2026. Creá tu cuenta gratis en 30 segundos y descargalo al instante.</span><span class="row" style="justify-content:flex-start;margin-top:8px"><a class="btn buy" href="#acceso" data-go="signup">Crear cuenta y descargar</a><a class="btn ghost" href="#acceso" data-go="login">Ya tengo cuenta</a></span></span></div>
-  <a class="freecard" href="cuadernillo/AranduMed-Cuadernillo-MI-Vol1.pdf" target="_blank" rel="noopener" onclick="try{trk('pdf','resl')}catch(e){}"><span class="ce">❤️</span><span><b>Empezá gratis con Cardiología</b><small>El resumen completo, sin registrarte.</small></span><span class="fc-go">Descargar PDF →</span></a>
-  <p class="resl-s">La colección completa de <b>Medicina Interna</b>: 10 subespecialidades armadas con las preguntas reales del CONAREM 2016–2026: qué preguntan, cómo lo preguntan, qué dicen las guías actuales y preguntas para practicar. Cada año sale una <b>edición nueva</b> con las preguntas del último examen. <b>Leé gratis las primeras páginas.</b></p>
+  <div class="rhero"><div class="rh-t"><span class="rh-k">Nuevo · Edición 2027</span><h2>Medicina Interna<br><em>en 10 resúmenes</em></h2><p>Basados en las 312 preguntas del CONAREM 2016–2026. Leé gratis las primeras páginas de cada uno.</p><span class="rh-bf" id="rhBf">Black Friday −25 % · hasta el 30/11</span><a class="rh-free" href="cuadernillo/AranduMed-Cuadernillo-MI-Vol1.pdf" target="_blank" rel="noopener" onclick="try{trk('pdf','resl')}catch(e){}">❤️ Cardiología gratis · Descargar PDF →</a></div><img class="rh-img" src="resumenes/abanico.webp" alt="Portadas de los resúmenes de Medicina Interna" width="800" height="512" loading="lazy"></div>
   <div id="reslShop"></div>
   <h3 class="resl-h">Próximamente</h3>
   <div class="soon"><div class="soon-i"><span><b>Pediatría</b><small>Volumen completo</small></span><button class="btn ghost sm" type="button" data-notify="Pediatría">Avisame</button></div><div class="soon-i"><span><b>Cirugía</b><small>Volumen completo</small></span><button class="btn ghost sm" type="button" data-notify="Cirugía">Avisame</button></div><div class="soon-i"><span><b>Gineco-Obstetricia</b><small>Volumen completo</small></span><button class="btn ghost sm" type="button" data-notify="Gineco-Obstetricia">Avisame</button></div><div class="soon-i"><span><b>Salud Pública</b><small>Volumen completo</small></span><button class="btn ghost sm" type="button" data-notify="Salud Pública">Avisame</button></div></div>
@@ -1192,7 +1200,7 @@ setSync('Progreso guardado en este dispositivo.');
 const $=id=>document.getElementById(id);
 const C=window.CONFIG||{};
 // ---------- Registro de errores (para diagnosticar cuelgues en celulares) ----------
-const VER='2026.11.12-i';let nlog=0;
+const VER='2026.11.12-j';let nlog=0;
 function tok(){try{const k=Object.keys(localStorage).find(k=>/^sb-.*-auth-token$/.test(k));const v=k&&JSON.parse(localStorage.getItem(k));return v&&v.access_token}catch(e){return null}}
 function clog(kind,msg){try{if(!C.SUPABASE_URL||nlog++>25)return;const t=tok();
   fetch(C.SUPABASE_URL+'/rest/v1/client_logs',{method:'POST',keepalive:true,headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:'Bearer '+(t||C.SUPABASE_ANON_KEY),'Content-Type':'application/json',Prefer:'return=minimal'},
@@ -1317,6 +1325,7 @@ function cuadPending(){try{return localStorage.getItem('am_cuad')==='mi'}catch(_
 function cuadModal(canTrial){if(!cuadPending())return;const m=modal('<button type="button" class="bs-x" data-x aria-label="Cerrar">×</button><div class="wel-e">📘</div><span class="bs-k">Tu resumen gratis</span><h3>Cardiología: lo que más pregunta el CONAREM</h3><p class="bs-s">Las 46 preguntas de 2016 a 2026 en 31 páginas: qué se pregunta, cómo lo pregunta el examen, guías actuales y 21 preguntas reales.</p><a class="btn buy big" id="cuDl" href="'+CUAD_URL+'" download target="_blank" rel="noopener">Descargar (versión celular)</a><a class="btn try big" href="'+CUAD_PRINT+'" download target="_blank" rel="noopener" onclick="trk(\'pdf\',\'print\')">Versión para imprimir</a>'+(canTrial?'<button type="button" class="btn try big" id="cuTr">Y de paso, empezar mis 3 días gratis</button>':'<button type="button" class="btn try big" data-x>Cerrar</button>'),'lock');m.querySelector('#cuDl').onclick=()=>{trk('pdf','mi');try{localStorage.removeItem('am_cuad')}catch(_){}setTimeout(()=>m.remove(),400)};const t=m.querySelector('#cuTr');if(t)t.onclick=()=>{trk('pdf','mi');try{localStorage.removeItem('am_cuad')}catch(_){}window.open(CUAD_URL,'_blank');m.remove();const b=$('bTrial');if(b)b.click()}}
 function trk(ev,info){try{sb.rpc('track',{p_ev:ev,p_src:trkSrc(),p_sid:trkSid(),p_info:info||null}).then(()=>{},()=>{})}catch(_){}}
 trk('visit');try{if(cuadPending()){$('cuadBan').hidden=false;setTimeout(()=>{try{$('resumenes').scrollIntoView({behavior:'smooth'})}catch(_){}},600)}}catch(_){}
+try{if(Date.now()>new Date(SHOP_PROMO.until).getTime())$('rhBf').hidden=true}catch(_){}
 try{const nv=[...document.querySelectorAll('#lnav a')],rs=$('resumenes');const upd=()=>{const r=rs.getBoundingClientRect();const on=r.height&&r.top<innerHeight*0.45?'resumenes':'landing';nv.forEach(a=>a.classList.toggle('on',a.dataset.nv===on))};addEventListener('scroll',upd,{passive:true});addEventListener('resize',upd);upd();setTimeout(upd,900)}catch(_){}
 const withTimeout=(p,ms)=>Promise.race([p,new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),ms))]);
 let hiddenAt=0,stalls=0;
