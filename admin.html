@@ -155,7 +155,7 @@ td.nw{white-space:nowrap}.num{font-variant-numeric:tabular-nums}
 </section>
 
 <section class="view" id="v-att">
-  <div class="card"><div class="ahead"><h2>Se registraron y no activaron nada</h2><span class="cnt" id="cA1"></span></div><p class="hint">Con "Activar semana gratis" les das la prueba (7 días mientras queden lugares de la promo, si no 3). "Copiar mensaje" te deja el texto listo para Instagram.</p><div class="att" id="att1"></div></div>
+  <div class="card"><div class="ahead"><h2>Se registraron y no activaron nada</h2><span class="cnt" id="cA1"></span></div><p class="hint">Con «Activar prueba (3 días)» les das la prueba gratis. «Copiar mensaje» te deja el texto listo para Instagram.</p><div class="att" id="att1"></div></div>
   <div class="card"><div class="ahead"><h2>La prueba les vence en las próximas 24 h</h2><span class="cnt" id="cA2"></span></div><p class="hint">El mejor momento para ofrecerles el plan.</p><div class="att" id="att2"></div></div>
   <div class="card"><div class="ahead"><h2>Terminó la prueba y no compraron</h2><span class="cnt" id="cA3"></span></div><p class="hint">De los últimos 30 días. Su progreso sigue guardado.</p><div class="att" id="att3"></div></div>
 </section>
@@ -294,10 +294,12 @@ function goTab(t){document.querySelector('.tabs button[data-t="'+t+'"]').click()
 /* ---------- Datos ---------- */
 let P=[],ST={},DS={},SALES=[],REPS=[],PROMO_LEFT=null;
 function isTrial(p){return !!(p&&p.trial_started&&p.access_until&&(new Date(p.access_until)-new Date(p.trial_started))<=7*864e5+36e5)}
-function status(p){if(p.is_admin)return'admin';const now=new Date();if(!p.access_until)return'sin';const on=new Date(p.access_until)>now;const paid=SALES.some(s=>s.email.toLowerCase()===(p.email||'').toLowerCase());
-  if(on)return paid?'pago':isTrial(p)?'prueba':'manual';return paid?'vencido':isTrial(p)?'pvencida':'vencido'}
-const SLAB={pago:'Pago',prueba:'En prueba',manual:'Acceso manual',vencido:'Vencido',pvencida:'Prueba vencida',sin:'Sin activar',admin:'Admin'};
-const SCLS={pago:'t-pago',prueba:'t-prueba',manual:'t-manual',vencido:'t-vencido',pvencida:'t-vencido',sin:'t-sin',admin:'t-admin'};
+function paidBy(p){const e=(p.email||'').toLowerCase();return SALES.some(s=>s.email.toLowerCase()===e&&s.plan!=='Regalo +1 semana')}
+function status(p){if(p.is_admin)return'admin';const now=new Date();if(!p.access_until&&!p.trial_started)return'sin';const on=p.access_until&&new Date(p.access_until)>now;const paid=paidBy(p);
+  if(on)return paid?'pago':isTrial(p)?'prueba':'regalo';if(p.revoked_reason)return'bloq';return paid?'expago':isTrial(p)?'pvencida':'rvencido'}
+const SLAB={pago:'💳 Pago',prueba:'⏳ En prueba',regalo:'🎁 Regalo o código',expago:'Ex cliente',pvencida:'Prueba terminada',rvencido:'Regalo vencido',bloq:'🚫 Bloqueado',sin:'📝 Sin activar',admin:'Admin'};
+const SCLS={pago:'t-pago',prueba:'t-prueba',regalo:'t-manual',expago:'t-vencido',pvencida:'t-vencido',rvencido:'t-vencido',bloq:'t-vencido',sin:'t-sin',admin:'t-admin'};
+const GRP={pago:['pago'],prueba:['prueba'],regalo:['regalo'],recup:['pvencida','rvencido','expago'],sin:['sin'],bloq:['bloq']};
 const tag=s=>'<span class="tag '+SCLS[s]+'">'+SLAB[s]+'</span>';
 
 async function loadAll(){
@@ -330,7 +332,7 @@ function renderRes(){try{renderTraffic()}catch(e){}const now=Date.now(),day=864e
   const trials=U.filter(p=>p.trial_started).length;const buyers=new Set(SALES.map(s=>s.email.toLowerCase()));
   const conv=trials?Math.round(100*U.filter(p=>p.trial_started&&buyers.has(p.email.toLowerCase())).length/trials):0;
   const K=[['ac',U.length,'registrados','+'+new7+' en 7 días'],['vi',newToday,'nuevos hoy',''],['ac',cnt('prueba'),'en prueba gratis',''],['ok',cnt('pago'),'pagos activos',''],
-    ['co',cnt('sin'),'sin activar','para recuperar'],['bd',cnt('pvencida')+cnt('vencido'),'vencidos',''],['co',PROMO_LEFT==null?'—':PROMO_LEFT+'/50','lugares de la promo','semana gratis'],
+    ['vi',cnt('regalo'),'con regalo o código',''],['co',cnt('pvencida')+cnt('rvencido')+cnt('expago'),'para recuperar','prueba o regalo vencido'],['bd',cnt('sin'),'sin activar','nunca entraron'],
     ['ok',gs(mSales.reduce((a,s)=>a+(s.amount||0),0)),'ingresos del mes',mSales.length+' venta'+(mSales.length===1?'':'s')],['vi',conv+'%','de prueba a pago','']];
   $('kpiA').innerHTML=K.map(([c,v,l,i])=>'<div class="kpi '+c+'"><b'+(String(v).length>9?' style="font-size:1.3rem"':'')+'>'+v+'</b><span>'+l+'</span>'+(i?'<i>'+i+'</i>':'')+'</div>').join('');
   const days=[];for(let i=13;i>=0;i--){const d=new Date(today.getTime()-i*day);days.push(d)}
@@ -346,16 +348,16 @@ function renderRes(){try{renderTraffic()}catch(e){}const now=Date.now(),day=864e
 const hm=m=>{m=m||0;return m<60?m+' min':Math.floor(m/60)+' h '+String(m%60).padStart(2,'0')};
 
 /* ---------- Atención ---------- */
-function mNoAct(){return '¡Hola! 👋 Vimos que te registraste en AranduMed. Te falta un solo paso: entrá con tu correo en '+SITE+' y tocá «Empezar mi semana gratis». Tenés acceso completo a las +1.600 preguntas, los simulacros y tu puesto estimado. ¡Cualquier duda, escribinos por acá!'}
+function mNoAct(){return '¡Hola! 👋 Vimos que te registraste en AranduMed. Te falta un solo paso: entrá con tu correo en '+SITE+' y tocá «Empezar mis 3 días gratis». Tenés los exámenes 2025 y 2026 completos y comentados, los simulacros y tu puesto estimado. ¡Cualquier duda, escribinos por acá!'}
 function mEnds(){const p=priceNow();return '¡Hola! ⏳ Tu prueba gratis de AranduMed termina mañana. Si te está sirviendo, podés seguir con el plan Completo (hasta el examen) a '+gs(p.full)+(p.note?' — '+p.note:'')+', y mantenés todo tu progreso. ¿Te paso los datos para pagar?'}
 function mEnded(){const p=priceNow();return '¡Hola! Terminó tu prueba en AranduMed. ¿Qué te pareció? 🙌 Tu progreso sigue guardado: si querés seguir, el plan Completo está a '+gs(p.full)+(p.note?' ('+p.note+')':'')+'. ¿Te paso los datos para pagar?'}
 function aiRow(p,sub,acts){return '<div class="ai"><div><div class="em">'+esc(p.email)+'</div><div class="sub">'+sub+'</div></div><div class="acts">'+acts+'</div></div>'}
 function renderAtt(){const now=Date.now();const U=P.filter(p=>!p.is_admin);
-  const a1=U.filter(p=>!p.access_until);
+  const a1=U.filter(p=>status(p)==='sin');
   const a2=U.filter(p=>status(p)==='prueba'&&new Date(p.access_until)-now<24*36e5);
   const a3=U.filter(p=>status(p)==='pvencida'&&now-new Date(p.access_until)<30*864e5);
   const ago=d=>{const h=Math.round((now-new Date(d))/36e5);return h<1?'hace minutos':h<24?'hace '+h+' h':'hace '+Math.round(h/24)+' días'};
-  $('att1').innerHTML=a1.map(p=>aiRow(p,'Se registró '+ago(p.created_at),'<button class="btn sm" data-trial="'+esc(p.email)+'">Activar semana gratis</button><button class="btn gh sm" data-cm="1">Copiar mensaje</button>')).join('')||'<div class="empty">Nadie pendiente 🎉</div>';
+  $('att1').innerHTML=a1.map(p=>aiRow(p,'Se registró '+ago(p.created_at),'<button class="btn sm" data-trial="'+esc(p.email)+'">Activar prueba (3 días)</button><button class="btn gh sm" data-cm="1">Copiar mensaje</button>')).join('')||'<div class="empty">Nadie pendiente 🎉</div>';
   $('att2').innerHTML=a2.map(p=>{const s=ST[p.email.toLowerCase()];return aiRow(p,'Vence '+fdl(p.access_until)+' · '+(s?s.answered:0)+' preguntas respondidas','<button class="btn gh sm" data-cm="2">Copiar mensaje</button><button class="btn sm" data-sell="'+esc(p.email)+'">Vender</button>')}).join('')||'<div class="empty">Ninguna prueba vence en las próximas 24 h.</div>';
   $('att3').innerHTML=a3.map(p=>{const s=ST[p.email.toLowerCase()];return aiRow(p,'Venció el '+fd(p.access_until)+' · '+(s?s.answered:0)+' preguntas respondidas','<button class="btn gh sm" data-cm="3">Copiar mensaje</button><button class="btn sm" data-sell="'+esc(p.email)+'">Vender</button>')}).join('')||'<div class="empty">Nadie en esta lista.</div>';
   [['cA1',a1],['cA2',a2],['cA3',a3]].forEach(([id,a])=>{$(id).textContent=a.length;$(id).classList.toggle('z',!a.length)});
@@ -390,16 +392,16 @@ $('sGo').onclick=async()=>{const em=$('sEmail').value.trim();const plan=$('sPlan
 
 /* ---------- Usuarios ---------- */
 let UF='all',UQ='';
-const UFS=[['all','Todos'],['sin','Sin activar'],['prueba','En prueba'],['pago','Pagos'],['venc','Vencidos'],['idle','Inactivos 3+ días']];
+const UFS=[['all','Todos'],['pago','💳 Pagos'],['prueba','⏳ En prueba'],['regalo','🎁 Regalo o código'],['recup','🎯 Para recuperar'],['sin','📝 Sin activar'],['bloq','🚫 Bloqueados'],['idle','😴 Con acceso, inactivos 3+ días']];
 const pct=(ok,n)=>n?Math.round(100*ok/n):null;
 const pcs=p=>p==null?'—':'<span class="pc '+(p>=70?'g':p>=60?'m':'b')+'">'+p+'%</span>';
 function daysAgo(d){if(!d)return null;const t=new Date();t.setHours(0,0,0,0);return Math.round((t-new Date(d+'T00:00:00'))/864e5)}
 function weak(a){let w=null;for(const k in a){const x=a[k];if(x.n<5)continue;const p=100*x.ok/x.n;if(!w||p<w.p)w={k,p:Math.round(p)}}return w}
 function uMatch(p){const s=status(p);const st=ST[p.email.toLowerCase()];
   if(UQ&&!(p.email||'').toLowerCase().includes(UQ))return false;
-  if(UF==='all')return true;if(UF==='venc')return s==='vencido'||s==='pvencida';
+  if(UF==='all')return true;if(GRP[UF])return GRP[UF].includes(s);
   if(UF==='idle'){const on=p.access_until&&new Date(p.access_until)>new Date();const d=st?daysAgo(st.last_active):null;return on&&!p.is_admin&&(d==null||d>=3)}
-  if(UF==='pago')return s==='pago'||s==='manual';return s===UF}
+  return s===UF}
 function renderUsers(){
   $('uF').innerHTML=UFS.map(([k,l])=>'<button data-f="'+k+'" aria-pressed="'+(UF===k)+'">'+l+'<b>'+P.filter(p=>{const o=UF;UF=k;const r=uMatch(p);UF=o;return r}).length+'</b></button>').join('');
   $('uF').querySelectorAll('button').forEach(b=>b.onclick=()=>{UF=b.dataset.f;renderUsers()});

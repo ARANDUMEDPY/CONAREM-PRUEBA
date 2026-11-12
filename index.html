@@ -269,6 +269,8 @@ h2{font-family:var(--display);font-weight:600;font-size:1.2rem;margin:0}
 .fc.lockc{opacity:.62;border-style:dashed}
 .cuadban{display:flex;gap:12px;align-items:flex-start;text-align:left;margin:0 0 18px;padding:14px 16px;border-radius:16px;border:1.5px solid var(--cta);background:color-mix(in srgb,var(--cta) 10%,transparent)}
 .cuadban a{text-decoration:none}.cuadban .ce{font-size:28px;line-height:1}.cuadban b{display:block;font-size:16px}.cuadban .sub{display:block;font-size:14px;margin-top:3px}
+.cuadgate{display:flex;align-items:center;gap:12px;margin:14px 0 4px;padding:12px 14px;border-radius:14px;border:1.5px solid var(--cta);background:color-mix(in srgb,var(--cta) 9%,transparent);color:inherit;text-decoration:none;text-align:left}
+.cuadgate .ce{font-size:22px}.cuadgate b{display:block;font-size:15px}.cuadgate .sub{display:block;font-size:13px}.cuadgate .cg{display:block;margin-top:5px;font-weight:700;font-size:14px;color:var(--cta)}
 </style>
 <style>
 [hidden]{display:none!important}
@@ -589,6 +591,7 @@ h2{font-weight:700;letter-spacing:-.01em;line-height:1.25}
     <div class="crow"><input id="code" required maxlength="20" autocomplete="off" placeholder="EJ: AB12CD34"><button class="btn cta" type="submit">Activar</button></div>
     <p class="msg" id="cMsg" role="status"></p>
     </div>
+    <a class="cuadgate" id="cuadGate" href="cuadernillo/AranduMed-Cuadernillo-MI-Vol1.pdf" target="_blank" rel="noopener"><span class="ce">❤️</span><span><b>Resumen gratis de Cardiología</b><span class="sub">Lo que más pregunta el CONAREM</span><span class="cg">Descargar el PDF →</span></span></a>
     <div class="acctbar"><button class="linkbtn" type="button" id="backApp" hidden>← Volver a la app</button><button class="linkbtn" type="button" id="outCode">Cerrar sesión</button></div>
   </form>
 
@@ -1156,7 +1159,7 @@ setSync('Progreso guardado en este dispositivo.');
 const $=id=>document.getElementById(id);
 const C=window.CONFIG||{};
 // ---------- Registro de errores (para diagnosticar cuelgues en celulares) ----------
-const VER='2026.11.11-k';let nlog=0;
+const VER='2026.11.11-l';let nlog=0;
 function tok(){try{const k=Object.keys(localStorage).find(k=>/^sb-.*-auth-token$/.test(k));const v=k&&JSON.parse(localStorage.getItem(k));return v&&v.access_token}catch(e){return null}}
 function clog(kind,msg){try{if(!C.SUPABASE_URL||nlog++>25)return;const t=tok();
   fetch(C.SUPABASE_URL+'/rest/v1/client_logs',{method:'POST',keepalive:true,headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:'Bearer '+(t||C.SUPABASE_ANON_KEY),'Content-Type':'application/json',Prefer:'return=minimal'},
@@ -1305,6 +1308,7 @@ window.__lockSheet=function(){const n=Object.values(window.__LOCK||{}).reduce((a
 window.__nudge=function(S){if(!window.__TRIAL||S.simRun||lsFlag('n100'))return;const a=Object.values(S.ans||{});if(a.length<100)return;lsFlag('n100','1');const pc=Math.round(100*a.filter(x=>x.ok).length/a.length);setTimeout(()=>{const m=modal('<button type="button" class="bs-x" data-x aria-label="Cerrar">×</button><div class="wel-e">🔥</div><span class="bs-k">¡Vas con todo!</span><h3>Ya respondiste '+a.length+' preguntas</h3><p class="bs-s">Acertaste el <b>'+pc+' %</b>. Te quedan más de 1.000 preguntas por delante, y si comprás seguís con todo tu progreso y tus repasos.</p><button type="button" class="btn buy big" id="nBuy">Ver planes</button><button type="button" class="btn try big" data-x>Seguir probando</button>','lock');m.querySelector('#nBuy').onclick=openPlans},900)};
 window.__amReady=function(){const AM=window.__AM;if(!window.__TRIAL||!AM||lsFlag('onb')||cuadPending()||document.getElementById('amModal'))return;if(Object.keys(AM.ans()).length||AM.st().simRun)return;lsFlag('onb','1');const m=modal('<button type="button" class="bs-x" data-x aria-label="Cerrar">×</button><div class="wel-e">🎯</div><span class="bs-k">Primer paso</span><h3>¿Cómo te iría hoy en el CONAREM?</h3><p class="bs-s">Hacé un <b>mini simulacro de 10 preguntas</b>: 2 de cada especialidad, 1 minuto por pregunta, como el examen. Al terminar ves cuántas acertaste y en qué puesto estarías.</p><button type="button" class="btn buy big" id="onbGo">Empezar mini simulacro</button><button type="button" class="btn try big" data-x>Ahora no, prefiero explorar</button>','lock');m.querySelector('#onbGo').onclick=()=>{m.remove();AM.go('sim');AM.simStart({src:'mix',size:10,sec:60,blk:false,mini:true})}};
 $('outCode').onclick=()=>logout();
+$('cuadGate').addEventListener('click',()=>{trk('pdf','gate');try{localStorage.removeItem('am_cuad')}catch(_){}});
 $('fNewPass').onsubmit=async ev=>{ev.preventDefault();const {error}=await sb.auth.updateUser({password:$('newpass').value});if(error){msg('nMsg',tr(error));return}msg('nMsg','Contraseña actualizada.',true);setTimeout(()=>route(),800)};
 
 // ---- Banco guardado en el dispositivo (IndexedDB): solo se descarga si hay cambios ----
