@@ -270,7 +270,7 @@ const EXAM_END='2027-03-06T23:59:59-03:00';
 // Fin del plan 2 exámenes: examen CONAREM 2028 (estimado).
 const EXAM_END2='2028-03-04T23:59:59-03:00';
 // Precios vigentes (mismos que la app)
-const PRICES=[{until:'2026-12-01T00:00:00-03:00',full:240000,month:100000,two:380000,year:450000,note:'precio Black Friday hasta el 30 de noviembre'},{until:'2027-02-01T00:00:00-03:00',full:280000,month:110000,two:420000,year:450000,note:'precio de verano hasta el 31 de enero'},{until:'2099-01-01T00:00:00-03:00',full:320000,month:120000,two:480000,year:450000,note:''}];
+const PRICES=[{until:'2026-12-01T00:00:00-03:00',full:240000,month:100000,two:380000,year:450000,note:'precio Black Friday hasta el 30 de noviembre'},{until:'2027-02-01T00:00:00-03:00',full:280000,month:110000,two:420000,year:450000,note:'precio de verano hasta el 31 de enero'},{until:'2027-03-07T00:00:00-03:00',full:320000,month:120000,two:480000,year:450000,note:''},{until:'2099-01-01T00:00:00-03:00',full:320000,month:150000,two:480000,year:450000,note:''}];
 const priceNow=()=>PRICES.find(p=>Date.now()<new Date(p.until).getTime())||PRICES[PRICES.length-1];
 const gs=n=>'Gs. '+Number(n||0).toLocaleString('es-PY').replace(/,/g,'.');
 const fd=d=>d?new Date(d).toLocaleDateString('es-PY',{day:'2-digit',month:'2-digit',year:'numeric'}):'—';

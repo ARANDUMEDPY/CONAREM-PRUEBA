@@ -1160,7 +1160,7 @@ setSync('Progreso guardado en este dispositivo.');
 const $=id=>document.getElementById(id);
 const C=window.CONFIG||{};
 // ---------- Registro de errores (para diagnosticar cuelgues en celulares) ----------
-const VER='2026.11.11-m';let nlog=0;
+const VER='2026.11.12-a';let nlog=0;
 function tok(){try{const k=Object.keys(localStorage).find(k=>/^sb-.*-auth-token$/.test(k));const v=k&&JSON.parse(localStorage.getItem(k));return v&&v.access_token}catch(e){return null}}
 function clog(kind,msg){try{if(!C.SUPABASE_URL||nlog++>25)return;const t=tok();
   fetch(C.SUPABASE_URL+'/rest/v1/client_logs',{method:'POST',keepalive:true,headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:'Bearer '+(t||C.SUPABASE_ANON_KEY),'Content-Type':'application/json',Prefer:'return=minimal'},
@@ -1183,7 +1183,8 @@ if(Date.now()>=new Date(NEWPLANS).getTime()||/[?&]plans=new/.test(location.searc
 const PRICES=[
  {until:'2026-12-01T00:00:00-03:00',full:240000,month:100000,two:380000,year:450000,promo:'Black Friday',untilTxt:'30 de noviembre',note:'Black Friday: precio especial hasta el 30 de noviembre.'},
  {until:'2027-02-01T00:00:00-03:00',full:280000,month:110000,two:420000,year:450000,promo:'',untilTxt:'31 de enero',note:'Precio de verano: el 1 de febrero sube a Gs. 320.000.'},
- {until:'2099-01-01T00:00:00-03:00',full:320000,month:120000,two:480000,year:450000,promo:'',untilTxt:'',note:''}];
+ {until:'2027-03-07T00:00:00-03:00',full:320000,month:120000,two:480000,year:450000,promo:'',untilTxt:'',note:''},
+ {until:'2099-01-01T00:00:00-03:00',full:320000,month:150000,two:480000,year:450000,promo:'',untilTxt:'',note:''}];
 const LIST={full:320000,month:120000};
 function gs(n){return 'Gs. '+n.toLocaleString('es-PY').replace(/,/g,'.')}
 function priceNow(){const now=Date.now();return PRICES.find(p=>now<new Date(p.until).getTime())||PRICES[PRICES.length-1]}
