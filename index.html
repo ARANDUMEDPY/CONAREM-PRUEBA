@@ -311,6 +311,28 @@ body:has(#gate:not([hidden])){padding-top:54px!important}
 @media (max-width:640px){.doors{grid-template-columns:1fr 1fr;gap:10px}.door{min-height:168px;padding:14px 12px 12px;border-radius:18px;gap:5px}.door b{position:relative;z-index:1;font-size:1rem;max-width:100%;text-shadow:0 2px 10px rgba(0,0,0,.35)}.doors{margin-top:30px!important}.dr-k{font-size:.58rem;padding:3px 8px}.dr-s{display:none}.dr-go{font-size:.8rem;padding:6px 10px;border-radius:10px}.dr-ph{width:70px;bottom:-46px;right:-8px;border-radius:16px;padding:4px}.dr-ph img{border-radius:12px}.dr-fan{width:130px;right:-40px;bottom:-4px}.lnav{display:none!important}}
 .gate[data-view] .rhero{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 18px;padding:18px 22px}.gate[data-view] .rhero .rh-k,.gate[data-view] .rhero h2,.gate[data-view] .rh-img{display:none}.gate[data-view] .rh-t{display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px;width:100%}.gate[data-view] .rhero p{flex:1 1 280px}.gate[data-view] .rh-bf,.gate[data-view] .rh-free{margin-top:0}
 .cu-off{display:block;margin:10px auto 0;color:var(--muted);font-size:.88rem;text-decoration:underline}
+/* Banco: estética flyer */
+.gate.lp .hero{position:relative;overflow:hidden;border-radius:28px;padding:40px 42px;color:#fff;background:radial-gradient(900px 620px at 88% 0%,#2BB3A3 0%,#137A70 46%,#0B3B38 100%);box-shadow:0 30px 60px -34px rgba(0,0,0,.7)}
+.gate.lp .hero .kick{display:inline-block;background:#FFC94A;color:#0D1321;border-radius:99px;padding:5px 12px;font-weight:900;font-size:.72rem;letter-spacing:.08em;margin:0 0 12px}
+.gate.lp .hero h1.logo{color:#fff;font-size:clamp(1.9rem,3.6vw,2.5rem);margin:0}.gate.lp .hero .brandmed{color:#FFC94A}
+.gate.lp .hero .hline{color:#fff}.gate.lp .hero .mark{color:#FFC94A;background:none;-webkit-text-fill-color:#FFC94A}
+.gate.lp .hero .hsub{color:rgba(255,255,255,.86)}.gate.lp .hero .hlogin{color:rgba(255,255,255,.8)}.gate.lp .hero .hlogin a{color:#FFC94A}
+.gate.lp .hero .hcheck li{color:rgba(255,255,255,.92)}.gate.lp .hero .hcheck li::before{background:#FFC94A}
+.gate.lp .hero .btn.try{color:#fff;border-color:rgba(255,255,255,.55);background:rgba(255,255,255,.08)}
+.gate.lp #heroPromo{display:none!important}
+.gate.lp .hero .phone{transform:rotate(6deg) scale(.9);margin:-30px 0 -90px}
+.gate.lp .bf{flex-direction:row;flex-wrap:wrap;justify-content:center;align-items:center;padding:12px 18px;gap:6px 18px;background:rgba(255,201,74,.08);border-color:rgba(255,201,74,.5)}
+.gate.lp .bf-cd{gap:6px}.gate.lp .bf-cd b{font-size:1.15rem;min-width:0;padding:4px 8px}.gate.lp .bf-cd span{font-size:.62rem}.gate.lp .bf-foot{flex-basis:100%;margin:0;font-size:.8rem}
+.gate.lp .ptry{display:none}.gate.lp .plans>.note:last-child{display:none}
+.gate.lp .plan{background:linear-gradient(160deg,#164A45,#0D2A28);border-color:rgba(255,255,255,.1);color:#fff}
+.gate.lp .plan h3{color:#fff}.gate.lp .plan .pdesc,.gate.lp .plan li{color:#CFE2DF}.gate.lp .plan .price b{color:#fff}.gate.lp .plan .price span,.gate.lp .plan .pnext{color:#9FC1BC}
+.gate.lp .plan li svg{stroke:#FFC94A}.gate.lp .plan.best{border:2px solid #FFC94A;box-shadow:0 20px 44px -26px rgba(255,201,74,.55)}.gate.lp .plan.best .tag{background:#FFC94A;color:#0D1321}
+.gate.lp .plan .btn.ghost{color:#fff;border-color:rgba(255,255,255,.5)}
+.gate.lp .feat{background:linear-gradient(160deg,#164A45,#0D2A28);border-color:rgba(255,255,255,.08);color:#fff}.gate.lp .feat h3{color:#fff}.gate.lp .feat p{color:#CFE2DF}.gate.lp .feat svg{stroke:#FFC94A}
+@media (max-width:640px){.gate.lp .hero{padding:26px 20px;border-radius:22px}.gate.lp .hero .hsub{font-size:.95rem}
+.gate.lp .plan{padding:18px 18px}.gate.lp .plan:not(.best) ul{display:none}.gate.lp .plan:not(.best) .pdesc{margin-bottom:0}.gate.lp .plan-g{gap:14px}
+.gate.lp .trial-t>p{display:none}.gate.lp .trial-s li span{font-size:.88rem}
+.gate.lp .feats{grid-template-columns:1fr 1fr!important;gap:10px}.gate.lp .feat{display:flex!important;flex-direction:column;gap:6px;padding:14px}.gate.lp .feat p{display:none}.gate.lp .feat h3{font-size:.92rem;line-height:1.2}}
 .shop-d,.soon-d{border:1px solid var(--line);border-radius:16px;background:var(--surface)}.shop-d>summary,.soon-d>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 20px}.shop-d>summary::-webkit-details-marker,.soon-d>summary::-webkit-details-marker{display:none}
 .shop-d summary b,.soon-d summary b{display:block;font-size:1.02rem}.shop-d summary small,.soon-d summary small{color:var(--muted)}.shop-d summary i,.soon-d summary i{font-style:normal;font-size:1.4rem;transition:transform .2s}.shop-d[open] summary i,.soon-d[open] summary i{transform:rotate(180deg)}
 .shop-d>.shop-g{padding:0 14px 14px}.soon-d>.soon{padding:0 14px 14px}#shopD{scroll-margin-top:80px}
@@ -581,7 +603,7 @@ h2{font-weight:700;letter-spacing:-.01em;line-height:1.25}
 <nav class="lnav" id="lnav" aria-label="Secciones de la página"><a href="#landing" data-nv="landing" class="on">🧠 Banco de preguntas</a><a href="#resumenes" data-nv="resumenes">📘 Resúmenes PDF</a></nav>
 <section class="hero" id="landing">
   <div class="hero-t">
-    <p class="kick">Banco de preguntas CONAREM · troncales</p>
+    <p class="kick">CONAREM · Troncales</p>
     <h1 class="logo">Arandu<span class="brandmed">Med</span></h1>
     <p class="hline">Arandu Rape · Tu ruta a una de las <span class="mark">834 plazas</span></p>
     <p class="hsub">+1.600 preguntas comentadas de los exámenes 2016–2026. Practicá todos los días, simulá el examen real y mirá en qué puesto estarías hoy.</p>
@@ -604,7 +626,7 @@ h2{font-weight:700;letter-spacing:-.01em;line-height:1.25}
   <div class="plan-g">
     <div class="plan best"><span class="tag">Recomendado</span><h3>Completo</h3><p class="pdesc">Todo, hasta el día del examen.</p><p class="price"><span class="pnext" data-pl="fullList"></span><b data-pl="full">Gs. 240.000</b></p><ul><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Las +1.600 preguntas</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Simulacros ilimitados</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Plan diario y repasos</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Puesto estimado</li></ul><a class="btn buy" href="#" data-buy="Completo">Comprar ahora</a><a class="ptry" href="#acceso" data-go="signup" data-plan="Completo">o probá 3 días gratis</a></div>
     <div class="plan"><h3>Mensual</h3><p class="pdesc">Para empezar o si ya falta poco.</p><p class="price"><span class="pnext" data-pl="monthList"></span><b data-pl="month">Gs. 100.000</b><span>/mes</span></p><ul><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Todo lo del plan Completo</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>30 días de acceso</li></ul><a class="btn ghost" href="#" data-buy="Mensual">Comprar ahora</a><a class="ptry" href="#acceso" data-go="signup" data-plan="Mensual">o probá 3 días gratis</a></div>
-    <div class="plan"><h3>2 exámenes</h3><p class="pdesc">CONAREM 2027 y 2028. Ideal si querés empezar a estudiar por adelantado, o si este año no entrás a la plaza que querés: seguís sin pagar de nuevo.</p><p class="price"><span class="pnext" data-pl="twoList"></span><b data-pl="two">Gs. 380.000</b></p><ul><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Todo lo del plan Completo</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Acceso hasta el examen 2028</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Empezá con tiempo, sin apuro</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Dos intentos con el mismo pago</li></ul><a class="btn ghost" href="#" data-buy="2 exámenes">Comprar ahora</a><a class="ptry" href="#acceso" data-go="signup" data-plan="2 exámenes">o probá 3 días gratis</a></div>
+    <div class="plan"><h3>2 exámenes</h3><p class="pdesc">CONAREM 2027 y 2028. Si este año no entrás a la plaza que querés, seguís sin pagar de nuevo.</p><p class="price"><span class="pnext" data-pl="twoList"></span><b data-pl="two">Gs. 380.000</b></p><ul><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Todo lo del plan Completo</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Acceso hasta el examen 2028</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Empezá con tiempo, sin apuro</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Dos intentos con el mismo pago</li></ul><a class="btn ghost" href="#" data-buy="2 exámenes">Comprar ahora</a><a class="ptry" href="#acceso" data-go="signup" data-plan="2 exámenes">o probá 3 días gratis</a></div>
   </div>
   <p class="note" style="text-align:center">Cómo funciona: creás tu cuenta, probás 3 días gratis y, si te gusta, elegís tu plan y activás tu código. Tu progreso queda guardado.</p>
 </section>
@@ -1225,7 +1247,7 @@ setSync('Progreso guardado en este dispositivo.');
 const $=id=>document.getElementById(id);
 const C=window.CONFIG||{};
 // ---------- Registro de errores (para diagnosticar cuelgues en celulares) ----------
-const VER='2026.11.12-n';let nlog=0;
+const VER='2026.11.12-o';let nlog=0;
 function tok(){try{const k=Object.keys(localStorage).find(k=>/^sb-.*-auth-token$/.test(k));const v=k&&JSON.parse(localStorage.getItem(k));return v&&v.access_token}catch(e){return null}}
 function clog(kind,msg){try{if(!C.SUPABASE_URL||nlog++>25)return;const t=tok();
   fetch(C.SUPABASE_URL+'/rest/v1/client_logs',{method:'POST',keepalive:true,headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:'Bearer '+(t||C.SUPABASE_ANON_KEY),'Content-Type':'application/json',Prefer:'return=minimal'},
