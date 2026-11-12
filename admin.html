@@ -168,7 +168,7 @@ td.nw{white-space:nowrap}.num{font-variant-numeric:tabular-nums}
       <div style="display:flex;flex-direction:column;gap:12px">
         <label>Correo de la cuenta<input id="sEmail" type="email" list="emList" placeholder="correo@ejemplo.com"><datalist id="emList"></datalist></label>
         <div class="row">
-          <label>Plan<select id="sPlan"><option value="year">Combo Anual (12 meses, mínimo hasta el examen 2028)</option><option value="full">Intensivo / Completo (hasta el examen 2027)</option><option value="month">Mensual (+30 días)</option><option value="two">2 exámenes (2027 y 2028)</option><option value="week">Regalo: +1 semana</option></select></label>
+          <label>Plan<select id="sPlan"><option value="full">Completo (hasta el examen 2027)</option><option value="month">Mensual (+30 días)</option><option value="two">2 exámenes (2027 y 2028)</option><option value="year">Combo Anual (12 meses, mínimo hasta el examen 2028)</option><option value="week">Regalo: +1 semana</option></select></label>
           <label>Monto (Gs.)<input id="sAmt" type="number" min="0" step="1000"></label>
         </div>
         <div class="row">
@@ -371,7 +371,7 @@ function renderAtt(){const now=Date.now();const U=P.filter(p=>!p.is_admin);
 /* ---------- Vender ---------- */
 function untilFor(plan,cur){const base=cur&&new Date(cur)>new Date()?new Date(cur):new Date();let u;
   if(plan==='year'){u=new Date(base.getTime()+365*864e5);const e2=new Date(EXAM_END2);if(u<e2)u=e2}else if(plan==='full'){u=new Date(EXAM_END);if(base>u)u=new Date(base.getTime()+30*864e5)}else if(plan==='two'){u=new Date(EXAM_END2);if(base>u)u=new Date(base.getTime()+30*864e5)}else if(plan==='week')u=new Date(base.getTime()+7*864e5);else u=new Date(base.getTime()+30*864e5);return u}
-const PLN={year:'Combo Anual',full:new Date()>=new Date('2026-12-01T00:00:00-03:00')?'Intensivo':'Completo',month:'Mensual',two:'2 exámenes',week:'Regalo +1 semana'};
+const PLN={year:'Combo Anual',full:'Completo',month:'Mensual',two:'2 exámenes',week:'Regalo +1 semana'};
 function sellMsg(plan,u){return '¡Listo! ✅ Ya tenés activo el plan '+PLN[plan]+' de AranduMed hasta el '+fdl(u)+'.\n\nEntrá con tu correo en '+SITE+' y seguí estudiando: no necesitás código. Tu progreso de la prueba se mantiene.\n\n¡Gracias por confiar en nosotros y éxitos con el estudio! 💚\nEquipo AranduMed'}
 function renderSellPrev(){const em=$('sEmail').value.trim().toLowerCase();const plan=$('sPlan').value;const p=P.find(x=>(x.email||'').toLowerCase()===em);
   const pr=priceNow();if(!$('sAmt').dataset.touched)$('sAmt').value=plan==='week'?0:pr[plan];
