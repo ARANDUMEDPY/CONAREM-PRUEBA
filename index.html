@@ -293,6 +293,15 @@ body{letter-spacing:-.005em}
 <style>
 body:has(#gate:not([hidden])){padding-top:54px!important}
 .tbr .themebtn{position:static;width:40px;height:40px;padding:0;font-size:1rem;display:inline-flex;align-items:center;justify-content:center}.tbr .themebtn .tl{display:none}
+.lnav{position:sticky;top:8px;z-index:25;align-self:center;display:flex;gap:4px;margin:34px auto 0;padding:5px;border-radius:999px;background:color-mix(in srgb,var(--surface) 88%,transparent);border:1px solid var(--line);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 10px 30px -14px rgba(0,0,0,.5)}
+.lnav a{color:var(--muted);text-decoration:none;font-weight:700;font-size:.92rem;padding:9px 18px;border-radius:999px;white-space:nowrap}.lnav a.on{background:var(--accent);color:#0B1214}.lnav a:not(.on):hover{color:var(--fg)}
+.gate:not(.lp) .lnav{display:none}
+#landing,#resumenes,#planes{scroll-margin-top:76px}
+.blk-k{text-align:center;margin:0 0 -6px;font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.resl{border-top:1px solid var(--line);padding-top:44px}
+.freecard{display:flex;align-items:center;gap:14px;max-width:640px;width:100%;margin:4px auto 6px;padding:14px 18px;border-radius:16px;border:1.5px solid var(--cta);background:color-mix(in srgb,var(--cta) 9%,transparent);color:inherit;text-decoration:none}.freecard .ce{font-size:26px}.freecard b{display:block}.freecard small{color:var(--muted)}.freecard .fc-go{margin-left:auto;font-weight:800;color:var(--cta);white-space:nowrap}
+.resl .cuadban{max-width:640px;margin:0 auto}
+@media (max-width:520px){.lnav a{font-size:.82rem;padding:8px 12px}.freecard{flex-wrap:wrap}.freecard .fc-go{margin-left:40px}}
 .loginbtn{position:absolute;top:10px;left:10px;z-index:30;font:700 .85rem var(--body);color:var(--accent);background:var(--surface);border:1.5px solid var(--accent);border-radius:999px;padding:6px 14px;text-decoration:none}.loginbtn:hover{background:var(--accent-soft)}.gate:not(.lp) .loginbtn{display:none}
 .themebtn{position:absolute;top:10px;right:10px;z-index:30;font:600 .82rem var(--body);color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 12px;cursor:pointer}
 .trialbox{background:var(--accent-soft);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}.tb-t{margin:0;font-family:var(--display);font-weight:800;font-size:1.1rem}
@@ -532,9 +541,9 @@ h2{font-weight:700;letter-spacing:-.01em;line-height:1.25}
 <button class="themebtn" id="themeBtn" type="button"></button>
 <div class="gate" id="gate">
 <a class="loginbtn" href="#acceso" data-go="login">Iniciar sesión</a>
+<nav class="lnav" id="lnav" aria-label="Secciones de la página"><a href="#landing" data-nv="landing" class="on">🧠 Banco de preguntas</a><a href="#resumenes" data-nv="resumenes">📘 Resúmenes PDF</a></nav>
 <section class="hero" id="landing">
   <div class="hero-t">
-    <div class="cuadban" id="cuadBan" hidden><span class="ce">📘</span><span><b>Tu resumen gratis de Cardiología está listo</b><span class="sub">«Cardiología: lo que más pregunta el CONAREM». 31 páginas con las 46 preguntas de 2016 a 2026. Creá tu cuenta gratis en 30 segundos y descargalo al instante.</span><span class="row" style="justify-content:flex-start;margin-top:8px"><a class="btn buy" href="#acceso" data-go="signup">Crear cuenta y descargar</a><a class="btn ghost" href="#acceso" data-go="login">Ya tengo cuenta</a></span></span></div>
     <p class="kick">Banco de preguntas CONAREM · troncales</p>
     <h1 class="logo">Arandu<span class="brandmed">Med</span></h1>
     <p class="hline">Arandu Rape · Tu ruta a una de las <span class="mark">834 plazas</span></p>
@@ -542,7 +551,6 @@ h2{font-weight:700;letter-spacing:-.01em;line-height:1.25}
     <a class="hpromo" id="heroPromo" href="#planes" hidden><span class="hp-tag">Black Friday</span><span class="hp-cd"><b data-cd="d">00</b>d <b data-cd="h">00</b>h <b data-cd="m">00</b>m <b data-cd="s">00</b>s</span></a>
     <div class="row hcta" style="justify-content:flex-start"><a class="btn buy big" href="#planes">Comprar ahora</a><a class="btn try big" href="#acceso" data-go="signup">Crear cuenta y probar 3 días gratis</a></div>
     <p class="hlogin">¿Ya tenés cuenta? <a href="#acceso" data-go="login">Ingresá</a></p>
-    <a class="hres" href="#resumenes">📘 <b>Nuevo:</b> resúmenes de Medicina Interna · Cardiología gratis →</a>
     <ul class="hcheck"><li>Acceso completo</li><li>Sin tarjeta</li><li>Sin compromiso</li></ul>
   </div>
   <div class="phone" aria-hidden="true"><div class="phone-in"><img src="img/app-shot.jpg" alt="" width="390" height="780" loading="eager"></div></div>
@@ -558,15 +566,9 @@ h2{font-weight:700;letter-spacing:-.01em;line-height:1.25}
   <div class="feat"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4h4"/><path d="M12 8.5v4l2.5 1.5"/></svg><h3>Plan diario y repaso espaciado</h3><p>Se adapta a los días que faltan. Tus errores vuelven justo antes de que los olvides.</p></div>
   <div class="feat"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0z"/><path d="M7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4"/></svg><h3>Tu puesto estimado</h3><p>Según tu porcentaje, dónde quedarías entre las 834 plazas, con los puntajes reales de 2026.</p></div>
 </section>
-<section class="resl" id="resumenes">
-  <h2 class="sec-t">Resúmenes en PDF</h2>
-  <p class="resl-s">La colección completa de <b>Medicina Interna</b>: 10 subespecialidades armadas con las preguntas reales del CONAREM 2016–2026: qué preguntan, cómo lo preguntan, qué dicen las guías actuales y preguntas para practicar. Cada año sale una <b>edición nueva</b> con las preguntas del último examen. <b>Leé gratis las primeras páginas.</b></p>
-  <div id="reslShop"></div>
-  <h3 class="resl-h">Próximamente</h3>
-  <div class="soon"><div class="soon-i"><span><b>Pediatría</b><small>Volumen completo</small></span><button class="btn ghost sm" type="button" data-notify="Pediatría">Avisame</button></div><div class="soon-i"><span><b>Cirugía</b><small>Volumen completo</small></span><button class="btn ghost sm" type="button" data-notify="Cirugía">Avisame</button></div><div class="soon-i"><span><b>Gineco-Obstetricia</b><small>Volumen completo</small></span><button class="btn ghost sm" type="button" data-notify="Gineco-Obstetricia">Avisame</button></div><div class="soon-i"><span><b>Salud Pública</b><small>Volumen completo</small></span><button class="btn ghost sm" type="button" data-notify="Salud Pública">Avisame</button></div></div>
-</section>
 <section class="plans" id="planes">
-  <h2 class="sec-t">Planes</h2>
+  <p class="blk-k">Banco de preguntas</p>
+  <h2 class="sec-t">Planes del banco</h2>
   <div class="bf" id="promoBox" hidden>
     <div class="bf-head"><span class="bf-tag">Black Friday</span><span class="bf-sub" id="promoT"></span></div>
     <div class="bf-cd" role="timer" aria-label="Tiempo que falta para que termine la promoción"><div><b data-cd="d">00</b><span>días</span></div><i>:</i><div><b data-cd="h">00</b><span>horas</span></div><i>:</i><div><b data-cd="m">00</b><span>min</span></div><i>:</i><div><b data-cd="s">00</b><span>seg</span></div></div>
@@ -579,6 +581,16 @@ h2{font-weight:700;letter-spacing:-.01em;line-height:1.25}
     <div class="plan"><h3>2 exámenes</h3><p class="pdesc">CONAREM 2027 y 2028. Ideal si querés empezar a estudiar por adelantado, o si este año no entrás a la plaza que querés: seguís sin pagar de nuevo.</p><p class="price"><span class="pnext" data-pl="twoList"></span><b data-pl="two">Gs. 380.000</b></p><ul><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Todo lo del plan Completo</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Acceso hasta el examen 2028</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Empezá con tiempo, sin apuro</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Dos intentos con el mismo pago</li></ul><a class="btn ghost" href="#" data-buy="2 exámenes">Comprar ahora</a><a class="ptry" href="#acceso" data-go="signup" data-plan="2 exámenes">o probá 3 días gratis</a></div>
   </div>
   <p class="note" style="text-align:center">Cómo funciona: creás tu cuenta, probás 3 días gratis y, si te gusta, elegís tu plan y activás tu código. Tu progreso queda guardado.</p>
+</section>
+<section class="resl" id="resumenes">
+  <p class="blk-k">Resúmenes en PDF · Edición 2027</p>
+  <h2 class="sec-t">Medicina Interna en 10 resúmenes</h2>
+  <div class="cuadban" id="cuadBan" hidden><span class="ce">📘</span><span><b>Tu resumen gratis de Cardiología está listo</b><span class="sub">«Cardiología: lo que más pregunta el CONAREM». 31 páginas con las 46 preguntas de 2016 a 2026. Creá tu cuenta gratis en 30 segundos y descargalo al instante.</span><span class="row" style="justify-content:flex-start;margin-top:8px"><a class="btn buy" href="#acceso" data-go="signup">Crear cuenta y descargar</a><a class="btn ghost" href="#acceso" data-go="login">Ya tengo cuenta</a></span></span></div>
+  <a class="freecard" href="cuadernillo/AranduMed-Cuadernillo-MI-Vol1.pdf" target="_blank" rel="noopener" onclick="try{trk('pdf','resl')}catch(e){}"><span class="ce">❤️</span><span><b>Empezá gratis con Cardiología</b><small>El resumen completo, sin registrarte.</small></span><span class="fc-go">Descargar PDF →</span></a>
+  <p class="resl-s">La colección completa de <b>Medicina Interna</b>: 10 subespecialidades armadas con las preguntas reales del CONAREM 2016–2026: qué preguntan, cómo lo preguntan, qué dicen las guías actuales y preguntas para practicar. Cada año sale una <b>edición nueva</b> con las preguntas del último examen. <b>Leé gratis las primeras páginas.</b></p>
+  <div id="reslShop"></div>
+  <h3 class="resl-h">Próximamente</h3>
+  <div class="soon"><div class="soon-i"><span><b>Pediatría</b><small>Volumen completo</small></span><button class="btn ghost sm" type="button" data-notify="Pediatría">Avisame</button></div><div class="soon-i"><span><b>Cirugía</b><small>Volumen completo</small></span><button class="btn ghost sm" type="button" data-notify="Cirugía">Avisame</button></div><div class="soon-i"><span><b>Gineco-Obstetricia</b><small>Volumen completo</small></span><button class="btn ghost sm" type="button" data-notify="Gineco-Obstetricia">Avisame</button></div><div class="soon-i"><span><b>Salud Pública</b><small>Volumen completo</small></span><button class="btn ghost sm" type="button" data-notify="Salud Pública">Avisame</button></div></div>
 </section>
   <div class="brand" id="miniBrand"><h1 class="logo">Arandu<span class="brandmed">Med</span></h1><p class="slogan">Arandu Rape · Tu ruta a una de las 834 plazas</p></div>
   <div class="formwrap" id="acceso">
@@ -1180,7 +1192,7 @@ setSync('Progreso guardado en este dispositivo.');
 const $=id=>document.getElementById(id);
 const C=window.CONFIG||{};
 // ---------- Registro de errores (para diagnosticar cuelgues en celulares) ----------
-const VER='2026.11.12-h';let nlog=0;
+const VER='2026.11.12-i';let nlog=0;
 function tok(){try{const k=Object.keys(localStorage).find(k=>/^sb-.*-auth-token$/.test(k));const v=k&&JSON.parse(localStorage.getItem(k));return v&&v.access_token}catch(e){return null}}
 function clog(kind,msg){try{if(!C.SUPABASE_URL||nlog++>25)return;const t=tok();
   fetch(C.SUPABASE_URL+'/rest/v1/client_logs',{method:'POST',keepalive:true,headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:'Bearer '+(t||C.SUPABASE_ANON_KEY),'Content-Type':'application/json',Prefer:'return=minimal'},
@@ -1304,7 +1316,8 @@ const CUAD_URL='cuadernillo/AranduMed-Cuadernillo-MI-Vol1.pdf',CUAD_PRINT='cuade
 function cuadPending(){try{return localStorage.getItem('am_cuad')==='mi'}catch(_){return false}}
 function cuadModal(canTrial){if(!cuadPending())return;const m=modal('<button type="button" class="bs-x" data-x aria-label="Cerrar">×</button><div class="wel-e">📘</div><span class="bs-k">Tu resumen gratis</span><h3>Cardiología: lo que más pregunta el CONAREM</h3><p class="bs-s">Las 46 preguntas de 2016 a 2026 en 31 páginas: qué se pregunta, cómo lo pregunta el examen, guías actuales y 21 preguntas reales.</p><a class="btn buy big" id="cuDl" href="'+CUAD_URL+'" download target="_blank" rel="noopener">Descargar (versión celular)</a><a class="btn try big" href="'+CUAD_PRINT+'" download target="_blank" rel="noopener" onclick="trk(\'pdf\',\'print\')">Versión para imprimir</a>'+(canTrial?'<button type="button" class="btn try big" id="cuTr">Y de paso, empezar mis 3 días gratis</button>':'<button type="button" class="btn try big" data-x>Cerrar</button>'),'lock');m.querySelector('#cuDl').onclick=()=>{trk('pdf','mi');try{localStorage.removeItem('am_cuad')}catch(_){}setTimeout(()=>m.remove(),400)};const t=m.querySelector('#cuTr');if(t)t.onclick=()=>{trk('pdf','mi');try{localStorage.removeItem('am_cuad')}catch(_){}window.open(CUAD_URL,'_blank');m.remove();const b=$('bTrial');if(b)b.click()}}
 function trk(ev,info){try{sb.rpc('track',{p_ev:ev,p_src:trkSrc(),p_sid:trkSid(),p_info:info||null}).then(()=>{},()=>{})}catch(_){}}
-trk('visit');try{if(cuadPending())$('cuadBan').hidden=false}catch(_){}
+trk('visit');try{if(cuadPending()){$('cuadBan').hidden=false;setTimeout(()=>{try{$('resumenes').scrollIntoView({behavior:'smooth'})}catch(_){}},600)}}catch(_){}
+try{const nv=[...document.querySelectorAll('#lnav a')],rs=$('resumenes');const upd=()=>{const r=rs.getBoundingClientRect();const on=r.height&&r.top<innerHeight*0.45?'resumenes':'landing';nv.forEach(a=>a.classList.toggle('on',a.dataset.nv===on))};addEventListener('scroll',upd,{passive:true});addEventListener('resize',upd);upd();setTimeout(upd,900)}catch(_){}
 const withTimeout=(p,ms)=>Promise.race([p,new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),ms))]);
 let hiddenAt=0,stalls=0;
 // Si la app estuvo más de 30 minutos en segundo plano, se recarga al volver (el progreso está guardado y las preguntas en el dispositivo)
