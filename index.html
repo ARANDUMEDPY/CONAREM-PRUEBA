@@ -358,6 +358,7 @@ body:has(#gate:not([hidden])){padding-top:54px!important}
 .shop-pk .tag{white-space:nowrap}.resl .shop-pk .shop-p{white-space:nowrap}
 @container shopc (min-width:561px) and (max-width:900px){.resl .shop-packs{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
 @container shopc (max-width:560px){.resl .shop-packs{grid-template-columns:1fr!important}}
+.mc-go{display:flex;align-items:center;justify-content:space-between;width:100%;margin-top:16px;padding:16px 18px;border:0;border-radius:16px;background:#F08A5D;color:#0D1321;font:inherit;text-align:left;cursor:pointer;box-shadow:0 14px 30px -16px rgba(240,138,93,.8);transition:transform .15s}.mc-go:hover{transform:translateY(-2px)}.mc-go b{display:block;font-size:1.25rem;font-family:var(--display);color:#0D1321!important}.mc-go small{display:block;font-size:.82rem;font-weight:600;opacity:.8;margin-top:2px}
 .shop-d,.soon-d{border:1px solid var(--line);border-radius:16px;background:var(--surface)}.shop-d>summary,.soon-d>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 20px}.shop-d>summary::-webkit-details-marker,.soon-d>summary::-webkit-details-marker{display:none}
 .shop-d summary b,.soon-d summary b{display:block;font-size:1.02rem}.shop-d summary small,.soon-d summary small{color:var(--muted)}.shop-d summary i,.soon-d summary i{font-style:normal;font-size:1.4rem;transition:transform .2s}.shop-d[open] summary i,.soon-d[open] summary i{transform:rotate(180deg)}
 .shop-d>.shop-g{padding:0 14px 14px}.soon-d>.soon{padding:0 14px 14px}#shopD{scroll-margin-top:80px}
@@ -1008,7 +1009,7 @@ async function loadRank(){const el=document.getElementById('mcRank');if(!el)retu
 function renderProg(){
   const v=document.getElementById('view');
   const st=stats(),sk=streakDays();let weak=null;AREAS.forEach(([a,n])=>{const x=stats(q=>q.area===a);if(x.done>=10){const p=x.ok/x.done;if(!weak||p<weak.p)weak={a,n,p}}});
-  let h='<div style="display:flex;flex-direction:column;gap:18px"><div class="card mc-top"><div class="mc-hd"><span class="mc-kick">Mi centro</span><h2>'+(sk>=2?'¡Vas '+sk+' días seguidos! 🔥':st.done?'Seguí así, cada día suma':'Empecemos hoy')+'</h2><p>'+(st.done?'Faltan <b>'+daysLeft()+' días</b> para el CONAREM.':'Respondé tus primeras preguntas y acá vas a ver tu avance.')+'</p></div><div class="mc-k"><div><b>'+mcItems().length+'</b><span>para recordar</span></div><div><b>'+st.done+'</b><span>respondidas</span></div><div><b>'+(st.done?Math.round(100*st.ok/st.done)+'%':'—')+'</b><span>aciertos</span></div><div><b>'+sk+(sk?' 🔥':'')+'</b><span>'+(sk===1?'día seguido':'días seguidos')+'</span></div></div>'+(weak?'<div class="mc-weak"><span><small>Para reforzar</small><b>'+weak.n+'</b> · '+Math.round(100*weak.p)+'% de aciertos</span><button type="button" class="btn cta sm" id="mcWeak" data-a="'+weak.a+'">Practicarla</button></div>':'')+'</div>';
+  let h='<div style="display:flex;flex-direction:column;gap:18px"><div class="card mc-top"><div class="mc-hd"><span class="mc-kick">Mi centro</span><h2>'+(sk>=2?'¡Vas '+sk+' días seguidos! 🔥':st.done?'Seguí así, cada día suma':'Empecemos hoy')+'</h2><p>'+(st.done?'Faltan <b>'+daysLeft()+' días</b> para el CONAREM.':'Respondé tus primeras preguntas y acá vas a ver tu avance.')+'</p><button type="button" class="mc-go" id="mcGo"><span><b>Estudiar ya nomás →</b><small>'+(()=>{try{ensureToday();const ids=S.today.ids||[];const done=ids.filter(id=>S.ans[id]&&S.ans[id].d===S.today.date).length;const rv=ids.filter(id=>isRev(id)).length;return ids.length?(done>=ids.length?'Sesión de hoy completa ✓ · seguí con más':'Hoy: '+rv+' repasos + '+(ids.length-rv)+' nuevas · '+done+'/'+ids.length+' hechas'):'Abrí tu sesión del día'}catch(_){return 'Abrí tu sesión del día'}})()+'</small></span></button></div><div class="mc-k"><div><b>'+mcItems().length+'</b><span>para recordar</span></div><div><b>'+st.done+'</b><span>respondidas</span></div><div><b>'+(st.done?Math.round(100*st.ok/st.done)+'%':'—')+'</b><span>aciertos</span></div><div><b>'+sk+(sk?' 🔥':'')+'</b><span>'+(sk===1?'día seguido':'días seguidos')+'</span></div></div>'+(weak?'<div class="mc-weak"><span><small>Para reforzar</small><b>'+weak.n+'</b> · '+Math.round(100*weak.p)+'% de aciertos</span><button type="button" class="btn cta sm" id="mcWeak" data-a="'+weak.a+'">Practicarla</button></div>':'')+'</div>';
   h+='<div class="card mc-rk"><div class="mc-prh"><span class="mc-pin" style="background:#2BB3A3">🏆</span><div><h2>Ranking de la semana</h2><p class="note" style="margin:2px 0 0">Preguntas respondidas en los últimos 7 días. Nadie ve tu nombre.</p></div></div><div id="mcRank"><p class="note">Cargando…</p></div></div>';
   h+='<div class="card mc-pr"><div class="mc-prh"><span class="mc-pin">📌</span><div><h2>Mis «Para recordar»</h2><p class="note" style="margin:2px 0 0">Los que guardaste y los de las preguntas que fallaste. Tu resumen personal para la semana del examen.</p></div></div><div id="mcBox">'+mcList()+'</div></div>';
   h+='<div class="card"><h2>Por especialidad</h2><div class="legend"><span><i style="background:var(--ok)"></i>Correctas</span><span><i style="background:var(--bad)"></i>Incorrectas</span><span><i style="background:var(--line)"></i>Pendientes</span></div><div class="areas">';
@@ -1033,6 +1034,7 @@ function renderProg(){
   h+='<div class="card"><h2>Empezar de nuevo</h2><p class="note">Borra todas las respuestas guardadas.</p><div class="row" style="justify-content:flex-start"><button class="btn ghost" id="reset">Borrar progreso</button></div><div id="confirm" hidden><p style="margin:0">¿Seguro? No se puede deshacer.</p><div class="row" style="justify-content:flex-start;margin-top:8px"><button class="btn" id="yes">Sí, borrar</button><button class="btn ghost" id="no">Cancelar</button></div></div></div></div>';
   v.innerHTML=h;
   loadRank();
+  const mg=document.getElementById('mcGo');if(mg)mg.onclick=()=>{go('hoy');window.scrollTo({top:0})};
   const mw=document.getElementById('mcWeak');if(mw)mw.onclick=()=>{const f=F();f.areas=[mw.dataset.a];f.status='all';persist();go('prac')};
   const box=document.getElementById('mcBox');const rb=()=>{box.innerHTML=mcList();const mm=document.getElementById('mcMore');if(mm)mm.onclick=()=>{mcMore=true;rb()}};box.addEventListener('click',e=>{const c=e.target.closest('[data-mca]');if(c){mcArea=c.dataset.mca;mcMore=false;rb()}});rb();
   document.getElementById('reset').onclick=()=>{document.getElementById('confirm').hidden=false};
@@ -1270,7 +1272,7 @@ document.getElementById('tab-guia').onclick=()=>go('guia');
 
 window.__AM={st:()=>S,simStart,go,ans:()=>S.ans,bank:BANK};
 const saved=lsGet();if(saved&&saved.ans)S=Object.assign({pref:'ALL',flt:null,srs:{}},saved);
-migrateSrs();ensureToday();fixToday();cur=firstOpen();if(S.simRun){view='sim';document.querySelectorAll('nav button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.v==='sim')));startTick()}render();
+migrateSrs();ensureToday();fixToday();cur=firstOpen();if(!S.simRun){view='prog';document.querySelectorAll('nav button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.v==='prog')))}if(S.simRun){view='sim';document.querySelectorAll('nav button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.v==='sim')));startTick()}render();
 setSync('Progreso guardado en este dispositivo.');
 
 (async()=>{
@@ -1300,7 +1302,7 @@ setSync('Progreso guardado en este dispositivo.');
 const $=id=>document.getElementById(id);
 const C=window.CONFIG||{};
 // ---------- Registro de errores (para diagnosticar cuelgues en celulares) ----------
-const VER='2026.11.12-q';let nlog=0;
+const VER='2026.11.12-r';let nlog=0;
 function tok(){try{const k=Object.keys(localStorage).find(k=>/^sb-.*-auth-token$/.test(k));const v=k&&JSON.parse(localStorage.getItem(k));return v&&v.access_token}catch(e){return null}}
 function clog(kind,msg){try{if(!C.SUPABASE_URL||nlog++>25)return;const t=tok();
   fetch(C.SUPABASE_URL+'/rest/v1/client_logs',{method:'POST',keepalive:true,headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:'Bearer '+(t||C.SUPABASE_ANON_KEY),'Content-Type':'application/json',Prefer:'return=minimal'},
