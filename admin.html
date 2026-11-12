@@ -186,7 +186,7 @@ td.nw{white-space:nowrap}.num{font-variant-numeric:tabular-nums}
     <h2>📘 Vender resúmenes en PDF</h2>
     <p class="hint">Registrá la venta y el comprador ve sus resúmenes en la app (pestaña Resúmenes → «Mis resúmenes»). Al descargar, cada PDF sale con su nombre y su correo en todas las páginas. Tiene que entrar con el <b>mismo correo</b>.</p>
     <div class="row"><label>Correo del comprador<input id="rEmail" type="email" list="emList" placeholder="correo@ejemplo.com"></label><label>Nombre y apellido (para la marca de agua)<input id="rName" placeholder="Ej.: María González"></label></div>
-    <div class="row" style="flex-wrap:wrap;gap:6px"><button class="btn gh sm" type="button" id="rAll">Pack completo</button><button class="btn gh sm" type="button" id="rNone">Limpiar</button></div>
+    <div class="row" style="flex-wrap:wrap;gap:6px"><button class="btn gh sm" type="button" id="rAll">Colección completa</button><button class="btn gh sm" type="button" id="rNone">Limpiar</button></div>
     <div class="rgrid" id="rChk"><label class="rck"><input type="checkbox" value="cardio"> Cardiología</label><label class="rck"><input type="checkbox" value="endo"> Endocrinología</label><label class="rck"><input type="checkbox" value="infecto"> Infectología</label><label class="rck"><input type="checkbox" value="neuro"> Neurología</label><label class="rck"><input type="checkbox" value="neumo"> Neumología</label><label class="rck"><input type="checkbox" value="gastro"> Gastroenterología</label><label class="rck"><input type="checkbox" value="nefro"> Nefrología</label><label class="rck"><input type="checkbox" value="hemato"> Hematología</label><label class="rck"><input type="checkbox" value="reuma"> Reumatología</label><label class="rck"><input type="checkbox" value="onco"> Oncología</label></div>
     <div class="row"><label>Monto (Gs.)<input id="rAmt" type="number" min="0" step="1000"></label><label>Medio de pago<select id="rMet"><option>Transferencia</option><option>Giro</option><option>Efectivo</option><option>Billetera (Tigo/Personal)</option><option>Otro</option></select></label><label>Nota (opcional)<input id="rNote"></label></div>
     <button class="btn cta" type="button" id="rGo">Registrar venta de resúmenes</button>
@@ -317,7 +317,7 @@ $('rAmt').addEventListener('input',()=>{$('rAmt').dataset.touched=1});
 $('rAll').onclick=()=>{document.querySelectorAll('#rChk input').forEach(x=>x.checked=true);delete $('rAmt').dataset.touched;rAuto()};
 $('rNone').onclick=()=>{document.querySelectorAll('#rChk input').forEach(x=>x.checked=false);delete $('rAmt').dataset.touched;rAuto()};
 $('rGo').onclick=async()=>{const em=$('rEmail').value.trim();const sl=rSel();if(!em||!sl.length){msg('rMsg','Falta el correo o elegir resúmenes.');return}
-  const n=sl.filter(x=>x!=='cardio').length;const label=n>=9?'Pack Medicina Interna':(n===3?'Elegí 3':'')+' '+sl.join(', ');
+  const n=sl.filter(x=>x!=='cardio').length;const label=n>=9?'Colección Medicina Interna':(n===3?'Elegí 3':'')+' '+sl.join(', ');
   const b=$('rGo');b.disabled=true;const {error}=await sb.rpc('admin_sell_resumen',{p_email:em,p_name:$('rName').value||null,p_slugs:sl,p_label:label.trim(),p_amount:+$('rAmt').value||0,p_method:$('rMet').value,p_note:$('rNote').value||null});b.disabled=false;
   if(error){msg('rMsg','Error: '+error.message);return}
   msg('rMsg','Listo: '+sl.length+' resumen(es) para '+em+'.',true);
