@@ -341,6 +341,7 @@ body:has(#gate:not([hidden])){padding-top:54px!important}
 .price s{color:var(--muted);font-size:.95rem;flex-basis:100%}
 .price b{font-family:var(--display);font-size:1.9rem;font-weight:800;letter-spacing:-.02em;line-height:1.15}
 .price span{color:var(--muted);font-size:.9rem}
+.psave{margin:-4px 0 4px;font-size:.84rem;font-weight:700;color:var(--accent)}
 .plan ul{list-style:none;margin:0 0 8px;padding:0;display:flex;flex-direction:column;gap:7px;font-size:.94rem}
 .plan li{display:flex;gap:8px;align-items:flex-start}
 .plan li svg{width:18px;height:18px;color:var(--ok);flex-shrink:0;margin-top:3px}
@@ -1159,7 +1160,7 @@ setSync('Progreso guardado en este dispositivo.');
 const $=id=>document.getElementById(id);
 const C=window.CONFIG||{};
 // ---------- Registro de errores (para diagnosticar cuelgues en celulares) ----------
-const VER='2026.11.11-l';let nlog=0;
+const VER='2026.11.11-m';let nlog=0;
 function tok(){try{const k=Object.keys(localStorage).find(k=>/^sb-.*-auth-token$/.test(k));const v=k&&JSON.parse(localStorage.getItem(k));return v&&v.access_token}catch(e){return null}}
 function clog(kind,msg){try{if(!C.SUPABASE_URL||nlog++>25)return;const t=tok();
   fetch(C.SUPABASE_URL+'/rest/v1/client_logs',{method:'POST',keepalive:true,headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:'Bearer '+(t||C.SUPABASE_ANON_KEY),'Content-Type':'application/json',Prefer:'return=minimal'},
@@ -1171,12 +1172,18 @@ clog('boot',(document.referrer||'')+' sw:'+(navigator.serviceWorker&&navigator.s
 setTimeout(()=>{const ld=document.getElementById('loading');if(ld&&!ld.hidden&&ld.offsetParent!==null)clog('slow_load',document.getElementById('loadTxt').textContent)},25000);
 // Contacto: completá WHATSAPP (solo números, con 595) e INSTAGRAM (usuario sin @) en config.js cuando los tengas
 const CONTACT={wa:String(C.WHATSAPP||'').replace(/\D/g,''),ig:String(C.INSTAGRAM||'').replace(/^@/,'').trim()};
+// ---------- Planes nuevos desde el 1 de diciembre (Combo Anual) ----------
+const NEWPLANS='2026-12-01T00:00:00-03:00';
+if(Date.now()>=new Date(NEWPLANS).getTime()||/[?&]plans=new/.test(location.search)){try{
+ document.querySelector('#planes .plan-g').innerHTML='<div class="plan best"><span class="tag">Mejor costo-beneficio</span><h3>Combo Anual</h3><p class="pdesc">12 meses de todo. Y si no entrás en 2027, te cubre también el CONAREM 2028.</p><p class="price"><span class="pnext" data-pl="yearList"></span><b data-pl="year">-</b></p><p class="psave" data-pl="yearSave"></p><ul><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Las +1.600 preguntas comentadas</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Resúmenes de alto rendimiento</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Simulacros ilimitados y puesto estimado</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Plan diario y repasos</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Acceso hasta el examen 2028</li></ul><a class="btn cta" href="#" data-buy="Combo Anual">Comprar ahora</a><a class="ptry" href="#acceso" data-go="signup" data-plan="Combo Anual">o probá 3 días gratis</a></div><div class="plan"><h3>Intensivo</h3><p class="pdesc">Para la recta final: todo, hasta el día del examen 2027.</p><p class="price"><span class="pnext" data-pl="fullList"></span><b data-pl="full">-</b></p><ul><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Las +1.600 preguntas comentadas</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Resúmenes de alto rendimiento</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Simulacros ilimitados</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Hasta el examen 2027</li></ul><a class="btn ghost" href="#" data-buy="Intensivo">Comprar ahora</a><a class="ptry" href="#acceso" data-go="signup" data-plan="Intensivo">o probá 3 días gratis</a></div><div class="plan"><h3>Mensual</h3><p class="pdesc">Para empezar o si ya falta poco.</p><p class="price"><span class="pnext" data-pl="monthList"></span><b data-pl="month">-</b><span>/mes</span></p><ul><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Todo lo del Combo</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>30 días de acceso</li></ul><a class="btn ghost" href="#" data-buy="Mensual">Comprar ahora</a><a class="ptry" href="#acceso" data-go="signup" data-plan="Mensual">o probá 3 días gratis</a></div>';
+ document.getElementById('cPlans').innerHTML='<a href="#" data-buy="Combo Anual"><span>Combo Anual ⭐</span><b data-pl="year">-</b><small>12 meses · cubre 2027 y 2028</small><i>Comprar →</i></a><a href="#" data-buy="Intensivo"><span>Intensivo</span><b data-pl="full">-</b><small>hasta el examen 2027</small><i>Comprar →</i></a><a href="#" data-buy="Mensual"><span>Mensual</span><b data-pl="month">-</b><small>por mes</small><i>Comprar →</i></a>';
+ window.__NEWPLANS=1}catch(e){}}
 // ---------- Precios según la fecha (hora de Paraguay) ----------
 // Para cambiar precios o fechas, editá solo esta tabla.
 const PRICES=[
- {until:'2026-12-01T00:00:00-03:00',full:240000,month:100000,two:380000,promo:'Black Friday',untilTxt:'30 de noviembre',note:'Black Friday: precio especial hasta el 30 de noviembre.'},
- {until:'2027-02-01T00:00:00-03:00',full:280000,month:110000,two:420000,promo:'',untilTxt:'31 de enero',note:'Precio de verano: el 1 de febrero sube a Gs. 320.000.'},
- {until:'2099-01-01T00:00:00-03:00',full:320000,month:120000,two:480000,promo:'',untilTxt:'',note:''}];
+ {until:'2026-12-01T00:00:00-03:00',full:240000,month:100000,two:380000,year:450000,promo:'Black Friday',untilTxt:'30 de noviembre',note:'Black Friday: precio especial hasta el 30 de noviembre.'},
+ {until:'2027-02-01T00:00:00-03:00',full:280000,month:110000,two:420000,year:450000,promo:'',untilTxt:'31 de enero',note:'Precio de verano: el 1 de febrero el Intensivo sube a Gs. 320.000.'},
+ {until:'2099-01-01T00:00:00-03:00',full:320000,month:120000,two:480000,year:450000,promo:'',untilTxt:'',note:''}];
 const LIST={full:320000,month:120000};
 function gs(n){return 'Gs. '+n.toLocaleString('es-PY').replace(/,/g,'.')}
 function priceNow(){const now=Date.now();return PRICES.find(p=>now<new Date(p.until).getTime())||PRICES[PRICES.length-1]}
@@ -1184,14 +1191,15 @@ function nextTier(p){const i=PRICES.indexOf(p);const n=PRICES[i+1];if(!n)return 
 function cdTxt(ms){if(ms<=0)return '';const d=Math.floor(ms/864e5),h=Math.floor(ms%864e5/36e5),m=Math.floor(ms%36e5/6e4);return (d?d+' d ':'')+h+' h '+String(m).padStart(2,'0')+' min'}
 function paintPrices(){const p=priceNow();
   document.querySelectorAll('[data-pl]').forEach(el=>{const k=el.dataset.pl;
-    if(k==='full'||k==='month'||k==='two')el.textContent=gs(p[k]);
+    if(k==='full'||k==='month'||k==='two'||k==='year')el.textContent=gs(p[k]);
+    else if(k==='yearSave'){el.textContent='Sale '+gs(Math.round(p.year/12/500)*500)+' por mes: menos de la mitad que el Mensual.'}
     else if(k==='fullList'||k==='monthList'||k==='twoList'){const kk=k==='fullList'?'full':k==='twoList'?'two':'month';const nx=nextTier(p);el.hidden=!(nx&&nx[kk]>p[kk]);if(nx)el.textContent='Desde el '+nx.fromTxt+': '+gs(nx[kk])}
     else if(k==='tag')el.textContent=p.note||''});
   const pn=document.getElementById('promoNote');if(pn)pn.textContent=p.promo?'':(p.note||'');
   const left=new Date(p.until).getTime()-Date.now();const box=document.getElementById('promoBox'),hp=document.getElementById('heroPromo');
   if(p.promo&&left>0){box.hidden=false;hp.hidden=false;const nx=nextTier(p);
     document.getElementById('promoT').innerHTML='<span>Completo <b>'+gs(p.full)+'</b></span><span>Mensual <b>'+gs(p.month)+'</b></span>';
-    document.getElementById('promoC').textContent='Hasta el '+p.untilTxt+' a las 23:59'+(nx?'. Desde el '+nx.fromTxt+' el Completo pasa a '+gs(nx.full)+'.':'.');}
+    document.getElementById('promoC').textContent='Hasta el '+p.untilTxt+' a las 23:59'+(nx?'. Desde el '+nx.fromTxt+' llega el Combo Anual: '+gs(nx.year)+' por 12 meses.':'.');}
   else{box.hidden=true;hp.hidden=true}}
 function tick(){const p=priceNow();const left=new Date(p.until).getTime()-Date.now();if(!p.promo||left<=0){if(!document.getElementById('promoBox').hidden)paintPrices();return}
   const v={d:Math.floor(left/864e5),h:Math.floor(left%864e5/36e5),m:Math.floor(left%36e5/6e4),s:Math.floor(left%6e4/1e3)};
