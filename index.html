@@ -293,6 +293,17 @@ body{letter-spacing:-.005em}
 <style>
 body:has(#gate:not([hidden])){padding-top:54px!important}
 .tbr .themebtn{position:static;width:40px;height:40px;padding:0;font-size:1rem;display:inline-flex;align-items:center;justify-content:center}.tbr .themebtn .tl{display:none}
+.doors{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:44px}
+.door{position:relative;overflow:hidden;min-height:260px;border-radius:24px;padding:24px 24px 22px;color:#fff;text-decoration:none;display:flex;flex-direction:column;gap:8px;box-shadow:0 24px 50px -28px rgba(0,0,0,.7);transition:transform .2s}.door:hover{transform:translateY(-3px)}
+.d-banco{background:radial-gradient(700px 500px at 90% 0%,#2BB3A3 0%,#137A70 45%,#0B3B38 100%)}.d-res{background:radial-gradient(700px 500px at 90% 0%,#1F4C80 0%,#173E6B 45%,#0F2A4A 100%)}
+.dr-k{align-self:flex-start;background:#FFC94A;color:#0D1321;font-weight:900;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;border-radius:99px;padding:4px 11px}
+.door b{font-family:var(--display);font-weight:800;font-size:clamp(1.5rem,3vw,2.05rem);line-height:1.02;letter-spacing:-.02em;max-width:58%;margin-top:4px}.door b em{font-style:normal;color:#FFC94A}.d-res b em{color:#FF8A50}
+.dr-s{max-width:52%;font-size:.9rem;color:rgba(255,255,255,.85)}.dr-go{position:relative;z-index:2;margin-top:auto;align-self:flex-start;font-weight:800;background:rgba(255,255,255,.14);border:1.5px solid rgba(255,255,255,.4);border-radius:12px;padding:8px 14px}
+.dr-ph{position:absolute;right:-6px;bottom:-70px;width:150px;aspect-ratio:9/18;border-radius:26px;padding:6px;background:#0E161B;transform:rotate(8deg);box-shadow:0 20px 40px rgba(0,0,0,.5)}.dr-ph img{width:100%;height:100%;object-fit:cover;object-position:top;border-radius:20px;display:block}
+.dr-fan{position:absolute;right:-60px;bottom:-24px;width:330px;height:auto}
+.gate:not(.lp) .doors{display:none}
+.lnav{position:fixed!important;left:50%;top:8px!important;transform:translateX(-50%);margin:0!important;opacity:0;pointer-events:none;transition:opacity .2s}.lnav.show{opacity:1;pointer-events:auto}
+@media (max-width:640px){.doors{grid-template-columns:1fr;gap:12px;margin-top:34px}.door{min-height:190px;padding:20px}.door b{font-size:1.5rem;max-width:66%}.dr-s{max-width:60%;font-size:.85rem}.dr-ph{width:112px;bottom:-70px;right:-10px}.dr-fan{width:200px;right:-70px;bottom:-6px}}
 .shop-d,.soon-d{border:1px solid var(--line);border-radius:16px;background:var(--surface)}.shop-d>summary,.soon-d>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 20px}.shop-d>summary::-webkit-details-marker,.soon-d>summary::-webkit-details-marker{display:none}
 .shop-d summary b,.soon-d summary b{display:block;font-size:1.02rem}.shop-d summary small,.soon-d summary small{color:var(--muted)}.shop-d summary i,.soon-d summary i{font-style:normal;font-size:1.4rem;transition:transform .2s}.shop-d[open] summary i,.soon-d[open] summary i{transform:rotate(180deg)}
 .shop-d>.shop-g{padding:0 14px 14px}.soon-d>.soon{padding:0 14px 14px}#shopD{scroll-margin-top:80px}
@@ -556,6 +567,10 @@ h2{font-weight:700;letter-spacing:-.01em;line-height:1.25}
 <button class="themebtn" id="themeBtn" type="button"></button>
 <div class="gate" id="gate">
 <a class="loginbtn" href="#acceso" data-go="login">Iniciar sesión</a>
+<div class="doors" id="doors">
+  <a class="door d-banco" href="#landing" data-nv="landing"><span class="dr-k">Banco de preguntas</span><b>+1.600 preguntas<br><em>del CONAREM</em></b><span class="dr-s">Comentadas, simulacro real y tu puesto estimado.</span><span class="dr-go">3 días gratis →</span><span class="dr-ph"><img src="img/app-shot.jpg" alt="" width="390" height="780"></span></a>
+  <a class="door d-res" href="#resumenes" data-nv="resumenes"><span class="dr-k">Resúmenes PDF · 2027</span><b>Medicina Interna<br><em>en 10 resúmenes</em></b><span class="dr-s">Lo que más pregunta el CONAREM. Cardiología gratis.</span><span class="dr-go">Ver resúmenes →</span><img class="dr-fan" src="resumenes/abanico.webp" alt="" width="800" height="512"></a>
+</div>
 <nav class="lnav" id="lnav" aria-label="Secciones de la página"><a href="#landing" data-nv="landing" class="on">🧠 Banco de preguntas</a><a href="#resumenes" data-nv="resumenes">📘 Resúmenes PDF</a></nav>
 <section class="hero" id="landing">
   <div class="hero-t">
@@ -569,17 +584,6 @@ h2{font-weight:700;letter-spacing:-.01em;line-height:1.25}
     <ul class="hcheck"><li>Acceso completo</li><li>Sin tarjeta</li><li>Sin compromiso</li></ul>
   </div>
   <div class="phone" aria-hidden="true"><div class="phone-in"><img src="img/app-shot.jpg" alt="" width="390" height="780" loading="eager"></div></div>
-</section>
-<section class="trial" id="trial">
-  <div class="trial-t"><span class="trial-k">Prueba gratis</span><h2>3 días gratis, sin pagar nada</h2><p>Los exámenes 2025 y 2026 completos y comentados, los simulacros y tu puesto estimado. Si te convence, elegís tu plan y seguís en la misma cuenta con todo tu progreso.</p></div>
-  <ol class="trial-s"><li><b>1</b><span><strong>Creá tu cuenta</strong>Con tu correo, en 30 segundos.</span></li><li><b>2</b><span><strong>Tocá "Empezar mis 3 días gratis"</strong>Se activa al instante.</span></li><li><b>3</b><span><strong>Estudiá como el día del examen</strong>Plan diario, simulacro y repasos.</span></li></ol>
-  <a class="btn cta big" href="#acceso" data-go="signup">Probar gratis ahora</a>
-</section>
-<section class="feats" id="feats">
-  <div class="feat"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10a2 2 0 0 1 2 2v14l-4-2.5L11 20l-4-2.5L3 20V6a2 2 0 0 1 2-2z" transform="translate(1 0)"/><path d="M9 9h6M9 12.5h4"/></svg><h3>+1.600 preguntas comentadas</h3><p>De los cuadernillos oficiales 2016–2026. Cada una con explicación, “para recordar”, por qué no las otras y la fuente.</p></div>
-  <div class="feat"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="7.5"/><path d="M12 9.5V13l2.5 2M10 2.5h4"/></svg><h3>Simulacro como el real</h3><p>140 preguntas en dos bloques, 1 minuto por pregunta y la nota al final. Igual que el día del examen.</p></div>
-  <div class="feat"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4h4"/><path d="M12 8.5v4l2.5 1.5"/></svg><h3>Plan diario y repaso espaciado</h3><p>Se adapta a los días que faltan. Tus errores vuelven justo antes de que los olvides.</p></div>
-  <div class="feat"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0z"/><path d="M7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4"/></svg><h3>Tu puesto estimado</h3><p>Según tu porcentaje, dónde quedarías entre las 834 plazas, con los puntajes reales de 2026.</p></div>
 </section>
 <section class="plans" id="planes">
   <p class="blk-k">Banco de preguntas</p>
@@ -596,6 +600,17 @@ h2{font-weight:700;letter-spacing:-.01em;line-height:1.25}
     <div class="plan"><h3>2 exámenes</h3><p class="pdesc">CONAREM 2027 y 2028. Ideal si querés empezar a estudiar por adelantado, o si este año no entrás a la plaza que querés: seguís sin pagar de nuevo.</p><p class="price"><span class="pnext" data-pl="twoList"></span><b data-pl="two">Gs. 380.000</b></p><ul><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Todo lo del plan Completo</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Acceso hasta el examen 2028</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Empezá con tiempo, sin apuro</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Dos intentos con el mismo pago</li></ul><a class="btn ghost" href="#" data-buy="2 exámenes">Comprar ahora</a><a class="ptry" href="#acceso" data-go="signup" data-plan="2 exámenes">o probá 3 días gratis</a></div>
   </div>
   <p class="note" style="text-align:center">Cómo funciona: creás tu cuenta, probás 3 días gratis y, si te gusta, elegís tu plan y activás tu código. Tu progreso queda guardado.</p>
+</section>
+<section class="trial" id="trial">
+  <div class="trial-t"><span class="trial-k">Prueba gratis</span><h2>3 días gratis, sin pagar nada</h2><p>Los exámenes 2025 y 2026 completos y comentados, los simulacros y tu puesto estimado. Si te convence, elegís tu plan y seguís en la misma cuenta con todo tu progreso.</p></div>
+  <ol class="trial-s"><li><b>1</b><span><strong>Creá tu cuenta</strong>Con tu correo, en 30 segundos.</span></li><li><b>2</b><span><strong>Tocá "Empezar mis 3 días gratis"</strong>Se activa al instante.</span></li><li><b>3</b><span><strong>Estudiá como el día del examen</strong>Plan diario, simulacro y repasos.</span></li></ol>
+  <a class="btn cta big" href="#acceso" data-go="signup">Probar gratis ahora</a>
+</section>
+<section class="feats" id="feats">
+  <div class="feat"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10a2 2 0 0 1 2 2v14l-4-2.5L11 20l-4-2.5L3 20V6a2 2 0 0 1 2-2z" transform="translate(1 0)"/><path d="M9 9h6M9 12.5h4"/></svg><h3>+1.600 preguntas comentadas</h3><p>De los cuadernillos oficiales 2016–2026. Cada una con explicación, “para recordar”, por qué no las otras y la fuente.</p></div>
+  <div class="feat"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="7.5"/><path d="M12 9.5V13l2.5 2M10 2.5h4"/></svg><h3>Simulacro como el real</h3><p>140 preguntas en dos bloques, 1 minuto por pregunta y la nota al final. Igual que el día del examen.</p></div>
+  <div class="feat"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4h4"/><path d="M12 8.5v4l2.5 1.5"/></svg><h3>Plan diario y repaso espaciado</h3><p>Se adapta a los días que faltan. Tus errores vuelven justo antes de que los olvides.</p></div>
+  <div class="feat"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0z"/><path d="M7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4"/></svg><h3>Tu puesto estimado</h3><p>Según tu porcentaje, dónde quedarías entre las 834 plazas, con los puntajes reales de 2026.</p></div>
 </section>
 <section class="resl" id="resumenes">
   <div class="cuadban" id="cuadBan" hidden><span class="ce">📘</span><span><b>Tu resumen gratis de Cardiología está listo</b><span class="sub">«Cardiología: lo que más pregunta el CONAREM». 31 páginas con las 46 preguntas de 2016 a 2026. Creá tu cuenta gratis en 30 segundos y descargalo al instante.</span><span class="row" style="justify-content:flex-start;margin-top:8px"><a class="btn buy" href="#acceso" data-go="signup">Crear cuenta y descargar</a><a class="btn ghost" href="#acceso" data-go="login">Ya tengo cuenta</a></span></span></div>
@@ -1205,7 +1220,7 @@ setSync('Progreso guardado en este dispositivo.');
 const $=id=>document.getElementById(id);
 const C=window.CONFIG||{};
 // ---------- Registro de errores (para diagnosticar cuelgues en celulares) ----------
-const VER='2026.11.12-j';let nlog=0;
+const VER='2026.11.12-k';let nlog=0;
 function tok(){try{const k=Object.keys(localStorage).find(k=>/^sb-.*-auth-token$/.test(k));const v=k&&JSON.parse(localStorage.getItem(k));return v&&v.access_token}catch(e){return null}}
 function clog(kind,msg){try{if(!C.SUPABASE_URL||nlog++>25)return;const t=tok();
   fetch(C.SUPABASE_URL+'/rest/v1/client_logs',{method:'POST',keepalive:true,headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:'Bearer '+(t||C.SUPABASE_ANON_KEY),'Content-Type':'application/json',Prefer:'return=minimal'},
@@ -1331,7 +1346,7 @@ function cuadModal(canTrial){if(!cuadPending())return;const m=modal('<button typ
 function trk(ev,info){try{sb.rpc('track',{p_ev:ev,p_src:trkSrc(),p_sid:trkSid(),p_info:info||null}).then(()=>{},()=>{})}catch(_){}}
 trk('visit');try{if(cuadPending()){$('cuadBan').hidden=false;setTimeout(()=>{try{$('resumenes').scrollIntoView({behavior:'smooth'})}catch(_){}},600)}}catch(_){}
 try{if(Date.now()>new Date(SHOP_PROMO.until).getTime())$('rhBf').hidden=true}catch(_){}
-try{const nv=[...document.querySelectorAll('#lnav a')],rs=$('resumenes');const upd=()=>{const r=rs.getBoundingClientRect();const on=r.height&&r.top<innerHeight*0.45?'resumenes':'landing';nv.forEach(a=>a.classList.toggle('on',a.dataset.nv===on))};addEventListener('scroll',upd,{passive:true});addEventListener('resize',upd);upd();setTimeout(upd,900)}catch(_){}
+try{const nv=[...document.querySelectorAll('#lnav a')],rs=$('resumenes');const upd=()=>{const r=rs.getBoundingClientRect();const on=r.height&&r.top<innerHeight*0.45?'resumenes':'landing';nv.forEach(a=>a.classList.toggle('on',a.dataset.nv===on))};const dr=$('doors'),ln=$('lnav');const sh=()=>{try{ln.classList.toggle('show',dr.getBoundingClientRect().bottom<0)}catch(_){}};addEventListener('scroll',sh,{passive:true});sh();addEventListener('scroll',upd,{passive:true});addEventListener('resize',upd);upd();setTimeout(upd,900)}catch(_){}
 const withTimeout=(p,ms)=>Promise.race([p,new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),ms))]);
 let hiddenAt=0,stalls=0;
 // Si la app estuvo más de 30 minutos en segundo plano, se recarga al volver (el progreso está guardado y las preguntas en el dispositivo)
