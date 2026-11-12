@@ -32,6 +32,7 @@ a{color:var(--accent)}
 .tabs .bd:empty{display:none}
 main{max-width:1180px;margin:0 auto;padding:22px 20px 80px}
 section.view{display:none;flex-direction:column;gap:18px}section.view.on{display:flex}
+.rgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:6px}.rck{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;font-size:.9rem;cursor:pointer}.rck input{width:auto!important;display:inline-block!important;margin:0}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:12px}
 h2{font-family:var(--display);font-weight:700;font-size:1.12rem;letter-spacing:-.01em;margin:0}
 h3{font-family:var(--display);font-weight:700;font-size:.98rem;margin:0}
@@ -181,8 +182,24 @@ td.nw{white-space:nowrap}.num{font-variant-numeric:tabular-nums}
       <div class="prev" id="sPrev"></div>
     </div>
   </div>
+  <div class="card">
+    <h2>📘 Vender resúmenes en PDF</h2>
+    <p class="hint">Registrá la venta y el comprador ve sus resúmenes en la app (pestaña Resúmenes → «Mis resúmenes»). Al descargar, cada PDF sale con su nombre y su correo en todas las páginas. Tiene que entrar con el <b>mismo correo</b>.</p>
+    <div class="row"><label>Correo del comprador<input id="rEmail" type="email" list="emList" placeholder="correo@ejemplo.com"></label><label>Nombre y apellido (para la marca de agua)<input id="rName" placeholder="Ej.: María González"></label></div>
+    <div class="row" style="flex-wrap:wrap;gap:6px"><button class="btn gh sm" type="button" id="rAll">Pack completo</button><button class="btn gh sm" type="button" id="rNone">Limpiar</button></div>
+    <div class="rgrid" id="rChk"><label class="rck"><input type="checkbox" value="cardio"> Cardiología</label><label class="rck"><input type="checkbox" value="endo"> Endocrinología</label><label class="rck"><input type="checkbox" value="infecto"> Infectología</label><label class="rck"><input type="checkbox" value="neuro"> Neurología</label><label class="rck"><input type="checkbox" value="neumo"> Neumología</label><label class="rck"><input type="checkbox" value="gastro"> Gastroenterología</label><label class="rck"><input type="checkbox" value="nefro"> Nefrología</label><label class="rck"><input type="checkbox" value="hemato"> Hematología</label><label class="rck"><input type="checkbox" value="reuma"> Reumatología</label><label class="rck"><input type="checkbox" value="onco"> Oncología</label></div>
+    <div class="row"><label>Monto (Gs.)<input id="rAmt" type="number" min="0" step="1000"></label><label>Medio de pago<select id="rMet"><option>Transferencia</option><option>Giro</option><option>Efectivo</option><option>Billetera (Tigo/Personal)</option><option>Otro</option></select></label><label>Nota (opcional)<input id="rNote"></label></div>
+    <button class="btn cta" type="button" id="rGo">Registrar venta de resúmenes</button>
+    <p class="msg" id="rMsg"></p><pre id="rTxt" hidden></pre>
+  </div>
+  <div class="card">
+    <h2>⬆️ Subir los PDF originales (una sola vez por edición)</h2>
+    <p class="hint">Elegí los 18 archivos de la carpeta «base» (por ejemplo <code>endo-lectura.pdf</code>, <code>endo-imprimir.pdf</code>). Quedan en un depósito privado: nadie los puede bajar sin comprar, y cada descarga sale con la marca de agua del comprador. Cardiología no hace falta: es gratis.</p>
+    <input type="file" id="upFiles" multiple accept="application/pdf">
+    <button class="btn" type="button" id="upGo">Subir archivos</button>
+    <p class="msg" id="upMsg"></p><div id="upList" class="hint"></div>
+  </div>
 </section>
-
 <section class="view" id="v-users">
   <div class="card">
     <div class="ahead"><h2>Usuarios</h2><div class="row" style="gap:8px"><button class="btn gh sm" id="uRef" type="button">Actualizar</button><button class="btn gh sm" id="uCsv" type="button">Descargar Excel (CSV)</button></div></div>
@@ -289,12 +306,33 @@ function twice(b,lab,fn){if(!b.dataset.ok){b.dataset.ok=1;const o=b.textContent;
 /* ---------- Tabs ---------- */
 let TAB='res';
 document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{TAB=b.dataset.t;document.querySelectorAll('.tabs button').forEach(x=>x.setAttribute('aria-selected',String(x===b)));document.querySelectorAll('section.view').forEach(s=>s.classList.toggle('on',s.id==='v-'+TAB));if(TAB==='qs')loadQs();if(TAB==='codes')loadCodes();window.scrollTo({top:0})});
+
+// ---------- Venta de resúmenes en PDF ----------
+const RPRICE={n:100000,bf:75000,tres:240000,tresbf:180000,pack:490000,packbf:390000,until:'2026-12-01T00:00:00-03:00'};
+function rSel(){return [...document.querySelectorAll('#rChk input:checked')].map(x=>x.value)}
+function rAuto(){if($('rAmt').dataset.touched)return;const n=rSel().filter(x=>x!=='cardio').length;const bf=Date.now()<new Date(RPRICE.until).getTime();let a=0;
+  if(n>=9)a=bf?RPRICE.packbf:RPRICE.pack;else if(n===3)a=bf?RPRICE.tresbf:RPRICE.tres;else a=n*(bf?RPRICE.bf:RPRICE.n);$('rAmt').value=a}
+document.querySelectorAll('#rChk input').forEach(x=>x.addEventListener('change',rAuto));
+$('rAmt').addEventListener('input',()=>{$('rAmt').dataset.touched=1});
+$('rAll').onclick=()=>{document.querySelectorAll('#rChk input').forEach(x=>x.checked=true);delete $('rAmt').dataset.touched;rAuto()};
+$('rNone').onclick=()=>{document.querySelectorAll('#rChk input').forEach(x=>x.checked=false);delete $('rAmt').dataset.touched;rAuto()};
+$('rGo').onclick=async()=>{const em=$('rEmail').value.trim();const sl=rSel();if(!em||!sl.length){msg('rMsg','Falta el correo o elegir resúmenes.');return}
+  const n=sl.filter(x=>x!=='cardio').length;const label=n>=9?'Pack Medicina Interna':(n===3?'Elegí 3':'')+' '+sl.join(', ');
+  const b=$('rGo');b.disabled=true;const {error}=await sb.rpc('admin_sell_resumen',{p_email:em,p_name:$('rName').value||null,p_slugs:sl,p_label:label.trim(),p_amount:+$('rAmt').value||0,p_method:$('rMet').value,p_note:$('rNote').value||null});b.disabled=false;
+  if(error){msg('rMsg','Error: '+error.message);return}
+  msg('rMsg','Listo: '+sl.length+' resumen(es) para '+em+'.',true);
+  const t='¡Listo! ✅ Ya tenés tus resúmenes de AranduMed (Edición 2027).\n\nEntrá con este correo ('+em+') en '+SITE+' → pestaña Resúmenes → «Mis resúmenes» y tocá Descargar. Cada PDF sale a tu nombre, en versión para leer y para imprimir.\n\n¡Éxitos con el estudio! 💚\nEquipo AranduMed';
+  const pre=$('rTxt');pre.hidden=false;pre.textContent=t;$('rNote').value='';delete $('rAmt').dataset.touched;try{loadAll()}catch(e){}};
+$('upGo').onclick=async()=>{const fs=[...$('upFiles').files];if(!fs.length){msg('upMsg','Elegí los archivos.');return}const out=[];$('upGo').disabled=true;
+  for(const f of fs){const m=f.name.match(/^([a-z]+)-(lectura|imprimir)\.pdf$/);if(!m){out.push('⚠️ '+esc(f.name)+': nombre no reconocido');continue}
+    const {error}=await sb.storage.from('resumenes').upload(m[1]+'/'+m[2]+'.pdf',f,{upsert:true,contentType:'application/pdf'});out.push((error?'❌ ':'✅ ')+esc(f.name)+(error?' — '+esc(error.message):''));$('upList').innerHTML=out.join('<br>')}
+  $('upGo').disabled=false;msg('upMsg','Terminado.',true)};
 function goTab(t){document.querySelector('.tabs button[data-t="'+t+'"]').click()}
 
 /* ---------- Datos ---------- */
 let P=[],ST={},DS={},SALES=[],REPS=[],PROMO_LEFT=null;
 function isTrial(p){return !!(p&&p.trial_started&&p.access_until&&(new Date(p.access_until)-new Date(p.trial_started))<=7*864e5+36e5)}
-function paidBy(p){const e=(p.email||'').toLowerCase();return SALES.some(s=>s.email.toLowerCase()===e&&s.plan!=='Regalo +1 semana')}
+function paidBy(p){const e=(p.email||'').toLowerCase();return SALES.some(s=>s.email.toLowerCase()===e&&s.plan!=='Regalo +1 semana'&&!/^Resumen/.test(s.plan||''))}
 function status(p){if(p.is_admin)return'admin';const now=new Date();if(!p.access_until&&!p.trial_started)return'sin';const on=p.access_until&&new Date(p.access_until)>now;const paid=paidBy(p);
   if(on)return paid?'pago':isTrial(p)?'prueba':'regalo';if(p.revoked_reason)return'bloq';return paid?'expago':isTrial(p)?'pvencida':'rvencido'}
 const SLAB={pago:'💳 Pago',prueba:'⏳ En prueba',regalo:'🎁 Regalo o código',expago:'Ex cliente',pvencida:'Prueba terminada',rvencido:'Regalo vencido',bloq:'🚫 Bloqueado',sin:'📝 Sin activar',admin:'Admin'};
