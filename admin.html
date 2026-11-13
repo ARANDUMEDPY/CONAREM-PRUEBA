@@ -85,6 +85,14 @@ td.nw{white-space:nowrap}.num{font-variant-numeric:tabular-nums}
 .pills button[aria-pressed=true]{color:var(--fg);border-color:var(--accent);background:var(--accent-soft)}
 .pills button b{color:var(--accent);margin-left:4px}
 .att{display:flex;flex-direction:column;gap:10px}
+.arow{padding:12px 14px;border:1px solid var(--line);border-radius:12px}
+.step{display:flex;align-items:center;font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:800;margin:0 0 8px}.step i{font-style:normal;display:inline-flex;width:20px;height:20px;border-radius:50%;background:var(--accent);color:#06201C;align-items:center;justify-content:center;margin-right:8px;font-size:.72rem}
+.tgrp{font-size:.8rem;color:var(--muted);margin:10px 0 6px}.tgrp:first-of-type{margin-top:0}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+.tile{padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface2);color:var(--fg);text-align:left;cursor:pointer;font:inherit}
+.tile b{display:block;font-size:.95rem}.tile small{display:block;color:var(--muted);font-size:.8rem;margin-top:2px}
+.tile:hover{border-color:var(--accent)}.tile.on{border-color:var(--accent);background:var(--accent-soft);box-shadow:0 0 0 1px var(--accent) inset}
+.tile.bf.on{border-color:var(--mid);background:rgba(229,176,74,.12);box-shadow:0 0 0 1px var(--mid) inset}
 .ai{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 14px;align-items:center;padding:12px 14px;background:var(--bg2);border:1px solid var(--line);border-radius:14px}
 .ai .em{font-weight:600;overflow-wrap:anywhere}.ai .sub{font-size:.8rem;color:var(--muted)}
 .ai .acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
@@ -166,23 +174,37 @@ td.nw{white-space:nowrap}.num{font-variant-numeric:tabular-nums}
     <h2>Registrar una venta y activar el acceso</h2>
     <p class="hint">Cuando alguien te paga por Instagram: escribí su correo, elegí el plan y listo. Se le activa el acceso al instante (no necesita código) y queda anotada la venta.</p>
     <div class="sell">
-      <div style="display:flex;flex-direction:column;gap:12px">
-        <label>Correo de la cuenta<input id="sEmail" type="email" list="emList" placeholder="correo@ejemplo.com"><datalist id="emList"></datalist></label>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div><div class="step"><i>1</i>¿Quién compró?</div>
+        <label>Correo de la cuenta<input id="sEmail" type="email" list="emList" placeholder="correo@ejemplo.com"><datalist id="emList"></datalist></label></div>
+        <div><div class="step"><i>2</i>¿Qué compró?</div>
+          <div class="tgrp">Banco de preguntas</div>
+          <div class="tiles"><button type="button" class="tile" data-pv="month"><b>Mensual</b><small data-pr="month"></small></button><button type="button" class="tile" data-pv="full"><b>Completo</b><small data-pr="full"></small></button><button type="button" class="tile" data-pv="two"><b>2 exámenes</b><small data-pr="two"></small></button><button type="button" class="tile" data-pv="year"><b>Combo Anual</b><small data-pr="year"></small></button></div>
+          <div class="tgrp">Black Friday</div>
+          <div class="tiles"><button type="button" class="tile bf" data-pv="res"><b>🔒 Reserva</b><small>Gs. 100.000 · 1 mes</small></button><button type="button" class="tile" data-pv="week"><b>🎁 Regalo</b><small>+1 semana</small></button></div>
+          <div id="sResW" hidden><div class="tgrp">Plan que reserva (se congela el precio)</div>
+          <div class="tiles"><button type="button" class="tile" data-rv="full"><b>Completo</b><small>Gs. 240.000</small></button><button type="button" class="tile" data-rv="two"><b>2 exámenes</b><small>Gs. 380.000</small></button><button type="button" class="tile" data-rv="combo"><b>Combo</b><small>Gs. 550.000</small></button></div></div>
+          <select id="sPlan" hidden><option value="full">Completo</option><option value="month">Mensual</option><option value="two">2 exámenes</option><option value="year">Combo Anual</option><option value="week">Regalo</option><option value="res">Reserva</option></select>
+          <select id="sRes" hidden><option value="full">Completo</option><option value="two">2 exámenes</option><option value="combo">Combo</option></select>
+        </div>
+        <div><div class="step"><i>3</i>¿Cómo pagó?</div>
         <div class="row">
-          <label>Plan<select id="sPlan"><option value="full">Completo (hasta el examen 2027)</option><option value="month">Mensual (+30 días)</option><option value="two">2 exámenes (2027 y 2028)</option><option value="year">Combo Anual (12 meses, mínimo hasta el examen 2028)</option><option value="week">Regalo: +1 semana</option></select></label>
           <label>Monto (Gs.)<input id="sAmt" type="number" min="0" step="1000"></label>
-        </div>
-        <div class="row">
           <label>Medio de pago<select id="sMet"><option>Transferencia</option><option>Giro</option><option>Efectivo</option><option>Billetera (Tigo/Personal)</option><option>Otro</option></select></label>
-          <label>Nota (opcional)<input id="sNote" placeholder="Ej.: comprobante 1234"></label>
         </div>
+        <label style="margin-top:10px">Nota (opcional)<input id="sNote" placeholder="Ej.: comprobante 1234"></label></div>
         <button class="btn cta" type="button" id="sGo">Registrar venta y activar</button>
         <p class="msg" id="sMsg"></p>
       </div>
       <div class="prev" id="sPrev"></div>
     </div>
   </div>
-  <div class="card">
+  <div class="card" id="resCard">
+    <div class="ahead"><h2>🔒 Reservas Black Friday pendientes</h2><span class="cnt" id="cRes"></span></div>
+    <p class="hint">Pagaron Gs. 100.000 y tienen hasta el 31/12 para completar la diferencia al precio de Black Friday. Al tocar «Completar» se registra el saldo y se extiende el acceso hasta el examen.</p>
+    <div class="att" id="resList"></div>
+  </div>
+  <div class="card" id="pdfCard">
     <h2>📘 Vender resúmenes en PDF</h2>
     <p class="hint">Registrá la venta y el comprador ve sus resúmenes en la app (pestaña Resúmenes → «Mis resúmenes»). Al descargar, cada PDF sale con su nombre y su correo en todas las páginas. Tiene que entrar con el <b>mismo correo</b>.</p>
     <div class="row"><label>Correo del comprador<input id="rEmail" type="email" list="emList" placeholder="correo@ejemplo.com"></label><label>Nombre y apellido (para la marca de agua)<input id="rName" placeholder="Ej.: María González"></label></div>
@@ -351,7 +373,7 @@ async function loadAll(){
   P=pr.data||[];ST={};(st.data||[]).forEach(s=>ST[(s.email||'').toLowerCase()]=s);DS={};(ds.data||[]).forEach(s=>DS[(s.email||'').toLowerCase()]=s);
   TR=tr&&tr.data||[];SALES=sl.data||[];REPS=rp.data||[];PROMO_LEFT=typeof pl.data==='number'?pl.data:null;
   $('emList').innerHTML=P.filter(p=>!p.is_admin).map(p=>'<option value="'+esc(p.email)+'">').join('');
-  renderRes();renderAtt();renderUsers();renderSales();renderReps();renderSellPrev();
+  renderRes();renderAtt();renderUsers();renderSales();renderReps();renderSellPrev();renderReservas();
 }
 
 /* ---------- Resumen ---------- */
@@ -406,21 +428,57 @@ function renderAtt(){const now=Date.now();const U=P.filter(p=>!p.is_admin);
     if(error){b.disabled=false;b.textContent='Error: '+error.message;return}b.textContent='Activada hasta el '+fd(data)+' ✓';b.classList.add('done');setTimeout(loadAll,1500)}));
 }
 
+/* ---------- Reservas Black Friday ---------- */
+function pendRes(){const out=[];const ks=Object.keys(RES_PL);
+  SALES.forEach(s=>{const k=ks.find(k=>s.plan===resName(k));if(!k)return;const em=(s.email||'').toLowerCase();
+    const done=SALES.some(x=>(x.email||'').toLowerCase()===em&&x.plan===doneName(k)&&new Date(x.at)>=new Date(s.at));if(!done)out.push({s,k})});
+  return out.sort((a,b)=>new Date(a.s.at)-new Date(b.s.at))}
+function renderReservas(){const L=pendRes();$('cRes').textContent=L.length;
+  const dl=Math.ceil((new Date(RES_DUE)-Date.now())/864e5);
+  $('resList').innerHTML=L.length?L.map(({s,k})=>{const r=RES_PL[k],saldo=r.t-(s.amount||0),p=P.find(x=>(x.email||'').toLowerCase()===(s.email||'').toLowerCase());
+    return '<div class="arow" style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center"><div><b>'+esc(s.email)+'</b><div class="hint" style="margin:2px 0 0">'+esc(r.n)+' · reservó el '+fd(s.at)+' · acceso hasta '+fd(p&&p.access_until)+'</div><div class="hint" style="margin:2px 0 0">Saldo <b style="color:var(--fg)">'+gs(saldo)+'</b> · '+(dl>=0?'quedan '+dl+' días':'<span style="color:var(--bad)">venció el plazo</span>')+'</div></div><div class="row" style="gap:6px"><button class="btn gh sm" type="button" data-rmsg="'+esc(s.email)+'" data-k="'+k+'">Recordatorio</button><button class="btn cta sm" type="button" data-rdone="'+esc(s.email)+'" data-k="'+k+'" data-amt="'+saldo+'">Completar</button></div></div>'}).join(''):'<p class="hint">No hay reservas pendientes.</p>';
+  document.querySelectorAll('[data-rmsg]').forEach(b=>b.onclick=()=>{const r=RES_PL[b.dataset.k];const sal=SALES.find(x=>x.email===b.dataset.rmsg&&x.plan===resName(b.dataset.k));copy('¡Hola! 😊 Te recuerdo que tu reserva de AranduMed ('+r.n+' a '+gs(r.t)+', precio Black Friday) se completa con '+gs(r.t-((sal&&sal.amount)||0))+' hasta el 31 de diciembre. Si querés te paso los datos para la transferencia.',b,'Copiado ✓')});
+  document.querySelectorAll('[data-rdone]').forEach(b=>b.onclick=()=>{const em=b.dataset.rdone,k=b.dataset.k,r=RES_PL[k],amt=+b.dataset.amt;const p=P.find(x=>(x.email||'').toLowerCase()===em.toLowerCase());if(!p){b.textContent='La cuenta no existe';return}
+    const u=untilFor(r.plan,p.access_until);
+    twice(b,'¿Registrar '+gs(amt)+' y activar hasta el '+fd(u)+'? Tocá de nuevo',async()=>{b.disabled=true;
+      const {error}=await sb.rpc('admin_sell',{p_email:em,p_plan:doneName(k),p_until:u.toISOString(),p_amount:amt,p_method:'Transferencia',p_note:'Saldo de la reserva Black Friday'});
+      if(error){b.disabled=false;b.textContent='Error: '+error.message;return}
+      await copy(doneMsg(k,u));b.textContent='Completado ✓ · mensaje copiado';b.classList.add('done');
+      if(k==='combo'){$('rEmail').value=em;document.querySelectorAll('#rChk input').forEach(c=>c.checked=true);$('rAmt').value=0;$('rNote').value='Incluido en el combo (reserva Black Friday)';$('pdfCard').scrollIntoView({behavior:'smooth',block:'start'});msg('rMsg','Falta activar los resúmenes del combo: completá su nombre (para la marca de agua) y tocá «Registrar venta de resúmenes».',true)}
+      setTimeout(loadAll,1500)})});
+}
 /* ---------- Vender ---------- */
 function untilFor(plan,cur){const base=cur&&new Date(cur)>new Date()?new Date(cur):new Date();let u;
   if(plan==='year'){u=new Date(base.getTime()+365*864e5);const e2=new Date(EXAM_END2);if(u<e2)u=e2}else if(plan==='full'){u=new Date(EXAM_END);if(base>u)u=new Date(base.getTime()+30*864e5)}else if(plan==='two'){u=new Date(EXAM_END2);if(base>u)u=new Date(base.getTime()+30*864e5)}else if(plan==='week')u=new Date(base.getTime()+7*864e5);else u=new Date(base.getTime()+30*864e5);return u}
-const PLN={year:'Combo Anual',full:'Completo',month:'Mensual',two:'2 exámenes',week:'Regalo +1 semana'};
+const PLN={year:'Combo Anual',full:'Completo',month:'Mensual',two:'2 exámenes',week:'Regalo +1 semana',res:'Reserva Black Friday'};
+const RES_AMT=100000,RES_DUE='2026-12-31T23:59:59-03:00';
+const RES_PL={full:{n:'Completo',t:240000,plan:'full'},two:{n:'2 exámenes',t:380000,plan:'two'},combo:{n:'Combo Banco + Colección',t:550000,plan:'full'}};
+const resName=k=>'Reserva BF · '+RES_PL[k].n,doneName=k=>'Completa reserva · '+RES_PL[k].n;
+function resMsg(k,u){const r=RES_PL[k];return '¡Listo! ✅ Recibimos tu reserva de Gs. 100.000.\n\n🔓 Ya tenés acceso al banco de preguntas hasta el '+fdl(u)+'.\n🔒 Te quedó congelado el plan '+r.n+' a '+gs(r.t)+' (precio Black Friday).\n💳 Para completarlo te faltan '+gs(r.t-RES_AMT)+', y tenés tiempo hasta el 31 de diciembre.\n\nEntrá con tu correo en '+SITE+' y empezá hoy mismo.\n\n¡Gracias por confiar en nosotros! 💚\nEquipo AranduMed'}
+function doneMsg(k,u){const r=RES_PL[k];return '¡Listo! ✅ Completaste tu plan '+r.n+' de AranduMed.\n\nTenés acceso al banco de preguntas hasta el '+fdl(u)+'.'+(k==='combo'?'\n📘 Tus 10 resúmenes de Medicina Interna ya están en la app: pestaña Resúmenes → «Mis resúmenes».':'')+'\n\n¡Éxitos con el estudio! 💚\nEquipo AranduMed'}
 function sellMsg(plan,u){return '¡Listo! ✅ Ya tenés activo el plan '+PLN[plan]+' de AranduMed hasta el '+fdl(u)+'.\n\nEntrá con tu correo en '+SITE+' y seguí estudiando: no necesitás código. Tu progreso de la prueba se mantiene.\n\n¡Gracias por confiar en nosotros y éxitos con el estudio! 💚\nEquipo AranduMed'}
 function renderSellPrev(){const em=$('sEmail').value.trim().toLowerCase();const plan=$('sPlan').value;const p=P.find(x=>(x.email||'').toLowerCase()===em);
-  const pr=priceNow();if(!$('sAmt').dataset.touched)$('sAmt').value=plan==='week'?0:pr[plan];
+  $('sResW').hidden=plan!=='res';
+  document.querySelectorAll('[data-pv]').forEach(b=>b.classList.toggle('on',b.dataset.pv===plan));document.querySelectorAll('[data-rv]').forEach(b=>b.classList.toggle('on',b.dataset.rv===$('sRes').value));
+  {const pr0=priceNow();document.querySelectorAll('[data-pr]').forEach(e=>e.textContent=gs(pr0[e.dataset.pr]))}
+  const pr=priceNow();if(!$('sAmt').dataset.touched)$('sAmt').value=plan==='week'?0:plan==='res'?RES_AMT:pr[plan];
+  if(plan==='res'){const k=$('sRes').value,r=RES_PL[k],u=untilFor('month',p&&p.access_until);$('sPrev').innerHTML='<span class="lab">Vista previa</span>'+(p?'<div>'+tag(status(p))+' <span class="hint" style="display:inline">'+esc(p.email)+'</span></div>':em?'<div class="msg err">No hay ninguna cuenta con ese correo. Pedile que se registre primero.</div>':'<div class="hint">Escribí el correo de la cuenta.</div>')+'<div class="big">Reserva · '+esc(r.n)+'</div><div class="hint">Paga '+gs($('sAmt').value)+' ahora · saldo <b style="color:var(--fg)">'+gs(r.t-(+$('sAmt').value||0))+'</b> hasta el 31/12<br>Acceso hasta el <b style="color:var(--fg)">'+fdl(u)+'</b></div><span class="lab" style="margin-top:6px">Mensaje para enviarle</span><pre id="sTxt">'+esc(resMsg(k,u))+'</pre>';return}
   const u=untilFor(plan,p&&p.access_until);
   $('sPrev').innerHTML='<span class="lab">Vista previa</span>'+(p?'<div>'+tag(status(p))+' <span class="hint" style="display:inline">'+esc(p.email)+'</span></div>':em?'<div class="msg err">No hay ninguna cuenta con ese correo. Pedile que se registre primero.</div>':'<div class="hint">Escribí el correo de la cuenta.</div>')+
     '<div class="big">'+PLN[plan]+' · '+gs($('sAmt').value)+'</div><div class="hint">Acceso hasta el <b style="color:var(--fg)">'+fdl(u)+'</b></div><span class="lab" style="margin-top:6px">Mensaje para enviarle</span><pre id="sTxt">'+esc(sellMsg(plan,u))+'</pre>';
 }
-['sEmail','sPlan'].forEach(id=>$(id).addEventListener('input',()=>{if(id==='sPlan')delete $('sAmt').dataset.touched;renderSellPrev()}));
+['sEmail','sPlan','sRes'].forEach(id=>$(id).addEventListener('input',()=>{if(id!=='sEmail')delete $('sAmt').dataset.touched;renderSellPrev()}));
+document.querySelectorAll('[data-pv]').forEach(b=>b.onclick=()=>{$('sPlan').value=b.dataset.pv;delete $('sAmt').dataset.touched;renderSellPrev()});
+document.querySelectorAll('[data-rv]').forEach(b=>b.onclick=()=>{$('sRes').value=b.dataset.rv;delete $('sAmt').dataset.touched;renderSellPrev()});
 $('sAmt').addEventListener('input',()=>{$('sAmt').dataset.touched=1;renderSellPrev()});
 $('sGo').onclick=async()=>{const em=$('sEmail').value.trim();const plan=$('sPlan').value;const p=P.find(x=>(x.email||'').toLowerCase()===em.toLowerCase());
   if(!p){msg('sMsg','No hay ninguna cuenta con ese correo.');return}
+  if(plan==='res'){const k=$('sRes').value,r=RES_PL[k],u=untilFor('month',p.access_until),amt=+$('sAmt').value||0,b=$('sGo');
+    twice(b,'¿Reserva de '+r.n+' para '+em+'? Tocá de nuevo',async()=>{b.disabled=true;
+      const {error}=await sb.rpc('admin_sell',{p_email:em,p_plan:resName(k),p_until:u.toISOString(),p_amount:amt,p_method:$('sMet').value,p_note:('Saldo '+gs(r.t-amt)+' hasta el 31/12'+($('sNote').value?' · '+$('sNote').value:''))});
+      b.disabled=false;if(error){msg('sMsg',error.message);return}
+      await copy(resMsg(k,u));msg('sMsg','Reserva registrada: acceso hasta el '+fd(u)+' y saldo de '+gs(r.t-amt)+' pendiente. Te copié el mensaje para Instagram.',true);
+      $('sNote').value='';delete $('sAmt').dataset.touched;loadAll()});return}
   const u=untilFor(plan,p.access_until);const b=$('sGo');
   twice(b,'¿'+PLN[plan]+' para '+em+'? Tocá de nuevo',async()=>{b.disabled=true;
     const {error}=await sb.rpc('admin_sell',{p_email:em,p_plan:PLN[plan],p_until:u.toISOString(),p_amount:+$('sAmt').value||0,p_method:$('sMet').value,p_note:$('sNote').value||null});
