@@ -411,6 +411,11 @@ body:has(#gate:not([hidden])){padding-top:54px!important}
 .pnext{flex-basis:100%;color:var(--muted);font-size:.85rem;font-weight:600}
 .promo{display:flex;align-items:center;justify-content:center;gap:10px 16px;flex-wrap:wrap;background:#0B0B0C;color:#F5F5F5;border:1px solid #2A2A2E;border-radius:14px;padding:12px 18px;text-align:center}.promo-t{font-family:var(--display);font-weight:800;letter-spacing:.02em}.promo-c{font-family:var(--mono);color:var(--cta);font-weight:600}
 .hpromo{white-space:nowrap;margin:16px 0 0;display:inline-flex;align-items:center;gap:8px;background:#0B0B0C;color:#F5F5F5;border:1px solid #2A2A2E;border-radius:99px;padding:6px 14px;font-size:.88rem;font-weight:600}.hpromo b{color:var(--cta);font-family:var(--mono)}
+.ldsvg{display:block;width:100%;max-width:420px;margin:0 auto 10px;overflow:visible}
+.ld-bob{animation:ldBob .5s ease-in-out infinite}.ld-l1,.ld-l2,.ld-arm{transform-box:fill-box}.ld-l1{transform-origin:50% 0;animation:ldLeg .5s ease-in-out infinite}.ld-l2{transform-origin:50% 0;animation:ldLeg .5s ease-in-out infinite reverse}.ld-arm{transform-origin:0 0;animation:ldLeg .5s ease-in-out infinite reverse}
+.ld-fl{transform-box:fill-box;transform-origin:0 50%;animation:ldFlag 1s ease-in-out infinite}
+@keyframes ldBob{50%{transform:translateY(-1.6px)}}@keyframes ldLeg{0%,100%{transform:rotate(28deg)}50%{transform:rotate(-28deg)}}@keyframes ldFlag{50%{transform:scaleX(.82) skewY(-6deg)}}
+@media (prefers-reduced-motion:reduce){.ld-bob,.ld-l1,.ld-l2,.ld-arm,.ld-fl{animation:none}}
 .pbar{height:6px;border-radius:99px;background:var(--line);overflow:hidden}.pbar i{display:block;height:100%;width:2%;background:var(--accent);transition:width .3s}.iosHint{font-size:.85rem;color:var(--muted)}
 </style>
 <style>
@@ -764,7 +769,7 @@ h2{font-weight:700;letter-spacing:-.01em;line-height:1.25}
     <div class="row" style="justify-content:flex-start"><button class="btn" type="submit">Guardar</button></div>
   </form>
 
-  <div class="card" id="loading" hidden><p style="margin:0" id="loadTxt">Cargando preguntas…</p><div class="pbar"><i id="loadBar"></i></div></div>
+  <div class="card" id="loading" hidden><svg id="ldSvg" class="ldsvg" viewBox="0 0 320 130" aria-hidden="true"><path id="ldRoad" d="M14 112 C 70 112 64 58 120 62 S 186 112 236 78 S 280 34 296 34" fill="none" stroke="var(--line)" stroke-width="10" stroke-linecap="round"/><path id="ldTrail" d="M14 112 C 70 112 64 58 120 62 S 186 112 236 78 S 280 34 296 34" fill="none" stroke="var(--accent)" stroke-width="4" stroke-linecap="round" stroke-dasharray="0 999"/><g class="ld-flag" transform="translate(296 34)"><line x1="0" y1="0" x2="0" y2="-30" stroke="var(--fg)" stroke-width="2.5" stroke-linecap="round"/><path class="ld-fl" d="M0 -30 L22 -24 L0 -17Z" fill="#F08A5D"/><text x="6" y="14" font-size="9" font-weight="800" fill="var(--muted)" font-family="var(--display)">CONAREM</text></g><g id="ldW" transform="translate(14 109)"><g class="ld-bob"><circle cx="0" cy="-27" r="5.5" fill="#F2C6A0"/><path d="M-6 -30 Q0 -36 6 -30" fill="#5B3A29"/><rect x="-6.5" y="-21" width="9" height="11" rx="3" fill="#FFC94A"/><line x1="0" y1="-21" x2="0" y2="-9" stroke="var(--accent)" stroke-width="5" stroke-linecap="round"/><g class="ld-arm"><line x1="0" y1="-19" x2="5" y2="-12" stroke="#F2C6A0" stroke-width="2.6" stroke-linecap="round"/></g><g class="ld-l1"><line x1="0" y1="-9" x2="-3" y2="0" stroke="#2B3550" stroke-width="3" stroke-linecap="round"/></g><g class="ld-l2"><line x1="0" y1="-9" x2="3" y2="0" stroke="#2B3550" stroke-width="3" stroke-linecap="round"/></g></g></g></svg><p style="margin:0" id="loadTxt">Cargando preguntas…</p><div class="pbar"><i id="loadBar"></i></div></div>
   </div>
 <footer class="lfoot" id="lfoot">
   <div class="soc"><a class="sbtn" id="lnkIg" aria-label="Instagram" title="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="14" rx="3.5"/><circle cx="12" cy="12.5" r="3.6"/><path d="M8 5.5l1.3-2h5.4l1.3 2"/></svg><span>Instagram</span></a><a class="sbtn" id="lnkWa" aria-label="WhatsApp" title="WhatsApp" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 20l1.5-4A8 8 0 1 1 20 11.5z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5"/></svg><span>WhatsApp</span></a></div>
@@ -1387,7 +1392,7 @@ setSync('Progreso guardado en este dispositivo.');
 const $=id=>document.getElementById(id);
 const C=window.CONFIG||{};
 // ---------- Registro de errores (para diagnosticar cuelgues en celulares) ----------
-const VER='2026.11.14-a';let nlog=0;
+const VER='2026.11.14-b';let nlog=0;
 function tok(){try{const k=Object.keys(localStorage).find(k=>/^sb-.*-auth-token$/.test(k));const v=k&&JSON.parse(localStorage.getItem(k));return v&&v.access_token}catch(e){return null}}
 function clog(kind,msg){try{if(!C.SUPABASE_URL||nlog++>25)return;const t=tok();
   fetch(C.SUPABASE_URL+'/rest/v1/client_logs',{method:'POST',keepalive:true,headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:'Bearer '+(t||C.SUPABASE_ANON_KEY),'Content-Type':'application/json',Prefer:'return=minimal'},
@@ -1495,7 +1500,7 @@ document.addEventListener('click',async e=>{const b=e.target.closest&&e.target.c
     box.innerHTML='<p class="msg ok">¡Gracias! Recibimos tu reporte y lo vamos a revisar. 🙌</p>'}catch(err){s.disabled=false;m.className='msg err';m.textContent='No se pudo enviar: '+((err&&err.message)||err)}});
 (function(){const b=$('themeBtn'),r=document.documentElement;function lab(){const d=r.getAttribute('data-theme')==='dark';b.innerHTML=(d?'☀':'☾')+'<span class="tl"> '+(d?'Modo claro':'Modo oscuro')+'</span>';b.setAttribute('aria-label',d?'Cambiar a modo claro':'Cambiar a modo oscuro')}lab();
 b.onclick=()=>{const n=r.getAttribute('data-theme')==='dark'?'light':'dark';r.setAttribute('data-theme',n);try{localStorage.setItem('tema',n)}catch(e){}lab()}})();
-function show(id){['fLogin','fCode','fNewPass','loading'].forEach(x=>$(x).hidden=(x!==id));$('gate').classList.toggle('lp',id==='fLogin')}
+function show(id){['fLogin','fCode','fNewPass','loading'].forEach(x=>$(x).hidden=(x!==id));if(id==='loading'&&!ldRaf&&typeof ldTick==='function')ldRaf=requestAnimationFrame(ldTick);$('gate').classList.toggle('lp',id==='fLogin')}
 function msg(id,t,ok){const m=$(id);m.textContent=t||'';m.className='msg'+(t?(ok?' ok':' err'):'')}
 if(!C.SUPABASE_URL||!C.SUPABASE_ANON_KEY){show('fLogin');msg('lMsg','La web todavía no está conectada a la base de datos (falta completar config.js).');$('bMain').disabled=true;return}
 // Candado propio: evita que la sesión quede trabada al volver a la pestaña (problema conocido de supabase-js con navigator.locks)
@@ -1587,7 +1592,12 @@ $('fNewPass').onsubmit=async ev=>{ev.preventDefault();const {error}=await sb.aut
 function idb(){return new Promise((res,rej)=>{const r=indexedDB.open('arandumed',1);r.onupgradeneeded=()=>r.result.createObjectStore('kv');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
 async function cacheGet(k){try{const db=await idb();return await new Promise(res=>{const q=db.transaction('kv').objectStore('kv').get(k);q.onsuccess=()=>res(q.result);q.onerror=()=>res(null)})}catch(e){return null}}
 async function cacheSet(k,v){try{const db=await idb();await new Promise(res=>{const tx=db.transaction('kv','readwrite');tx.objectStore('kv').put(v,k);tx.oncomplete=res;tx.onerror=res})}catch(e){}}
-function prog(t,p){$('loadTxt').textContent=t;$('loadBar').style.width=(p||0)+'%'}
+let ldT=0,ldC=0,ldRaf=0,ldS=0;
+function ldTick(){const road=document.getElementById('ldRoad'),w=document.getElementById('ldW'),tr=document.getElementById('ldTrail');if(!road||!w)return;const L=road.getTotalLength();
+  if(!ldS)ldS=performance.now();const idle=.4*(1-Math.exp(-(performance.now()-ldS)/5000));const tg=Math.min(1,Math.max(ldT,idle));ldC+=(tg-ldC)*.06;const pt=road.getPointAtLength(L*ldC),pt2=road.getPointAtLength(Math.min(L,L*ldC+2));
+  w.setAttribute('transform','translate('+pt.x.toFixed(1)+' '+(pt.y-3).toFixed(1)+')'+(pt2.x<pt.x?' scale(-1 1)':''));tr.setAttribute('stroke-dasharray',(L*ldC).toFixed(1)+' 999');
+  const ld=document.getElementById('loading');if(ld&&!ld.hidden)ldRaf=requestAnimationFrame(ldTick);else ldRaf=0}
+function prog(t,p){$('loadTxt').textContent=t;$('loadBar').style.width=(p||0)+'%';ldT=Math.max(ldT,(p||0)/100);if(!ldRaf)ldRaf=requestAnimationFrame(ldTick)}
 async function loadBank(){
   const cached=await withTimeout(cacheGet('bank'),6000).catch(()=>null);
   let ver=null,total=0;
