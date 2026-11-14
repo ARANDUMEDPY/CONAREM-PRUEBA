@@ -365,7 +365,7 @@ body:has(#gate:not([hidden])){padding-top:54px!important}
 @container shopc (min-width:561px) and (max-width:900px){.resl .shop-packs{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
 @container shopc (max-width:560px){.resl .shop-packs{grid-template-columns:1fr!important}}
 .mc-go{display:flex;align-items:center;justify-content:space-between;width:100%;margin-top:16px;padding:16px 18px;border:0;border-radius:16px;background:#F08A5D;color:#0D1321;font:inherit;text-align:left;cursor:pointer;box-shadow:0 14px 30px -16px rgba(240,138,93,.8);transition:transform .15s}.mc-go:hover{transform:translateY(-2px)}.mc-go b{display:block;font-size:1.25rem;font-family:var(--display);color:#0D1321!important}.mc-go small{display:block;font-size:.82rem;font-weight:600;opacity:.8;margin-top:2px}
-.mc-col>*:not(.mc-bar){display:none!important}.mc-col.open>*:not(.mc-bar){display:revert!important}.mc-col.open>#mcBox,.mc-col.open>#mcRank{display:block!important}
+.mc-col:not(.open)>*:not(.mc-bar){display:none!important}
 .mc-bar{all:unset;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;cursor:pointer}.mc-bar .mc-prh{margin:0;flex:1;min-width:0}.mc-bar .mc-prh .note{display:none}.mc-bar h2{margin:0}
 .mc-meta{display:flex;align-items:center;gap:8px;flex:none;max-width:50%}.mc-tz{font-size:.8rem;color:var(--muted);text-align:right;line-height:1.25}.mc-ch{font-size:1.3rem;transition:transform .2s}.mc-col.open .mc-ch{transform:rotate(180deg)}.mc-col.open .mc-bar{margin-bottom:12px}
 .card.mc-col{padding-top:16px;padding-bottom:16px}.mc-col .mc-pin{width:36px;height:36px;font-size:18px;border-radius:11px}
@@ -1387,7 +1387,7 @@ setSync('Progreso guardado en este dispositivo.');
 const $=id=>document.getElementById(id);
 const C=window.CONFIG||{};
 // ---------- Registro de errores (para diagnosticar cuelgues en celulares) ----------
-const VER='2026.11.14-a';let nlog=0;
+const VER='2026.11.14-c';let nlog=0;
 function tok(){try{const k=Object.keys(localStorage).find(k=>/^sb-.*-auth-token$/.test(k));const v=k&&JSON.parse(localStorage.getItem(k));return v&&v.access_token}catch(e){return null}}
 function clog(kind,msg){try{if(!C.SUPABASE_URL||nlog++>25)return;const t=tok();
   fetch(C.SUPABASE_URL+'/rest/v1/client_logs',{method:'POST',keepalive:true,headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:'Bearer '+(t||C.SUPABASE_ANON_KEY),'Content-Type':'application/json',Prefer:'return=minimal'},
