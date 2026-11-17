@@ -1405,7 +1405,7 @@ setSync('Progreso guardado en este dispositivo.');
 const $=id=>document.getElementById(id);
 const C=window.CONFIG||{};
 // ---------- Registro de errores (para diagnosticar cuelgues en celulares) ----------
-const VER='2026.11.17-b';let nlog=0;
+const VER='2026.11.17-c';let nlog=0;
 function tok(){try{const k=Object.keys(localStorage).find(k=>/^sb-.*-auth-token$/.test(k));const v=k&&JSON.parse(localStorage.getItem(k));return v&&v.access_token}catch(e){return null}}
 function clog(kind,msg){try{if(!C.SUPABASE_URL||nlog++>25)return;const t=tok();
   fetch(C.SUPABASE_URL+'/rest/v1/client_logs',{method:'POST',keepalive:true,headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:'Bearer '+(t||C.SUPABASE_ANON_KEY),'Content-Type':'application/json',Prefer:'return=minimal'},
@@ -1697,6 +1697,8 @@ async function leave(kick){if(leaving)return;leaving=true;clog('leave',kick?'kic
   try{Object.keys(localStorage).filter(k=>/^sb-.*-auth-token$/.test(k)).forEach(k=>localStorage.removeItem(k))}catch(e){}
   done()}
 function kicked(){return leave(true)}
+window.__devWarn=(a,b,c)=>devWarn(a,b,c);
+function devWarn(c,lim,h){const q=Math.max(0,lim-c);modal('<button type="button" class="bs-x" data-x aria-label="Cerrar">×</button><div class="wel-e">⚠️</div><span class="bs-k">Cambios de dispositivo</span><h3>'+(q>0?'Te queda '+q+' cambio esta semana':'No te quedan cambios esta semana')+'</h3><p class="bs-s">Tu cuenta se abrió en un equipo mientras estaba en uso en otro <b>'+c+' veces</b> en los últimos 7 días. Cada cuenta es personal: si se pasa de '+lim+' cambios, la cuenta se bloquea por '+h+' horas.</p><p class="bs-s">Si usás celular y compu, cerrá la sesión en uno antes de abrir el otro y no suma.</p><button type="button" class="btn buy big" data-x>Entendido</button>')}
 let pinging=false;
 const isAuthErr=e=>e&&(e.code==='PGRST301'||e.code==='PGRST303'||/JWT|expired|401/i.test(e.message||''));
 async function ping(){if(document.hidden||pinging||leaving)return;pinging=true;
@@ -1718,7 +1720,7 @@ function recoverSession(why){if(recovering||leaving)return;recovering=true;clog(
 async function route(depth){depth=depth||0;
   let session=null;
   try{session=(await withTimeout(sb.auth.getSession(),10000)).data.session}catch(e){recoverSession('getSession '+e.message);return}
-  if(!session){$('app').hidden=true;$('gate').hidden=false;show('fLogin');let k=null;try{k=sessionStorage.getItem('am_kicked');sessionStorage.removeItem('am_kicked')}catch(e){}let rc=null;try{rc=sessionStorage.getItem('am_recover');sessionStorage.removeItem('am_recover')}catch(e){}if(rc&&!k)msg('lMsg','Por seguridad tu sesión se reinició. Ingresá de nuevo: tu progreso está guardado.',true);if(k)msg('lMsg','Tu cuenta se abrió en otro dispositivo. Cada cuenta puede estar abierta en un solo dispositivo a la vez; si ingresás acá, se cerrará en el otro. Tu progreso está guardado.');return}
+  if(!session){$('app').hidden=true;$('gate').hidden=false;show('fLogin');let k=null;try{k=sessionStorage.getItem('am_kicked');sessionStorage.removeItem('am_kicked')}catch(e){}let rc=null;try{rc=sessionStorage.getItem('am_recover');sessionStorage.removeItem('am_recover')}catch(e){}let bl=null;try{bl=sessionStorage.getItem('am_blocked');sessionStorage.removeItem('am_blocked')}catch(e){}if(bl){const d=new Date(bl);const hh=isNaN(d)?'':' hasta las '+d.toLocaleTimeString('es-PY',{hour:'2-digit',minute:'2-digit'})+(d.toDateString()!==new Date().toDateString()?' de mañana':'');msg('lMsg','🔒 Tu cuenta quedó bloqueada temporalmente'+hh+': se abrió en otro equipo mientras estaba en uso demasiadas veces esta semana (máximo 4). Cada cuenta es personal. Si creés que es un error, escribinos por WhatsApp (0994 314 870). Tu progreso está guardado.');return}if(rc&&!k)msg('lMsg','Por seguridad tu sesión se reinició. Ingresá de nuevo: tu progreso está guardado.',true);if(k)msg('lMsg','Tu cuenta se abrió en otro dispositivo. Cada cuenta puede estar abierta en un solo dispositivo a la vez; si ingresás acá, se cerrará en el otro. Ojo: si esto pasa más de 4 veces en una semana, la cuenta se bloquea 12 horas. Tu progreso está guardado.');return}
   const uid=session.user.id;
   let prof=null;
   try{const r=await withTimeout(sb.from('profiles').select('access_until,is_admin,email,trial_started,revoked_reason').eq('id',uid).maybeSingle(),12000);
@@ -1734,7 +1736,9 @@ async function route(depth){depth=depth||0;
   if(started)return;started=true;show('loading');
   const slowT=setTimeout(()=>{if($('loading').hidden||$('gate').hidden)return;clog('stuck_loading',$('loadTxt').textContent);
     if(!$('loadRetry')){const d=document.createElement('p');d.id='loadRetry';d.className='sub';d.style.margin='10px 0 0';d.innerHTML='Está tardando más de lo normal. Puede ser la conexión. <button class="btn" type="button" style="margin-top:8px">Reintentar</button>';d.querySelector('button').onclick=()=>location.reload();$('loading').appendChild(d)}},20000);
-  try{const rd=await withTimeout(sb.rpc('register_device',{p_device:devId(),p_label:devLabel()}),6000);if(rd&&rd.data===-1){clearTimeout(slowT);started=false;return route()}}catch(e){clog('register_device',(e&&e.message)||e)}
+  try{const rd=await withTimeout(sb.rpc('register_device',{p_device:devId(),p_label:devLabel()}),6000);if(rd&&rd.data===-1){clearTimeout(slowT);started=false;return route()}
+    if(rd&&rd.data===-2){clearTimeout(slowT);let bu='';try{const st=await withTimeout(sb.rpc('device_status'),5000);bu=(st&&st.data&&st.data.bloqueado_hasta)||''}catch(_){}try{sessionStorage.setItem('am_blocked',bu||'1')}catch(_){}return leave(true)}
+    if(rd&&rd.data>0){setTimeout(async()=>{try{const st=await sb.rpc('device_status');const c=st&&st.data&&st.data.cambios;if(c>=3)devWarn(c,st.data.limite,st.data.horas)}catch(_){}},2500)}}catch(e){clog('register_device',(e&&e.message)||e)}
   startPing();
   try{
     const bank0=await loadBank();
