@@ -702,7 +702,7 @@ h2{font-weight:700;letter-spacing:-.01em;line-height:1.25}
 .ms-ic svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 @media (min-width:641px) and (hover:hover){#masSheet{display:none}}
 /* Web: menú lateral */
-@media (min-width:900px) and (hover:hover){
+@media (min-width:768px) and (hover:hover),(min-width:768px) and (pointer:fine){
  body:has(#app:not([hidden])){padding-left:calc(248px + 32px);transition:padding-left .2s}
  html.sb-min body:has(#app:not([hidden])){padding-left:calc(78px + 32px)}
  #app .topbar h1{display:none}#app .topbar{justify-content:flex-end}
@@ -724,7 +724,17 @@ h2{font-weight:700;letter-spacing:-.01em;line-height:1.25}
  html.sb-min #mainNav .sb-col svg{transform:rotate(180deg)}
  #app.v-cls{max-width:1040px}
 }
-@media (min-width:641px) and (max-width:899px) and (hover:hover){#mainNav .nw{display:none}}
+@media (min-width:641px) and (max-width:767px) and (hover:hover){#mainNav .nw{display:none}}
+@media (min-width:768px) and (max-width:1099px) and (hover:hover),(min-width:768px) and (max-width:1099px) and (pointer:fine){
+ html body:has(#app:not([hidden])){padding-left:calc(78px + 32px)}
+ html #app nav#mainNav{width:78px!important}
+ html #mainNav button{padding:11px 0!important;justify-content:center}
+ html #mainNav button span,html #mainNav .nw{display:none}
+ html #mainNav .sb-col svg{transform:rotate(180deg)}
+ html #mainNav .sb-full{display:none}html #mainNav .sb-short{display:inline}
+ #mainNav .sb-col{display:none!important}
+}
+
 /* Pestaña Clases */
 .cls-h h2{margin:0;font-family:var(--display);font-size:1.6rem}.cls-h .sub{margin-top:4px}
 .cls-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px;margin-top:16px}
@@ -1441,7 +1451,7 @@ document.querySelectorAll('#mainNav [role=tab]').forEach(b=>b.onclick=()=>go(b.d
 try{if(localStorage.getItem('am_cls_seen')==='1'){const n=document.getElementById('clsNew');if(n)n.remove()}}catch(_){}
 function toAcct(){const a=document.getElementById('acct');if(view!=='prog')go('prog');setTimeout(()=>{const b=document.getElementById('acct');if(b)b.scrollIntoView({behavior:'smooth',block:'center'})},60)}
 function masOpen(){let o=document.getElementById('masSheet');if(o){o.remove();return}o=document.createElement('div');o.id='masSheet';o.setAttribute('role','dialog');o.setAttribute('aria-label','Más secciones');const it=[['res','Resúmenes','Lo más preguntado de cada tema y los PDF',document.querySelector('#tab-res svg')],['prog','Mi centro','Tu avance, puesto estimado y ranking',document.querySelector('#tab-prog svg')],['err','Errores','Repasá las que fallaste',document.querySelector('#tab-err svg')],['guia','Guía del examen','Fechas, documentos y reglas',document.querySelector('#sbGuia svg')],['cta','Mi cuenta','Plan, cerrar sesión y más',document.querySelector('#sbCta svg')]];o.innerHTML='<div class="ms-dim" data-x></div><div class="ms-sh"><div class="ms-grab" data-x></div>'+it.map(([k,t,d,ic])=>'<button type="button" class="ms-it'+(view===k?' on':'')+'" data-k="'+k+'"><span class="ms-ic">'+(ic?ic.outerHTML:'')+'</span><span><b>'+t+'</b><small>'+d+'</small></span></button>').join('')+'</div>';o.onclick=e=>{if(e.target.closest('[data-x]')){o.remove();return}const b=e.target.closest('[data-k]');if(!b)return;o.remove();const k=b.dataset.k;if(k==='cta')toAcct();else go(k);window.scrollTo(0,0)};document.body.appendChild(o);requestAnimationFrame(()=>o.classList.add('show'))}
-document.getElementById('tab-mas').onclick=masOpen;document.getElementById('sbGuia').onclick=()=>go('guia');document.getElementById('sbCta').onclick=toAcct;
+document.querySelectorAll('#mainNav button').forEach(b=>{const t=b.querySelector('span');if(t&&!b.title)b.title=t.textContent});document.getElementById('tab-mas').onclick=masOpen;document.getElementById('sbGuia').onclick=()=>go('guia');document.getElementById('sbCta').onclick=toAcct;
 {const col=document.getElementById('sbCol');const ap=m=>{document.documentElement.classList.toggle('sb-min',m);col.setAttribute('aria-label',m?'Expandir menú':'Contraer menú');col.querySelector('span').textContent=m?'Expandir menú':'Contraer menú'};let m0=false;try{m0=localStorage.getItem('am_sbmin')==='1'}catch(_){}ap(m0);col.onclick=()=>{const m=!document.documentElement.classList.contains('sb-min');ap(m);try{localStorage.setItem('am_sbmin',m?'1':'0')}catch(_){}}}
 document.getElementById('view').addEventListener('click',e=>{const b=e.target.closest('[data-save]');if(!b)return;e.preventDefault();const id=b.dataset.save;S.saved=S.saved||{};if(S.saved[id])delete S.saved[id];else S.saved[id]=todayKey();persist();const on=!!S.saved[id];document.querySelectorAll('[data-save="'+id.replace(/"/g,'')+'"]').forEach(x=>{x.classList.toggle('on',on);x.textContent=x.closest('.mc-b')?(on?'★ Quitar de guardados':'☆ Guardar'):(on?'★ Guardado':'☆ Guardar')})});
 document.getElementById('tab-guia').onclick=()=>go('guia');
@@ -1478,7 +1488,7 @@ setSync('Progreso guardado en este dispositivo.');
 const $=id=>document.getElementById(id);
 const C=window.CONFIG||{};
 // ---------- Registro de errores (para diagnosticar cuelgues en celulares) ----------
-const VER='2026.11.17-e';let nlog=0;
+const VER='2026.11.17-f';let nlog=0;
 function tok(){try{const k=Object.keys(localStorage).find(k=>/^sb-.*-auth-token$/.test(k));const v=k&&JSON.parse(localStorage.getItem(k));return v&&v.access_token}catch(e){return null}}
 function clog(kind,msg){try{if(!C.SUPABASE_URL||nlog++>25)return;const t=tok();
   fetch(C.SUPABASE_URL+'/rest/v1/client_logs',{method:'POST',keepalive:true,headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:'Bearer '+(t||C.SUPABASE_ANON_KEY),'Content-Type':'application/json',Prefer:'return=minimal'},
