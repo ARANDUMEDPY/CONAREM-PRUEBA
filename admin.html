@@ -126,6 +126,7 @@ td.nw{white-space:nowrap}.num{font-variant-numeric:tabular-nums}
 .ef .two{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
 .login{max-width:420px;margin:12vh auto 0}
 @media (max-width:760px){.sell,.ed{grid-template-columns:1fr}.top-in{padding:12px 14px 0}main{padding:16px 14px 70px}.card{padding:16px;border-radius:16px}.fr{grid-template-columns:100px 1fr 44px}.ai{grid-template-columns:1fr}.ai .acts{justify-content:flex-start}.kpi b{font-size:1.45rem}}
+.btn.wa{background:#25D366;color:#06281a;border-color:#25D366;text-decoration:none}
 </style>
 </head>
 <body>
@@ -169,7 +170,7 @@ td.nw{white-space:nowrap}.num{font-variant-numeric:tabular-nums}
 <section class="view" id="v-att">
   <div class="card"><div class="ahead"><h2>Se registraron y no activaron nada</h2><span class="cnt" id="cA1"></span></div><p class="hint">Con «Activar prueba (3 días)» les das la prueba gratis. «Copiar mensaje» te deja el texto listo para Instagram.</p><div class="att" id="att1"></div></div>
   <div class="card"><div class="ahead"><h2>La prueba les vence en las próximas 24 h</h2><span class="cnt" id="cA2"></span></div><p class="hint">El mejor momento para ofrecerles el plan.</p><div class="att" id="att2"></div></div>
-  <div class="card"><div class="ahead"><h2>Terminó la prueba y no compraron</h2><span class="cnt" id="cA3"></span></div><p class="hint">De los últimos 30 días. Su progreso sigue guardado.</p><div class="att" id="att3"></div></div>
+  <div class="card"><div class="ahead"><h2>Terminó la prueba y no compraron</h2><span class="cnt" id="cA3"></span></div><p class="hint">De los últimos 30 días. Su progreso sigue guardado. Los que dejaron su WhatsApp tienen el botón verde.</p><div class="row" style="gap:8px;flex-wrap:wrap;margin:6px 0 10px"><button class="btn gh sm" id="cpMails">Copiar todos los correos</button><button class="btn gh sm" id="cpMailTxt">Copiar texto del correo</button></div><p class="hint" style="margin-top:-4px">Pegá los correos en <b>CCO</b> (copia oculta) para que no se vean entre sí. «Todos» = todos los que probaron y no compraron, sin límite de fecha.</p><div class="att" id="att3"></div></div>
 </section>
 
 <section class="view" id="v-sell">
@@ -367,7 +368,7 @@ const tag=s=>'<span class="tag '+SCLS[s]+'">'+SLAB[s]+'</span>';
 
 async function loadAll(){
   const [pr,st,ds,sl,rp,pl,tr]=await Promise.all([
-    sb.from('profiles').select('id,email,access_until,created_at,is_admin,trial_started,revoked_reason').order('created_at',{ascending:false}).limit(2000),
+    sb.from('profiles').select('id,email,access_until,created_at,is_admin,trial_started,revoked_reason,whatsapp,wa_optin').order('created_at',{ascending:false}).limit(2000),
     sb.rpc('admin_student_stats'),sb.rpc('admin_device_stats'),
     sb.from('sales').select('*').order('at',{ascending:false}).limit(2000),
     sb.from('question_reports').select('*').order('at',{ascending:false}).limit(500),
@@ -414,17 +415,20 @@ const hm=m=>{m=m||0;return m<60?m+' min':Math.floor(m/60)+' h '+String(m%60).pad
 function mNoAct(){return '¡Hola! 👋 Vimos que te registraste en AranduMed. Te falta un solo paso: entrá con tu correo en '+SITE+' y tocá «Empezar mis 3 días gratis». Tenés los exámenes 2025 y 2026 completos y comentados, los simulacros y tu puesto estimado. ¡Cualquier duda, escribinos por acá!'}
 function mEnds(){const p=priceNow();return '¡Hola! ⏳ Tu prueba gratis de AranduMed termina mañana. Si te está sirviendo, podés seguir con el plan Completo (hasta el examen) a '+gs(p.full)+(p.note?' — '+p.note:'')+', y mantenés todo tu progreso. ¿Te paso los datos para pagar?'}
 function mEnded(){const p=priceNow();return '¡Hola! Terminó tu prueba en AranduMed. ¿Qué te pareció? 🙌 Tu progreso sigue guardado: si querés seguir, el plan Completo está a '+gs(p.full)+(p.note?' ('+p.note+')':'')+'. ¿Te paso los datos para pagar?'}
-function aiRow(p,sub,acts){return '<div class="ai"><div><div class="em">'+esc(p.email)+'</div><div class="sub">'+sub+'</div></div><div class="acts">'+acts+'</div></div>'}
+function waBtn(p,fn){if(!p.whatsapp||!p.wa_optin)return '';return '<a class="btn sm wa" target="_blank" rel="noopener" href="https://wa.me/'+p.whatsapp+'?text='+encodeURIComponent(fn())+'">WhatsApp</a>'}
+function mMail(){const p=priceNow();return 'Asunto: Tu progreso en AranduMed sigue guardado\n\n¡Hola! 👋\n\nHace unos días probaste AranduMed. Tu progreso sigue guardado: las preguntas que respondiste, tus errores y tu puesto estimado.\n\nSi querés seguir preparándote para la CONAREM, el plan Completo (hasta el examen) está a '+gs(p.full)+(p.note?' ('+p.note+')':'')+'. Incluye las preguntas de la CONAREM 2016–2026 comentadas, simulacros, los resúmenes de Medicina Interna y Pediatría, y las video clases.\n\nPara activarlo, respondé este correo o escribinos por WhatsApp: https://wa.me/595994314870\n\n¡Éxitos con el estudio!\nEquipo AranduMed\n'+SITE}
+function aiRow(p,sub,acts){return '<div class="ai"><div><div class="em">'+esc(p.email)+(p.whatsapp?' <span class="hint" style="display:inline">· 📲 '+(p.wa_optin?'':'(sin permiso) ')+'0'+esc(String(p.whatsapp).replace(/^595/,''))+'</span>':'')+'</div><div class="sub">'+sub+'</div></div><div class="acts">'+acts+'</div></div>'}
 function renderAtt(){const now=Date.now();const U=P.filter(p=>!p.is_admin);
   const a1=U.filter(p=>status(p)==='sin');
   const a2=U.filter(p=>status(p)==='prueba'&&new Date(p.access_until)-now<24*36e5);
   const a3=U.filter(p=>status(p)==='pvencida'&&now-new Date(p.access_until)<30*864e5);
   const ago=d=>{const h=Math.round((now-new Date(d))/36e5);return h<1?'hace minutos':h<24?'hace '+h+' h':'hace '+Math.round(h/24)+' días'};
-  $('att1').innerHTML=a1.map(p=>aiRow(p,'Se registró '+ago(p.created_at),'<button class="btn sm" data-trial="'+esc(p.email)+'">Activar prueba (3 días)</button><button class="btn gh sm" data-cm="1">Copiar mensaje</button>')).join('')||'<div class="empty">Nadie pendiente 🎉</div>';
-  $('att2').innerHTML=a2.map(p=>{const s=ST[p.email.toLowerCase()];return aiRow(p,'Vence '+fdl(p.access_until)+' · '+(s?s.answered:0)+' preguntas respondidas','<button class="btn gh sm" data-cm="2">Copiar mensaje</button><button class="btn sm" data-sell="'+esc(p.email)+'">Vender</button>')}).join('')||'<div class="empty">Ninguna prueba vence en las próximas 24 h.</div>';
-  $('att3').innerHTML=a3.map(p=>{const s=ST[p.email.toLowerCase()];return aiRow(p,'Venció el '+fd(p.access_until)+' · '+(s?s.answered:0)+' preguntas respondidas','<button class="btn gh sm" data-cm="3">Copiar mensaje</button><button class="btn sm" data-sell="'+esc(p.email)+'">Vender</button>')}).join('')||'<div class="empty">Nadie en esta lista.</div>';
+  $('att1').innerHTML=a1.map(p=>aiRow(p,'Se registró '+ago(p.created_at),waBtn(p,mNoAct)+'<button class="btn sm" data-trial="'+esc(p.email)+'">Activar prueba (3 días)</button><button class="btn gh sm" data-cm="1">Copiar mensaje</button>')).join('')||'<div class="empty">Nadie pendiente 🎉</div>';
+  $('att2').innerHTML=a2.map(p=>{const s=ST[p.email.toLowerCase()];return aiRow(p,'Vence '+fdl(p.access_until)+' · '+(s?s.answered:0)+' preguntas respondidas',waBtn(p,mEnds)+'<button class="btn gh sm" data-cm="2">Copiar mensaje</button><button class="btn sm" data-sell="'+esc(p.email)+'">Vender</button>')}).join('')||'<div class="empty">Ninguna prueba vence en las próximas 24 h.</div>';
+  $('att3').innerHTML=a3.map(p=>{const s=ST[p.email.toLowerCase()];return aiRow(p,'Venció el '+fd(p.access_until)+' · '+(s?s.answered:0)+' preguntas respondidas',waBtn(p,mEnded)+'<button class="btn gh sm" data-cm="3">Copiar mensaje</button><button class="btn sm" data-sell="'+esc(p.email)+'">Vender</button>')}).join('')||'<div class="empty">Nadie en esta lista.</div>';
   [['cA1',a1],['cA2',a2],['cA3',a3]].forEach(([id,a])=>{$(id).textContent=a.length;$(id).classList.toggle('z',!a.length)});
   const tot=a1.length+a2.length;$('bdAtt').textContent=tot||'';
+  {const all=U.filter(p=>status(p)==='pvencida');$('cpMails').textContent='Copiar todos los correos ('+all.length+')';$('cpMails').onclick=()=>copy(all.map(p=>p.email).join(', '),$('cpMails'));$('cpMailTxt').onclick=()=>copy(mMail(),$('cpMailTxt'))}
   document.querySelectorAll('#v-att [data-cm]').forEach(b=>b.onclick=()=>copy([null,mNoAct,mEnds,mEnded][+b.dataset.cm](),b));
   document.querySelectorAll('#v-att [data-sell]').forEach(b=>b.onclick=()=>{goTab('sell');$('sEmail').value=b.dataset.sell;renderSellPrev()});
   document.querySelectorAll('#v-att [data-trial]').forEach(b=>b.onclick=()=>twice(b,'¿Activar? Tocá de nuevo',async()=>{b.disabled=true;const {data,error}=await sb.rpc('admin_activate_trial',{p_email:b.dataset.trial});
@@ -512,7 +516,7 @@ function renderUsers(){
     $('uBody').querySelectorAll('tr.det').forEach(x=>x.remove());const p=P.find(x=>x.email===tr.dataset.em);const st=ST[p.email.toLowerCase()]||{};const a=st.areas||{};const w=weak(a);
     const det=document.createElement('tr');det.className='det';
     det.innerHTML='<td colspan="8"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:18px;padding:6px 2px;position:sticky;left:0;max-width:min(100%,calc(100vw - 64px))"><div><span class="lab">Por especialidad</span>'+(Object.keys(a).length?Object.keys(ANM).filter(k=>a[k]).map(k=>{const pc=pct(a[k].ok,a[k].n);return '<div class="abar"><span>'+ANM[k]+'</span><i><b style="width:'+pc+'%"></b></i><span>'+a[k].ok+'/'+a[k].n+' · '+pc+'%</span></div>'}).join(''):'<p class="hint">Todavía no respondió preguntas.</p>')+'</div>'+
-      '<div><span class="lab">Actividad</span><p class="hint">Ingresos: '+(st.sessions_7d||0)+' en 7 días · '+(st.sessions_total||0)+' en total<br>Tiempo: '+hm(st.minutes_7d)+' en 7 días · '+hm(st.minutes_total)+' en total<br>Simulacros: '+(st.sims||0)+(st.sims?' · último '+(st.sim_last_pct??'—')+'% · mejor '+(st.sim_best_pct??'—')+'%':'')+'<br>Repasos pendientes: '+(st.srs_due||0)+(w?'<br>Área más floja: '+ANM[w.k]+' ('+w.p+'%)':'')+'</p></div>'+
+      '<div><span class="lab">Actividad</span><p class="hint">Ingresos: '+(st.sessions_7d||0)+' en 7 días · '+(st.sessions_total||0)+' en total<br>Tiempo: '+hm(st.minutes_7d)+' en 7 días · '+hm(st.minutes_total)+' en total<br>Simulacros: '+(st.sims||0)+(st.sims?' · último '+(st.sim_last_pct??'—')+'% · mejor '+(st.sim_best_pct??'—')+'%':'')+'<br>Repasos pendientes: '+(st.srs_due||0)+(w?'<br>Área más floja: '+ANM[w.k]+' ('+w.p+'%)':'')+'<br>WhatsApp: '+(p.whatsapp?'<a target="_blank" rel="noopener" href="https://wa.me/'+p.whatsapp+'">0'+esc(String(p.whatsapp).replace(/^595/,''))+'</a>'+(p.wa_optin?'':' (no dio permiso)'):'no dejó')+'</p></div>'+
       '<div><span class="lab">Equipos</span><div class="devbox hint" data-devbox="1">Cargando…</div></div>'+
       (p.is_admin?'':(()=>{const on=p.access_until&&new Date(p.access_until)>new Date();const dl=on?Math.ceil((new Date(p.access_until)-Date.now())/864e5):0;
         const ext=[['month','+30 días'],['full','Completo'],['two','2 exámenes'],['year','Combo Anual'],['week','Regalo +1 sem.']].map(([k,l])=>'<button class="btn gh sm xb" data-pl="'+k+'">'+l+'<small>hasta '+fd(untilFor(k,p.access_until))+'</small></button>').join('');
