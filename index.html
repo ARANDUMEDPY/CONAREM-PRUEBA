@@ -1490,7 +1490,7 @@ setSync('Progreso guardado en este dispositivo.');
 const $=id=>document.getElementById(id);
 const C=window.CONFIG||{};
 // ---------- Registro de errores (para diagnosticar cuelgues en celulares) ----------
-const VER='2026.11.17-g';let nlog=0;
+const VER='2026.11.18-a';let nlog=0;
 function tok(){try{const k=Object.keys(localStorage).find(k=>/^sb-.*-auth-token$/.test(k));const v=k&&JSON.parse(localStorage.getItem(k));return v&&v.access_token}catch(e){return null}}
 function clog(kind,msg){try{if(!C.SUPABASE_URL||nlog++>25)return;const t=tok();
   fetch(C.SUPABASE_URL+'/rest/v1/client_logs',{method:'POST',keepalive:true,headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:'Bearer '+(t||C.SUPABASE_ANON_KEY),'Content-Type':'application/json',Prefer:'return=minimal'},
@@ -1776,8 +1776,18 @@ function installUI(){
 }
 function devId(){let d=null;try{d=localStorage.getItem('am_device')}catch(e){}
   if(!d){d=(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2));try{localStorage.setItem('am_device',d)}catch(e){}}return d}
-function devLabel(){const u=navigator.userAgent;const os=/android/i.test(u)?'Android':/iphone|ipad|ipod/i.test(u)?'iPhone/iPad':/windows/i.test(u)?'Windows':/mac os/i.test(u)?'Mac':/linux/i.test(u)?'Linux':'Otro';
-  const br=/edg\//i.test(u)?'Edge':/chrome|crios/i.test(u)?'Chrome':/firefox|fxios/i.test(u)?'Firefox':/safari/i.test(u)?'Safari':'Navegador';return os+' · '+br}
+function devLabel(){const u=navigator.userAgent;const ipad=/ipad/i.test(u)||(/macintosh/i.test(u)&&navigator.maxTouchPoints>1);
+  const os=/android/i.test(u)?'Android':/iphone|ipod/i.test(u)?'iPhone':ipad?'iPad':/windows/i.test(u)?'Windows':/mac os/i.test(u)?'Mac':/cros/i.test(u)?'ChromeOS':/linux/i.test(u)?'Linux':'Otro';
+  const br=/edg\//i.test(u)?'Edge':/chrome|crios/i.test(u)?'Chrome':/firefox|fxios/i.test(u)?'Firefox':/safari/i.test(u)?'Safari':'Navegador';
+  const side=Math.min(screen.width||0,screen.height||0);
+  if(os==='Android')return 'Android · '+(side>=600?'tablet':'celular');
+  if(os==='iPhone')return 'iPhone · celular';if(os==='iPad')return 'iPad · tablet';
+  return os+' · computadora · '+br}
+async function devModel(){const u=navigator.userAgent;let m='';
+  try{const d=navigator.userAgentData;if(d&&d.getHighEntropyValues){const v=await Promise.race([d.getHighEntropyValues(['model']),new Promise(r=>setTimeout(()=>r({}),800))]);m=(v&&v.model)||''}}catch(_){}
+  if(!m){const ig=u.match(/Android \([^;]*;[^;]*;[^;]*; ([^;]+); ([^;]+);/);if(ig)m=ig[1].replace('/',' ')+' '+ig[2];}
+  if(!m){const g=u.match(/Android [\d.]+; ([^;)]+?)(?: Build|[;)])/);if(g&&g[1]!=='K')m=g[1];}
+  return m.slice(0,60)}
 let pingT=null;
 let leaving=false;
 async function leave(kick){if(leaving)return;leaving=true;clog('leave',kick?'kick':'logout');clearInterval(pingT);try{if(kick)sessionStorage.setItem('am_kicked','1')}catch(e){}
@@ -1826,7 +1836,7 @@ async function route(depth){depth=depth||0;
   if(started)return;started=true;show('loading');
   const slowT=setTimeout(()=>{if($('loading').hidden||$('gate').hidden)return;clog('stuck_loading',$('loadTxt').textContent);
     if(!$('loadRetry')){const d=document.createElement('p');d.id='loadRetry';d.className='sub';d.style.margin='10px 0 0';d.innerHTML='Está tardando más de lo normal. Puede ser la conexión. <button class="btn" type="button" style="margin-top:8px">Reintentar</button>';d.querySelector('button').onclick=()=>location.reload();$('loading').appendChild(d)}},20000);
-  try{const rd=await withTimeout(sb.rpc('register_device',{p_device:devId(),p_label:devLabel()}),6000);if(rd&&rd.data===-1){clearTimeout(slowT);started=false;return route()}
+  try{const rd=await withTimeout(sb.rpc('register_device',{p_device:devId(),p_label:devLabel(),p_model:await devModel()}),6000);if(rd&&rd.data===-1){clearTimeout(slowT);started=false;return route()}
     if(rd&&rd.data===-2){clearTimeout(slowT);let bu='';try{const st=await withTimeout(sb.rpc('device_status'),5000);bu=(st&&st.data&&st.data.bloqueado_hasta)||''}catch(_){}try{sessionStorage.setItem('am_blocked',JSON.stringify({u:bu||'',e:(session&&session.user&&session.user.email)||''}))}catch(_){}return leave(true)}
     if(rd&&rd.data>0){setTimeout(async()=>{try{const st=await sb.rpc('device_status');const c=st&&st.data&&st.data.cambios;if(c>=3)devWarn(c,st.data.limite,st.data.horas)}catch(_){}},2500)}}catch(e){clog('register_device',(e&&e.message)||e)}
   startPing();

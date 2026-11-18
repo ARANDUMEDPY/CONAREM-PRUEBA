@@ -513,6 +513,7 @@ function renderUsers(){
     const det=document.createElement('tr');det.className='det';
     det.innerHTML='<td colspan="8"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:18px;padding:6px 2px;position:sticky;left:0;max-width:min(100%,calc(100vw - 64px))"><div><span class="lab">Por especialidad</span>'+(Object.keys(a).length?Object.keys(ANM).filter(k=>a[k]).map(k=>{const pc=pct(a[k].ok,a[k].n);return '<div class="abar"><span>'+ANM[k]+'</span><i><b style="width:'+pc+'%"></b></i><span>'+a[k].ok+'/'+a[k].n+' · '+pc+'%</span></div>'}).join(''):'<p class="hint">Todavía no respondió preguntas.</p>')+'</div>'+
       '<div><span class="lab">Actividad</span><p class="hint">Ingresos: '+(st.sessions_7d||0)+' en 7 días · '+(st.sessions_total||0)+' en total<br>Tiempo: '+hm(st.minutes_7d)+' en 7 días · '+hm(st.minutes_total)+' en total<br>Simulacros: '+(st.sims||0)+(st.sims?' · último '+(st.sim_last_pct??'—')+'% · mejor '+(st.sim_best_pct??'—')+'%':'')+'<br>Repasos pendientes: '+(st.srs_due||0)+(w?'<br>Área más floja: '+ANM[w.k]+' ('+w.p+'%)':'')+'</p></div>'+
+      '<div><span class="lab">Equipos</span><div class="devbox hint" data-devbox="1">Cargando…</div></div>'+
       (p.is_admin?'':(()=>{const on=p.access_until&&new Date(p.access_until)>new Date();const dl=on?Math.ceil((new Date(p.access_until)-Date.now())/864e5):0;
         const ext=[['month','+30 días'],['full','Completo'],['two','2 exámenes'],['year','Combo Anual'],['week','Regalo +1 sem.']].map(([k,l])=>'<button class="btn gh sm xb" data-pl="'+k+'">'+l+'<small>hasta '+fd(untilFor(k,p.access_until))+'</small></button>').join('');
         return '<div class="acts"><span class="lab">Acciones</span>'+
@@ -522,11 +523,31 @@ function renderUsers(){
         (on?'<div class="agrp dz"><div class="agh">⛔ Quitar acceso <span>(su progreso queda guardado)</span></div><div class="xgrid"><button class="btn dg sm" data-rev="1">Quitar acceso</button><button class="btn dg sm" data-rev="dispositivos">Por más de 2 dispositivos</button></div></div>':'')+
         '</div>'})())+'</div></td>';
     tr.after(det);
+    loadDevBox(det.querySelector('[data-devbox]'),p.email);
     det.querySelectorAll('[data-pl]').forEach(b=>b.onclick=e=>{e.stopPropagation();const u=untilFor(b.dataset.pl,p.access_until);twice(b,'¿Hasta el '+fd(u)+'? Tocá de nuevo',async()=>{b.disabled=true;const {error}=await sb.rpc('admin_set_access',{p_email:p.email,p_until:u.toISOString()});if(error){b.disabled=false;b.textContent='Error: '+error.message;return}msg('uMsg','Listo: '+p.email+' tiene acceso hasta el '+fd(u)+'.',true);loadAll()})});
     det.querySelectorAll('[data-sellu]').forEach(b=>b.onclick=e=>{e.stopPropagation();goTab('sell');$('sEmail').value=p.email;renderSellPrev()});
     det.querySelectorAll('[data-rev]').forEach(b=>b.onclick=e=>{e.stopPropagation();twice(b,'¿Seguro? Tocá de nuevo',async()=>{b.disabled=true;const {error}=await sb.rpc('admin_set_access',{p_email:p.email,p_until:new Date(Date.now()-60000).toISOString(),p_reason:b.dataset.rev==='dispositivos'?'dispositivos':null});if(error){b.disabled=false;b.textContent='Error: '+error.message;return}msg('uMsg','Acceso quitado a '+p.email+'. Su progreso queda guardado.',true);loadAll()})});
   });
 }
+function uaInfo(u){u=u||'';let m='';const ig=u.match(/Android \([^;]*;[^;]*;[^;]*; ([^;]+); ([^;]+);/);if(ig)m=ig[1].replace('/',' ')+' '+ig[2];
+  if(!m){const g=u.match(/Android [\d.]+; ([^;)]+?)(?: Build|[;)])/);if(g&&g[1]!=='K')m=g[1]}
+  if(!m&&/iphone/i.test(u))m='iPhone';if(!m&&/ipad/i.test(u))m='iPad';if(!m&&/windows/i.test(u))m='Windows';if(!m&&/mac os/i.test(u))m='Mac';
+  const app=/Instagram/.test(u)?'Instagram':/FBAN|FB_IAB|FBAV/.test(u)?'Facebook':/WhatsApp/i.test(u)?'WhatsApp':/edg\//i.test(u)?'Edge':/firefox|fxios/i.test(u)?'Firefox':/crios|chrome/i.test(u)?'Chrome':/safari/i.test(u)?'Safari':'Navegador';
+  const tipo=/android|iphone|ipad/i.test(u)?(/Mobile/.test(u)&&!/ipad/i.test(u)?'celular':'tablet'):'computadora';
+  return {m:m||'Modelo oculto',app,tipo}}
+function fdt(x){if(!x)return '—';const d=new Date(x);return d.toLocaleDateString('es-PY',{day:'2-digit',month:'2-digit'})+' '+d.toLocaleTimeString('es-PY',{hour:'2-digit',minute:'2-digit'})}
+async function loadDevBox(el,email){if(!el)return;const {data,error}=await sb.rpc('admin_user_devices',{p_email:email});
+  if(error||!data){el.textContent=error?'Error: '+error.message:'Sin datos.';return}
+  const eq=(data.equipos||[]).filter(e=>/celular|tablet|computadora/.test(e.label));
+  const nav=data.navegadores||[];const ch=data.cambios||[];
+  let h='';
+  h+='<b>Tipos de equipo</b> (límite 2): '+(eq.length?eq.map(e=>esc(e.label)+(e.model?' · <b>'+esc(e.model)+'</b>':'')+' <span style="opacity:.7">(desde '+fdt(e.first)+')</span>').join('<br>'):'<span style="opacity:.7">se registran desde el próximo ingreso</span>');
+  h+='<br><br><b>Abierto ahora en:</b> '+((data.abierto||[]).map(e=>esc(e.label)+(e.model?' · '+esc(e.model):'')+' <span style="opacity:.7">(últ. '+fdt(e.last)+')</span>').join(', ')||'—');
+  h+='<br><b>Cambios de equipo:</b> '+(data.kicks||0)+' en total · '+ch.length+' con el otro equipo en uso (30 días)'+(ch.length?': '+ch.slice(0,8).map(fdt).join(', '):'');
+  if(data.bloqueado_hasta&&new Date(data.bloqueado_hasta)>new Date())h+='<br><b style="color:#FF8A8F">🔒 Bloqueada hasta '+fdt(data.bloqueado_hasta)+'</b>';
+  if(nav.length){const seen={};const rows=[];nav.forEach(n=>{const i=uaInfo(n.ua);const k=i.m+'|'+i.app+'|'+i.tipo;if(seen[k]){seen[k].first=seen[k].first<n.first?seen[k].first:n.first;seen[k].last=seen[k].last>n.last?seen[k].last:n.last;return}seen[k]=Object.assign({},i,{first:n.first,last:n.last});rows.push(seen[k])});
+    h+='<br><br><b>Equipos detectados</b> <span style="opacity:.7">(por el navegador)</span>:<br>'+rows.map(r=>(r.tipo==='celular'?'📱 ':r.tipo==='tablet'?'📟 ':'💻 ')+'<b>'+esc(r.m)+'</b> · '+esc(r.app)+' <span style="opacity:.7">('+fdt(r.first)+' → '+fdt(r.last)+')</span>').join('<br>')}
+  el.innerHTML=h}
 $('uQ').addEventListener('input',e=>{UQ=e.target.value.trim().toLowerCase();renderUsers()});
 $('uRef').onclick=loadAll;
 $('uCsv').onclick=()=>{const H=['correo','estado','alta','acceso_hasta','preguntas_7d','preguntas_total','aciertos_%','minutos_total','simulacros','ultima_actividad'];
