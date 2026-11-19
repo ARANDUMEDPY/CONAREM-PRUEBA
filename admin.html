@@ -161,6 +161,7 @@ td.nw{white-space:nowrap}.num{font-variant-numeric:tabular-nums}
     <div class="card"><div class="ahead"><h2>Registros de los últimos 14 días</h2><span class="hint" id="regTot"></span></div><div class="bars" id="bars"></div></div>
     <div class="card"><h2>De registrado a pago</h2><div class="funnel" id="funnel"></div><p class="hint">Cuántos de los registrados llegan a cada paso.</p></div>
   </div>
+  <div class="card"><div class="ahead"><h2>🎬 Clases</h2><span class="hint" id="clsSince"></span></div><div class="scroll"><table><thead><tr><th>Clase</th><th class="num">Personas</th><th class="num">Reproducciones</th><th class="num">Últimos 7 días</th><th class="num">Llegaron a la mitad</th><th class="num">La terminaron</th></tr></thead><tbody id="clsT"><tr><td colspan="6" class="hint">Cargando…</td></tr></tbody></table></div><p class="hint" id="clsLand"></p><p class="hint">Personas = navegadores distintos que le dieron play. «Mitad» y «terminaron» = cuántos de esos llegaron al 50 % y al final del video.</p></div>
   <div class="card"><div class="ahead"><h2>Uso de la app</h2><span class="hint">últimos 7 días</span></div><div class="kpis" id="kpiU"></div></div>
   <div class="card"><div class="ahead"><h2>Visitas a la página</h2><span class="hint" id="trTot"></span></div><div class="kpis" id="kpiT"></div>
     <div class="scroll"><table><thead><tr><th>Día</th><th class="num">Visitas</th><th class="num">Instagram</th><th class="num">WhatsApp</th><th class="num">Facebook</th><th class="num">Google</th><th class="num">Directo</th><th class="num">Otros</th><th class="num">Cuadernillo</th><th class="num">«Comprar»</th><th class="num">Cuentas</th><th class="num">Pruebas</th><th class="num">PDF bajados</th></tr></thead><tbody id="trBody"></tbody></table></div>
@@ -388,7 +389,12 @@ function renderTraffic(){const sum=k=>TR.reduce((a,r)=>a+(r[k]||0),0),last7=TR.s
   $('trTot').textContent=sum('visitas')+' visitas en 14 días';
   const fd=d=>{const x=new Date(d+'T12:00:00');return x.toLocaleDateString('es-PY',{weekday:'short',day:'numeric',month:'numeric'})};
   $('trBody').innerHTML=TR.map(r=>'<tr><td class="nw">'+fd(r.day)+'</td>'+['visitas','instagram','whatsapp','facebook','google','directo','otros','cuadernillo','compras','registros','pruebas','descargas'].map(c=>'<td class="num">'+(r[c]||'·')+'</td>').join('')+'</tr>').join('')}
-function renderRes(){try{renderTraffic()}catch(e){}const now=Date.now(),day=864e5;const U=P.filter(p=>!p.is_admin);
+async function loadCls(){const el=$('clsT');if(!el)return;const NM={preeclampsia:'Preeclampsia y eclampsia',trauma:'Trauma y ATLS 11'};const {data,error}=await sb.rpc('admin_class_stats');if(error){el.innerHTML='<tr><td colspan="6" class="hint">Error: '+esc(error.message)+'</td></tr>';return}
+  const L=(data&&data.clases)||[];const pc=(a,b)=>b?' <span class="hint" style="display:inline">('+Math.round(100*a/b)+'%)</span>':'';
+  const ids=Object.keys(NM);const rows=ids.map(id=>L.find(x=>x.id===id)||{id,plays:0,personas:0,semana:0,p50:0,p100:0}).concat(L.filter(x=>!NM[x.id]));
+  el.innerHTML=rows.map(r=>'<tr><td>'+esc(NM[r.id]||r.id)+'</td><td class="num"><b>'+r.personas+'</b></td><td class="num">'+r.plays+'</td><td class="num">'+r.semana+'</td><td class="num">'+r.p50+pc(r.p50,r.personas)+'</td><td class="num">'+r.p100+pc(r.p100,r.personas)+'</td></tr>').join('');
+  $('clsLand').textContent='Toques en «Registrarme y ver las clases» (portada): '+((data&&data.landing)||0);$('clsSince').textContent=data&&data.desde?'desde el '+new Date(data.desde).toLocaleDateString('es-PY'):'se cuenta desde el 19/11/2026'}
+function renderRes(){try{renderTraffic()}catch(e){}try{loadCls()}catch(e){}const now=Date.now(),day=864e5;const U=P.filter(p=>!p.is_admin);
   const cnt=k=>U.filter(p=>status(p)===k).length;
   const today=new Date();today.setHours(0,0,0,0);
   const newToday=U.filter(p=>new Date(p.created_at)>=today).length,new7=U.filter(p=>now-new Date(p.created_at)<7*day).length;
