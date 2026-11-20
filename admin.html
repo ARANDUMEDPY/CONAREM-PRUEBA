@@ -185,11 +185,13 @@ td.nw{white-space:nowrap}.num{font-variant-numeric:tabular-nums}
         <div><div class="step"><i>2</i>¿Qué compró?</div>
           <div class="tgrp">Banco de preguntas</div>
           <div class="tiles"><button type="button" class="tile" data-pv="month"><b>Mensual</b><small data-pr="month"></small></button><button type="button" class="tile" data-pv="full"><b>Completo</b><small data-pr="full"></small></button><button type="button" class="tile" data-pv="two"><b>2 exámenes</b><small data-pr="two"></small></button><button type="button" class="tile" data-pv="year"><b>Combo Anual</b><small data-pr="year"></small></button></div>
+          <div class="tgrp">Banco FCM-UNA (examen de la UNA)</div>
+          <div class="tiles"><button type="button" class="tile" data-pv="fcm"><b>FCM-UNA</b><small>Gs. 120.000</small></button><button type="button" class="tile" data-pv="fcombo"><b>Combo + UNA</b><small data-pr="fcombo"></small></button><button type="button" class="tile" data-pv="fmonth"><b>Mensual los dos</b><small data-pr="fmonth"></small></button><button type="button" class="tile" data-pv="fadd"><b>Sumar UNA</b><small>Gs. 80.000</small></button></div>
           <div class="tgrp">Black Friday</div>
           <div class="tiles"><button type="button" class="tile bf" data-pv="res"><b>🔒 Reserva</b><small>Gs. 100.000 · 1 mes</small></button><button type="button" class="tile" data-pv="week"><b>🎁 Regalo</b><small>+1 semana</small></button></div>
           <div id="sResW" hidden><div class="tgrp">Plan que reserva (se congela el precio)</div>
           <div class="tiles"><button type="button" class="tile" data-rv="full"><b>Completo</b><small>Gs. 240.000</small></button><button type="button" class="tile" data-rv="two"><b>2 exámenes</b><small>Gs. 380.000</small></button><button type="button" class="tile" data-rv="combo"><b>Combo</b><small>Gs. 550.000</small></button></div></div>
-          <select id="sPlan" hidden><option value="full">Completo</option><option value="month">Mensual</option><option value="two">2 exámenes</option><option value="year">Combo Anual</option><option value="week">Regalo</option><option value="res">Reserva</option></select>
+          <select id="sPlan" hidden><option value="full">Completo</option><option value="month">Mensual</option><option value="two">2 exámenes</option><option value="year">Combo Anual</option><option value="week">Regalo</option><option value="res">Reserva</option><option value="fcm">FCM-UNA</option><option value="fcombo">Combo + UNA</option><option value="fmonth">Mensual los dos</option><option value="fadd">Sumar UNA</option></select>
           <select id="sRes" hidden><option value="full">Completo</option><option value="two">2 exámenes</option><option value="combo">Combo</option></select>
         </div>
         <div><div class="step"><i>3</i>¿Cómo pagó?</div>
@@ -369,7 +371,7 @@ const tag=s=>'<span class="tag '+SCLS[s]+'">'+SLAB[s]+'</span>';
 
 async function loadAll(){
   const [pr,st,ds,sl,rp,pl,tr]=await Promise.all([
-    sb.from('profiles').select('id,email,access_until,created_at,is_admin,trial_started,revoked_reason,whatsapp,wa_optin').order('created_at',{ascending:false}).limit(2000),
+    sb.from('profiles').select('id,email,access_until,created_at,is_admin,trial_started,revoked_reason,whatsapp,wa_optin,fcm_until').order('created_at',{ascending:false}).limit(2000),
     sb.rpc('admin_student_stats'),sb.rpc('admin_device_stats'),
     sb.from('sales').select('*').order('at',{ascending:false}).limit(2000),
     sb.from('question_reports').select('*').order('at',{ascending:false}).limit(500),
@@ -463,7 +465,11 @@ function renderReservas(){const L=pendRes();$('cRes').textContent=L.length;
 /* ---------- Vender ---------- */
 function untilFor(plan,cur){const base=cur&&new Date(cur)>new Date()?new Date(cur):new Date();let u;
   if(plan==='year'){u=new Date(base.getTime()+365*864e5);const e2=new Date(EXAM_END2);if(u<e2)u=e2}else if(plan==='full'){u=new Date(EXAM_END);if(base>u)u=new Date(base.getTime()+30*864e5)}else if(plan==='two'){u=new Date(EXAM_END2);if(base>u)u=new Date(base.getTime()+30*864e5)}else if(plan==='week')u=new Date(base.getTime()+7*864e5);else u=new Date(base.getTime()+30*864e5);return u}
-const PLN={year:'Combo Anual',full:'Completo',month:'Mensual',two:'2 exámenes',week:'Regalo +1 semana',res:'Reserva Black Friday'};
+const PLN={year:'Combo Anual',full:'Completo',month:'Mensual',two:'2 exámenes',week:'Regalo +1 semana',res:'Reserva Black Friday',fcm:'FCM-UNA',fcombo:'Combo CONAREM + FCM-UNA',fmonth:'Mensual CONAREM + FCM-UNA',fadd:'Sumar banco FCM-UNA'};
+const FCM_END='2027-02-28T23:59:59-03:00';const isF=pl=>/^f(cm|combo|month|add)$/.test(pl);
+function fPrice(pl){const pr=priceNow();return pl==='fcm'?120000:pl==='fcombo'?pr.full+80000:pl==='fmonth'?pr.month+30000:80000}
+function fUntil(pl,p){const now=new Date();const bF=p&&p.fcm_until&&new Date(p.fcm_until)>now?new Date(p.fcm_until):now;if(pl==='fmonth'){return {f:new Date(bF.getTime()+30*864e5),c:untilFor('month',p&&p.access_until)}}let f=new Date(FCM_END);if(bF>f)f=new Date(bF.getTime()+30*864e5);return {f,c:pl==='fcombo'?untilFor('full',p&&p.access_until):null}}
+function fMsg(pl,u){return '¡Listo! ✅ Ya tenés activo el plan '+PLN[pl]+' de AranduMed.\n\n'+(u.c?'📚 Banco CONAREM hasta el '+fdl(u.c)+'.\n':'')+'🏥 Banco FCM-UNA (examen de la UNA) hasta el '+fdl(u.f)+'.\n\nEntrá con tu correo en '+SITE+'. Arriba vas a ver el selector para cambiar al banco «FCM-UNA».\n\n¡Gracias por confiar en nosotros y éxitos con el estudio! 💚\nEquipo AranduMed'}
 const RES_AMT=100000,RES_DUE='2026-12-31T23:59:59-03:00';
 const RES_PL={full:{n:'Completo',t:240000,plan:'full'},two:{n:'2 exámenes',t:380000,plan:'two'},combo:{n:'Combo Banco + Colección',t:550000,plan:'full'}};
 const resName=k=>'Reserva BF · '+RES_PL[k].n,doneName=k=>'Completa reserva · '+RES_PL[k].n;
@@ -473,8 +479,9 @@ function sellMsg(plan,u){return '¡Listo! ✅ Ya tenés activo el plan '+PLN[pla
 function renderSellPrev(){const em=$('sEmail').value.trim().toLowerCase();const plan=$('sPlan').value;const p=P.find(x=>(x.email||'').toLowerCase()===em);
   $('sResW').hidden=plan!=='res';
   document.querySelectorAll('[data-pv]').forEach(b=>b.classList.toggle('on',b.dataset.pv===plan));document.querySelectorAll('[data-rv]').forEach(b=>b.classList.toggle('on',b.dataset.rv===$('sRes').value));
-  {const pr0=priceNow();document.querySelectorAll('[data-pr]').forEach(e=>e.textContent=gs(pr0[e.dataset.pr]))}
-  const pr=priceNow();if(!$('sAmt').dataset.touched)$('sAmt').value=plan==='week'?0:plan==='res'?RES_AMT:pr[plan];
+  {const pr0=priceNow();document.querySelectorAll('[data-pr]').forEach(e=>e.textContent=gs(/^f/.test(e.dataset.pr)?fPrice(e.dataset.pr):pr0[e.dataset.pr]))}
+  const pr=priceNow();if(!$('sAmt').dataset.touched)$('sAmt').value=plan==='week'?0:plan==='res'?RES_AMT:isF(plan)?fPrice(plan):pr[plan];
+  if(isF(plan)){const u=fUntil(plan,p);$('sResW').hidden=true;$('sPrev').innerHTML='<span class="lab">Vista previa</span>'+(p?'<div>'+tag(status(p))+' <span class="hint" style="display:inline">'+esc(p.email)+'</span></div>':em?'<div class="msg err">No hay ninguna cuenta con ese correo. Pedile que se registre primero.</div>':'<div class="hint">Escribí el correo de la cuenta.</div>')+'<div class="big">'+PLN[plan]+' · '+gs($('sAmt').value)+'</div><div class="hint">'+(u.c?'CONAREM hasta el <b style="color:var(--fg)">'+fdl(u.c)+'</b><br>':'')+'FCM-UNA hasta el <b style="color:var(--fg)">'+fdl(u.f)+'</b></div><span class="lab" style="margin-top:6px">Mensaje para enviarle</span><pre id="sTxt">'+esc(fMsg(plan,u))+'</pre>';return}
   if(plan==='res'){const k=$('sRes').value,r=RES_PL[k],u=untilFor('month',p&&p.access_until);$('sPrev').innerHTML='<span class="lab">Vista previa</span>'+(p?'<div>'+tag(status(p))+' <span class="hint" style="display:inline">'+esc(p.email)+'</span></div>':em?'<div class="msg err">No hay ninguna cuenta con ese correo. Pedile que se registre primero.</div>':'<div class="hint">Escribí el correo de la cuenta.</div>')+'<div class="big">Reserva · '+esc(r.n)+'</div><div class="hint">Paga '+gs($('sAmt').value)+' ahora · saldo <b style="color:var(--fg)">'+gs(r.t-(+$('sAmt').value||0))+'</b> hasta el 31/12<br>Acceso hasta el <b style="color:var(--fg)">'+fdl(u)+'</b></div><span class="lab" style="margin-top:6px">Mensaje para enviarle</span><pre id="sTxt">'+esc(resMsg(k,u))+'</pre>';return}
   const u=untilFor(plan,p&&p.access_until);
   $('sPrev').innerHTML='<span class="lab">Vista previa</span>'+(p?'<div>'+tag(status(p))+' <span class="hint" style="display:inline">'+esc(p.email)+'</span></div>':em?'<div class="msg err">No hay ninguna cuenta con ese correo. Pedile que se registre primero.</div>':'<div class="hint">Escribí el correo de la cuenta.</div>')+
@@ -492,6 +499,11 @@ $('sGo').onclick=async()=>{const em=$('sEmail').value.trim();const plan=$('sPlan
       b.disabled=false;if(error){msg('sMsg',error.message);return}
       await copy(resMsg(k,u));msg('sMsg','Reserva registrada: acceso hasta el '+fd(u)+' y saldo de '+gs(r.t-amt)+' pendiente. Te copié el mensaje para Instagram.',true);
       $('sNote').value='';delete $('sAmt').dataset.touched;loadAll()});return}
+  if(isF(plan)){const u=fUntil(plan,p),b=$('sGo');twice(b,'¿'+PLN[plan]+' para '+em+'? Tocá de nuevo',async()=>{b.disabled=true;
+    const {error}=await sb.rpc('admin_sell_fcm',{p_email:em,p_plan:PLN[plan],p_until_fcm:u.f.toISOString(),p_until_conarem:u.c?u.c.toISOString():null,p_amount:+$('sAmt').value||0,p_method:$('sMet').value,p_note:$('sNote').value||null});
+    b.disabled=false;if(error){msg('sMsg',error.message);return}
+    await copy(fMsg(plan,u));msg('sMsg','Venta registrada. FCM-UNA activo hasta el '+fd(u.f)+(u.c?' y CONAREM hasta el '+fd(u.c):'')+'. Te copié el mensaje de confirmación.',true);
+    $('sNote').value='';delete $('sAmt').dataset.touched;loadAll()});return}
   const u=untilFor(plan,p.access_until);const b=$('sGo');
   twice(b,'¿'+PLN[plan]+' para '+em+'? Tocá de nuevo',async()=>{b.disabled=true;
     const {error}=await sb.rpc('admin_sell',{p_email:em,p_plan:PLN[plan],p_until:u.toISOString(),p_amount:+$('sAmt').value||0,p_method:$('sMet').value,p_note:$('sNote').value||null});
