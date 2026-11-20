@@ -1049,7 +1049,8 @@ function setPref(p){
   S.today.ids=keep.concat(rev,add);S.today.rev=oldRev.filter(id=>keep.includes(id)).concat(rev);
   cur=firstOpen();picked=null;persist(true);render();
 }
-function daysLeft(){const t=new Date();t.setHours(0,0,0,0);return Math.max(0,Math.round((EXAM-t)/86400000))}
+const EXAM_FCM=new Date(2027,1,3); // estimada: la FCM-UNA tomó el examen el 12/02/2025 y el 04/02/2026; la fecha 2027 aún no está publicada
+function daysLeft(){const t=new Date();t.setHours(0,0,0,0);return Math.max(0,Math.round(((window.__FCM?EXAM_FCM:EXAM)-t)/86400000))}
 function stats(filter){
   const qs=filter?ORDER.filter(filter):ORDER;let done=0,ok=0;
   qs.forEach(q=>{const a=S.ans[q.id];if(a){done++;if(a.ok)ok++}});
