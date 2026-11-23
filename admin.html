@@ -369,7 +369,7 @@ const tag=s=>'<span class="tag '+SCLS[s]+'">'+SLAB[s]+'</span>';
 
 async function loadAll(){
   const [pr,st,ds,sl,rp,pl,tr]=await Promise.all([
-    sb.from('profiles').select('id,email,access_until,created_at,is_admin,trial_started,revoked_reason,whatsapp,wa_optin').order('created_at',{ascending:false}).limit(2000),
+    sb.from('profiles').select('id,email,access_until,created_at,is_admin,trial_started,revoked_reason,whatsapp,wa_optin,blocked_until').order('created_at',{ascending:false}).limit(2000),
     sb.rpc('admin_student_stats'),sb.rpc('admin_device_stats'),
     sb.from('sales').select('*').order('at',{ascending:false}).limit(2000),
     sb.from('question_reports').select('*').order('at',{ascending:false}).limit(500),
@@ -517,7 +517,7 @@ function renderUsers(){
   const rows=P.filter(uMatch);
   $('uBody').innerHTML=rows.map(p=>{const s=status(p),st=ST[p.email.toLowerCase()]||{},dv=DS[p.email.toLowerCase()];const da=daysAgo(st.last_active);const on=p.access_until&&new Date(p.access_until)>new Date();
     const last=st.last_active?(da===0?'hoy':da===1?'ayer':'hace '+da+' d'):'nunca';
-    return '<tr class="r" data-em="'+esc(p.email)+'" style="cursor:pointer"><td>'+esc(p.email)+'</td><td>'+tag(s)+'</td><td class="nw">'+fd(p.created_at)+'</td><td class="nw">'+fd(p.access_until)+'</td><td class="num nw">'+(st.answered_7d||0)+' · '+(st.answered||0)+'</td><td class="nw">'+pcs(pct(st.correct,st.answered))+'</td><td class="nw'+(on&&!p.is_admin&&(da==null||da>=3)?' idle':'')+'">'+last+'</td><td class="nw">'+(dv?dv.devices+(dv.kicks?' <span class="'+(dv.kicks>=15?'idle':'hint')+'" style="display:inline">· '+dv.kicks+' cambios'+(dv.kicks>=15?' ⚠':'')+'</span>':''):'—')+'</td></tr>'}).join('')||'<tr><td colspan="8"><div class="empty">Sin usuarios en este filtro.</div></td></tr>';
+    return '<tr class="r" data-em="'+esc(p.email)+'" style="cursor:pointer"><td>'+(p.blocked_until&&new Date(p.blocked_until)>new Date()?'🔒 ':'')+esc(p.email)+'</td><td>'+tag(s)+'</td><td class="nw">'+fd(p.created_at)+'</td><td class="nw">'+fd(p.access_until)+'</td><td class="num nw">'+(st.answered_7d||0)+' · '+(st.answered||0)+'</td><td class="nw">'+pcs(pct(st.correct,st.answered))+'</td><td class="nw'+(on&&!p.is_admin&&(da==null||da>=3)?' idle':'')+'">'+last+'</td><td class="nw">'+(dv?dv.devices+(dv.kicks?' <span class="'+(dv.kicks>=15?'idle':'hint')+'" style="display:inline">· '+dv.kicks+' cambios'+(dv.kicks>=15?' ⚠':'')+'</span>':''):'—')+'</td></tr>'}).join('')||'<tr><td colspan="8"><div class="empty">Sin usuarios en este filtro.</div></td></tr>';
   $('uBody').querySelectorAll('tr.r').forEach(tr=>tr.onclick=()=>{const nx=tr.nextElementSibling;if(nx&&nx.classList.contains('det')){nx.remove();return}
     $('uBody').querySelectorAll('tr.det').forEach(x=>x.remove());const p=P.find(x=>x.email===tr.dataset.em);const st=ST[p.email.toLowerCase()]||{};const a=st.areas||{};const w=weak(a);
     const det=document.createElement('tr');det.className='det';
@@ -554,10 +554,16 @@ async function loadDevBox(el,email){if(!el)return;const {data,error}=await sb.rp
   h+='<b>Tipos de equipo</b> (límite 2): '+(eq.length?eq.map(e=>esc(e.label)+(e.model?' · <b>'+esc(e.model)+'</b>':'')+' <span style="opacity:.7">(desde '+fdt(e.first)+')</span>').join('<br>'):'<span style="opacity:.7">se registran desde el próximo ingreso</span>');
   h+='<br><br><b>Abierto ahora en:</b> '+((data.abierto||[]).map(e=>esc(e.label)+(e.model?' · '+esc(e.model):'')+' <span style="opacity:.7">(últ. '+fdt(e.last)+')</span>').join(', ')||'—');
   h+='<br><b>Cambios de equipo:</b> '+(data.kicks||0)+' en total · '+ch.length+' con el otro equipo en uso (30 días)'+(ch.length?': '+ch.slice(0,8).map(fdt).join(', '):'');
-  if(data.bloqueado_hasta&&new Date(data.bloqueado_hasta)>new Date())h+='<br><b style="color:#FF8A8F">🔒 Bloqueada hasta '+fdt(data.bloqueado_hasta)+'</b>';
+  const blk=data.bloqueado_hasta&&new Date(data.bloqueado_hasta)>new Date();
+  if(blk)h+='<br><b style="color:#FF8A8F">🔒 Bloqueada hasta '+fdt(data.bloqueado_hasta)+'</b>';
+  if(blk||(data.kicks||0)>0||eq.length>2)h+='<br><button class="btn cta sm" data-unb="1" style="margin-top:8px">'+(blk?'🔓 Desbloquear cuenta':'Reiniciar equipos')+'</button><div class="hint" data-unbm style="margin-top:4px"></div>';
   if(nav.length){const seen={};const rows=[];nav.forEach(n=>{const i=uaInfo(n.ua);const k=i.m+'|'+i.app+'|'+i.tipo;if(seen[k]){seen[k].first=seen[k].first<n.first?seen[k].first:n.first;seen[k].last=seen[k].last>n.last?seen[k].last:n.last;return}seen[k]=Object.assign({},i,{first:n.first,last:n.last});rows.push(seen[k])});
     h+='<br><br><b>Equipos detectados</b> <span style="opacity:.7">(por el navegador)</span>:<br>'+rows.map(r=>(r.tipo==='celular'?'📱 ':r.tipo==='tablet'?'📟 ':'💻 ')+'<b>'+esc(r.m)+'</b> · '+esc(r.app)+' <span style="opacity:.7">('+fdt(r.first)+' → '+fdt(r.last)+')</span>').join('<br>')}
-  el.innerHTML=h}
+  el.innerHTML=h;
+  const ub=el.querySelector('[data-unb]');if(ub)ub.onclick=e=>{e.stopPropagation();twice(ub,'¿Seguro? Tocá de nuevo',async()=>{ub.disabled=true;const {error}=await sb.rpc('admin_unblock',{p_email:email});const m=el.querySelector('[data-unbm]');
+    if(error){ub.disabled=false;m.textContent='Error: '+error.message;return}
+    m.textContent='Listo: cuenta desbloqueada y equipos reiniciados. Ya puede ingresar.';m.style.color='#4CC2B7';
+    const p=P.find(x=>x.email===email);if(p)p.blocked_until=null;setTimeout(()=>loadDevBox(el,email),1200)})}}
 $('uQ').addEventListener('input',e=>{UQ=e.target.value.trim().toLowerCase();renderUsers()});
 $('uRef').onclick=loadAll;
 $('uCsv').onclick=()=>{const H=['correo','estado','alta','acceso_hasta','preguntas_7d','preguntas_total','aciertos_%','minutos_total','simulacros','ultima_actividad'];
