@@ -330,11 +330,11 @@ function paintBank(){$('bank').innerHTML=Object.keys(SEC).map(b=>{const S=SEC[b]
 function gate(html){$('gateBox').innerHTML=html;$('gateBox').hidden=false;$('study').hidden=true;$('dock').hidden=true}
 async function setBank(b){bank=b;ss('am_flash_bank',b);area='Todas';tema='';document.body.classList.toggle('una',b==='UNA');document.body.classList.toggle('carrera',b==='Carrera');paintBank();paintCtx();
  $('title').innerHTML=SEC[b].t;$('sub').textContent=SEC[b].s;
- if(!uid){gate(`<div class="lock"><div class="ic">📇</div><h2>Iniciá sesión para usar tus flashcards</h2><p>Las flashcards de la CONAREM y del Examen Único UNA vienen incluidas en los planes del banco de preguntas, con el método Mandú’a para repasar.</p><a class="btn" href="./#acceso">Iniciar sesión</a><a class="btn gh" href="./#planes">Ver los planes</a></div>`);return}
+ if(!uid){gate(`<div class="lock"><div class="ic">📇</div><h2>Iniciá sesión para usar tus flashcards</h2><p>Flashcards de la Carrera: Medicina Interna, Cirugía, GO y Pediatría, desde Gs 40.000 por mes. Si ya tenés el banco de la CONAREM o de la UNA, tus flashcards de examen están incluidas.</p><a class="btn" href="./#acceso">Iniciar sesión</a><a class="btn gh" href="https://wa.me/595994314870?text=Hola%2C%20quiero%20las%20flashcards%20de%20la%20Carrera" target="_blank" rel="noopener">Pedir las flashcards de la Carrera</a></div>`);return}
  let src=b;
  if(SEC[b].soon){if(!ACC.admin){gate(`<div class="lock"><div class="ic">🛠️</div><h2>Próximamente</h2><p>${b==='Carrera'?'Estamos armando mazos por tema para la facultad. El primero: Hipertensión arterial.':'Estamos armando mazos de manejo práctico para residentes. El primero: Hipertensión arterial.'}</p><a class="btn gh" href="./">Volver a la app</a></div>`);return}src='MAZO'}
  else if(b==='Carrera'&&!ACC.carrera&&!ACC.admin){gate(`<div class="lock"><div class="ic">📇</div><h2>Flashcards de la Carrera</h2><p>Medicina Interna, Cirugía, GO y Pediatría, cada tema completo y con repetición espaciada. Planes: mensual Gs 40.000 · semestral Gs 150.000 · vitalicio Gs 600.000.</p><a class="btn" href="https://wa.me/595994314870?text=Hola%2C%20quiero%20las%20flashcards%20de%20la%20Carrera" target="_blank" rel="noopener">Pedir acceso por WhatsApp</a><a class="btn gh" href="./">Volver a la app</a></div>`);return}
- else if(!ACC[SEC[b].need]&&!ACC.admin){gate(`<div class="lock"><div class="ic">🔒</div><h2>Incluidas en el plan del banco ${b==='UNA'?'del Examen Único UNA':'de la CONAREM'}</h2><p>Las flashcards ${b==='UNA'?'del Examen Único de Residencias de la FCM-UNA':'de la CONAREM'} se activan con el plan de ese banco de preguntas.</p><a class="btn" href="./${b==='UNA'?'#una':'#planes'}">Ver los planes</a></div>`);return}
+ else if(!ACC[SEC[b].need]&&!ACC.admin){gate(`<div class="lock"><div class="ic">🔒</div><h2>Incluidas en el plan del banco ${b==='UNA'?'del Examen Único UNA':'de la CONAREM'}</h2><p>Las flashcards ${b==='UNA'?'del Examen Único de Residencias de la FCM-UNA':'de la CONAREM'} se activan con el plan de ese banco de preguntas.</p><a class="btn" href="./${b==='UNA'?'#una':'#planes'}">Ver los planes del banco</a><button type="button" class="btn gh" onclick="setBank('Carrera')">¿Sos estudiante? Ver flashcards de la Carrera</button></div>`);return}
  $('gateBox').hidden=true;$('study').hidden=false;$('dock').hidden=false;
  if(src==='MAZO'){$('gateBox').hidden=false;$('gateBox').innerHTML='<p class="adm">Vista de administrador: esta sección todavía no está publicada para los alumnos.</p>'}
  if(!CARDS[src]){$('front').innerHTML='<div class="empty">Cargando tarjetas…</div>';$('back').innerHTML='';
@@ -419,6 +419,8 @@ $('fm').onclick=()=>{if(fk>0){fk--;fsz()}};$('fp').onclick=()=>{if(fk<FS.length-
    try{P=JSON.parse(st('am_fsrs_'+uid)||'{"srs":{}}')}catch(e){P={srs:{}}}
    const {data}=await sb.from('flash_progress').select('data').eq('user_id',uid).maybeSingle();if(data&&data.data)P=merge(P,data.data)}
  }catch(e){}
+ const okB=b=>b==='Carrera'?!!(ACC.carrera||ACC.admin):b==='UNA'?!!(ACC.una||ACC.admin):!!(ACC.conarem||ACC.admin);
+ if(!uid||!okB(bank)){bank=ACC.carrera?'Carrera':ACC.conarem?'CONAREM':ACC.una?'UNA':'Carrera'}
  setBank(bank)})();
 
 </script>
