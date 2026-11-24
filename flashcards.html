@@ -5,8 +5,13 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Flashcards · Arandú Med</title>
 <meta name="theme-color" content="#0B1318">
-<link rel="icon" href="icons/icon-192.png">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="manifest" href="flashcards.webmanifest">
+<link rel="icon" href="icons/fc-192.png">
+<link rel="apple-touch-icon" href="icons/fc-apple-touch.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Flashcards">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
 <style>
@@ -218,6 +223,11 @@ body.cfg{overflow:hidden}
 .sheet .filters{flex-wrap:wrap;overflow:visible}
 .okb{font:inherit;background:var(--acc);color:var(--ink);border:0;border-radius:14px;padding:13px;font-weight:800;font-size:1rem;cursor:pointer}
 @media (prefers-reduced-motion:reduce){.sheet,.scrim{transition:none}}
+.inst[hidden]{display:none}
+.inst{display:flex;align-items:center;gap:12px;background:var(--panel);border:1.5px solid var(--line);border-radius:14px;padding:10px 12px}
+.inst img{width:40px;height:40px;border-radius:10px;flex-shrink:0}
+.inst div{flex:1;min-width:0;font-size:.82rem;color:var(--mut);line-height:1.35}.inst div b{display:block;color:var(--fg);font-size:.9rem}
+.inst button{font:inherit;font-weight:800;font-size:.85rem;color:var(--ink);background:var(--acc);border:0;border-radius:10px;padding:9px 12px;cursor:pointer;flex-shrink:0}
 </style>
 </head>
 <body>
@@ -269,6 +279,7 @@ body.cfg{overflow:hidden}
       <div class="ftog"><button class="tg" type="button" id="nue" aria-pressed="false">Solo nuevas</button><button class="tg" type="button" id="rep" aria-pressed="false">Repetidas</button><button class="tg" type="button" id="mix" aria-pressed="false">Mezclar</button></div>
     </div></div>
     <div class="grp"><span class="gt">Tamaño de letra</span><div class="fsz" role="group" aria-label="Tamaño de letra"><button type="button" id="fm" aria-label="Letra más chica" style="font-size:.8rem">A−</button><span id="fv">100%</span><button type="button" id="fp" aria-label="Letra más grande" style="font-size:1.05rem">A+</button></div></div>
+    <div class="inst" id="inst" hidden><img src="icons/fc-192.png" alt=""><div><b>Instalá la app de Flashcards</b><span id="instTx">Abrila desde tu pantalla de inicio, a pantalla completa.</span></div><button type="button" id="instBtn">Instalar</button></div>
     <button class="okb" id="shOk" type="button">Listo</button>
   </div>
 </div>
@@ -404,6 +415,17 @@ $('fm').onclick=()=>{if(fk>0){fk--;fsz()}};$('fp').onclick=()=>{if(fk<FS.length-
    const {data}=await sb.from('flash_progress').select('data').eq('user_id',uid).maybeSingle();if(data&&data.data)P=merge(P,data.data)}
  }catch(e){}
  setBank(bank)})();
+</script>
+<script>
+// App instalable: service worker + botón "Instalar" (Android/Chrome) o instrucciones (iPhone).
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}
+(function(){const box=document.getElementById('inst'),btn=document.getElementById('instBtn'),tx=document.getElementById('instTx');
+ const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;if(standalone)return;
+ let ev=null;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();ev=e;btn.hidden=false;box.hidden=false});
+ window.addEventListener('appinstalled',()=>{box.hidden=true;ev=null});
+ btn.onclick=async()=>{if(!ev)return;ev.prompt();try{await ev.userChoice}catch(e){}ev=null;box.hidden=true};
+ if(/iphone|ipad|ipod/i.test(navigator.userAgent)){tx.innerHTML='En Safari tocá <b style="display:inline">Compartir</b> y después <b style="display:inline">Agregar a inicio</b>.';btn.hidden=true;box.hidden=false}
+})();
 </script>
 </body>
 </html>

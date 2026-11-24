@@ -1,0 +1,18 @@
+{
+  "id": "flashcards.html",
+  "name": "Flashcards · AranduMed",
+  "short_name": "Flashcards",
+  "description": "Las preguntas de la CONAREM y de la UNA en tarjetas, con repetición espaciada (método Mandu’a).",
+  "lang": "es-PY",
+  "start_url": "flashcards.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0B1318",
+  "theme_color": "#0B1318",
+  "icons": [
+    {"src": "icons/fc-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "icons/fc-512.png", "sizes": "512x512", "type": "image/png"},
+    {"src": "icons/fc-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}
