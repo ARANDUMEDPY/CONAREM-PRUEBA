@@ -14,15 +14,17 @@
 :root{
   --bg:#0B1318; --ink:#0E161B; --panel:#121D24; --line:#24323B; --fg:#E7EEF1; --mut:#8EA0AA;
   --paper:#0F2A2B; --paper-ink:#EEF4F3; --paper-mut:#86B3AD;
-  --teal:#4CC2B7; --orange:#F08A5D; --amber:#F7B731; --ok:#3FBF7F; --acc:#4CC2B7;
+  --teal:#4CC2B7; --orange:#F08A5D; --amber:#F7B731; --ok:#3FBF7F; --acc:#4CC2B7; --mi:#4CC2B7;
   --f-body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
   --f-head:"Space Grotesk","Inter",system-ui,sans-serif;
   color-scheme:dark;
 }
-body.una{--acc:#F2C14E;--paper:#151C3D}
+body.una{--bg:#0A0F24;--ink:#0D1433;--panel:#121A3D;--line:#26306A;--fg:#E6E9F5;--mut:#9AA3C7;--paper:#151C3D;--paper-ink:#EEF0FA;--paper-mut:#A9B2DA;--teal:#F2C14E;--acc:#F2C14E;--amber:#F2C14E;--mi:#8FA8FF}
+body.carrera{--bg:#15201B;--ink:#101914;--panel:#1A2721;--line:#2B3C33;--fg:#F0EEE6;--mut:#A7B3AA;--paper:#1C2B24;--paper-ink:#F0EEE6;--paper-mut:#AAB7AE;--teal:#E8D38E;--acc:#E8D38E;--amber:#E8D38E;--mi:#E8D38E}
 *{box-sizing:border-box}
 body{background:radial-gradient(900px 600px at 100% -10%,#123A3A55,transparent 70%),radial-gradient(700px 500px at -10% 110%,#5a2a1533,transparent 70%),var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16px;line-height:1.5;min-height:100vh}
 body.una{background:radial-gradient(900px 600px at 100% -10%,#2a338a66,transparent 70%),radial-gradient(700px 500px at -10% 110%,#5a4a1533,transparent 70%),#0A0F24}
+body.carrera{background:radial-gradient(900px 600px at 50% -10%,#ffffff08,transparent 70%),#15201B}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
 .wrap{max-width:560px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px 40px;display:flex;flex-direction:column;gap:14px}
 .head{display:flex;justify-content:space-between;align-items:center;gap:12px}
@@ -78,7 +80,7 @@ h1 em{font-style:normal;color:var(--acc)}
 .tap{display:flex;align-items:center;justify-content:center;gap:8px;font-size:.8rem;color:var(--mut)}
 .tap svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .back{transform:rotateY(180deg);background:radial-gradient(500px 300px at 100% 0%,#ffffff12,transparent 70%),var(--paper);color:var(--paper-ink);border:1.5px solid #2B5554}
-body.una .back{border-color:#2E3A7A}
+body.una .back{border-color:#2E3A7A}body.carrera .back{border-color:#34483D}body.una .deck::before{background:#18204A}body.una .deck::after{background:#141B40}body.carrera .deck::before{background:#1E2D26}body.carrera .deck::after{background:#192620}
 .bin{flex:1;display:flex;flex-direction:column;gap:12px;padding:20px 22px 18px;overflow:auto;min-height:0}
 .bin>*,.fin>*{flex-shrink:0}
 .bin,.fin{scrollbar-width:thin;scrollbar-color:#ffffff33 transparent}
@@ -280,7 +282,7 @@ body.cfg{overflow:hidden}
       <button class="arrow" id="next" type="button" aria-label="Siguiente"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
     </div>
     <div class="mnd" id="mnd" hidden>
-      <div class="mnd-h"><span><b>Método Mandu’a</b> · ¿La sabías? Vuelve en:</span></div>
+      <div class="mnd-h"><span><b>Método Mandú’a</b> · ¿La sabías? Vuelve en:</span></div>
       <div class="rg" id="rg"></div>
     </div>
     <p class="hint" id="mndS"></p>
@@ -317,9 +319,9 @@ if(!SEC[bank])bank='CONAREM';
 function paintBank(){$('bank').innerHTML=Object.keys(SEC).map(b=>{const S=SEC[b];const lk=uid&&S.need&&!ACC[S.need]&&!ACC.admin;const lab=b==='UNA'?'Examen UNA':b;return `<button type="button" data-b="${b}" aria-pressed="${b===bank}">${lab}${lk?'<span class="lk" aria-label="bloqueado">🔒</span>':''}${S.soon?'<span class="pr">Pronto</span>':''}</button>`}).join('');
  $('bank').querySelectorAll('button').forEach(x=>x.onclick=()=>setBank(x.dataset.b))}
 function gate(html){$('gateBox').innerHTML=html;$('gateBox').hidden=false;$('study').hidden=true;$('dock').hidden=true}
-async function setBank(b){bank=b;ss('am_flash_bank',b);area='Todas';tema='';document.body.classList.toggle('una',b==='UNA');paintBank();paintCtx();
+async function setBank(b){bank=b;ss('am_flash_bank',b);area='Todas';tema='';document.body.classList.toggle('una',b==='UNA');document.body.classList.toggle('carrera',b==='Carrera');paintBank();paintCtx();
  $('title').innerHTML=SEC[b].t;$('sub').textContent=SEC[b].s;
- if(!uid){gate(`<div class="lock"><div class="ic">📇</div><h2>Iniciá sesión para usar tus flashcards</h2><p>Las flashcards de la CONAREM y del Examen Único UNA vienen incluidas en los planes del banco de preguntas, con el método Mandu’a para repasar.</p><a class="btn" href="./#acceso">Iniciar sesión</a><a class="btn gh" href="./#planes">Ver los planes</a></div>`);return}
+ if(!uid){gate(`<div class="lock"><div class="ic">📇</div><h2>Iniciá sesión para usar tus flashcards</h2><p>Las flashcards de la CONAREM y del Examen Único UNA vienen incluidas en los planes del banco de preguntas, con el método Mandú’a para repasar.</p><a class="btn" href="./#acceso">Iniciar sesión</a><a class="btn gh" href="./#planes">Ver los planes</a></div>`);return}
  let src=b;
  if(SEC[b].soon){if(!ACC.admin){gate(`<div class="lock"><div class="ic">🛠️</div><h2>Próximamente</h2><p>${b==='Carrera'?'Estamos armando mazos por tema para la facultad. El primero: Hipertensión arterial.':'Estamos armando mazos de manejo práctico para residentes. El primero: Hipertensión arterial.'}</p><a class="btn gh" href="./">Volver a la app</a></div>`);return}src='MAZO'}
  else if(!ACC[SEC[b].need]&&!ACC.admin){gate(`<div class="lock"><div class="ic">🔒</div><h2>Incluidas en el plan del banco ${b==='UNA'?'del Examen Único UNA':'de la CONAREM'}</h2><p>Las flashcards ${b==='UNA'?'del Examen Único de Residencias de la FCM-UNA':'de la CONAREM'} se activan con el plan de ese banco de preguntas.</p><a class="btn" href="./${b==='UNA'?'#una':'#planes'}">Ver los planes</a></div>`);return}
@@ -346,7 +348,7 @@ function rebuild(){
  i=0;show();paintCtx();requestAnimationFrame(fitCard)}
 function show(){const card=$('card');card.classList.remove('flip');flipped=false;stats();
  if(!list.length){$('front').innerHTML=mode==='due'?`<div class="done"><div class="ic">🎉</div><b>No tenés repasos pendientes</b><span>${Object.keys(P.srs).length?'Volvé mañana o seguí con tarjetas nuevas.':'Empezá con tarjetas nuevas: las que califiques vuelven acá justo antes de que las olvides.'}</span><button class="btn" type="button" onclick="event.stopPropagation();goNew()">Estudiar tarjetas nuevas</button></div>`:'<div class="empty">No hay tarjetas con estos filtros.</div>';$('back').innerHTML='';$('n').textContent='0 tarjetas';rates();return}
- const c=list[i],col=COL[c.ar]||'#4CC2B7';card.style.setProperty('--c',col);
+ const c=list[i],col=c.ar==='Medicina Interna'?(getComputedStyle(document.body).getPropertyValue('--mi').trim()||'#4CC2B7'):(COL[c.ar]||'#4CC2B7');card.style.setProperty('--c',col);
  const yrs=c.y&&c.y.length?(c.b==="UNA"?'FCM-UNA ':'CONAREM ')+c.y.join(' · '):(c.mz==='HTA'?'Mazo Hipertensión':'Pregunta de práctica');
  const o=P.srs[c.id];const st0=o?(o.ok?'<span class="kd">Repaso</span>':'<span class="rep">Vuelve a repasar</span>'):'';
  const tags=st0+(c.k?`<span class="kd">${esc(c.k)}</span>`:'')+(c.n>1?`<span class="rep">Salió ${c.n} veces</span>`:'')+(c.x?'<span class="exc">Ojo: pide la excepción</span>':'');
