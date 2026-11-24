@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Flashcards · Arandú Med</title>
 <meta name="theme-color" content="#0B1318">
-<link rel="icon" href="icons/icon-192.png">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
 <style>
@@ -71,7 +71,7 @@ h1 em{font-style:normal;color:var(--acc)}
 .tema{display:flex;flex-direction:column;gap:2px;font-size:.74rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--c)}
 .tema small{font-size:.72rem;letter-spacing:.02em;text-transform:none;color:var(--mut);font-weight:600}
 .yr{font-size:.76rem;color:var(--mut);font-variant-numeric:tabular-nums;text-align:right;flex-shrink:0}
-.tags{display:flex;gap:6px;flex-wrap:wrap}
+.tags{display:flex;gap:6px;flex-wrap:wrap}.top .yr{flex-shrink:1;}#enf{display:grid;grid-template-columns:1fr;gap:6px}#enf button{width:100%}.top .yr{max-width:58%;white-space:normal;line-height:1.3}.top .tema{flex-shrink:0;max-width:42%}.exa{font-size:.72rem;font-weight:700;padding:3px 9px;border-radius:999px;background:color-mix(in srgb,var(--amber) 16%,transparent);color:var(--amber);border:1px solid color-mix(in srgb,var(--amber) 45%,transparent)}
 .rep,.exc{font-size:.72rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;border-radius:8px;padding:4px 9px}
 .rep{color:var(--ink);background:var(--orange);transform:rotate(-2deg)}
 .exc{color:var(--amber);border:1.5px solid var(--amber)}
@@ -258,6 +258,7 @@ body.cfg{overflow:hidden}
       <div class="kpi"><div class="k1"><b id="kDue">0</b><span>para hoy</span></div><div class="k2"><b id="kLear">0</b><span>aprendiendo</span></div><div class="k3"><b id="kCons">0</b><span>consolidadas</span></div></div>
       <div class="pbar" aria-hidden="true"><i id="pk" style="background:var(--ok)"></i><i id="pa" style="background:var(--orange)"></i></div>
     </section>
+    <div class="grp"><span class="gt">Enfoque</span><div class="mode" role="group" aria-label="Enfoque" id="enf"><button type="button" data-e="all">📖 Todo el tema</button><button type="button" data-e="CONAREM">🎯 Solo examen CONAREM</button><button type="button" data-e="UNA">🎯 Solo examen UNA</button></div><span class="gt" id="enfN" style="text-transform:none;letter-spacing:0;font-weight:500;margin-top:6px"></span></div>
     <div class="grp"><span class="gt">Qué estudiar</span><div class="mode" role="group" aria-label="Modo">
       <button type="button" id="mDue" aria-pressed="true">🔁 Repaso de hoy <span class="ct" id="cDue">0</span></button>
       <button type="button" id="mAll" aria-pressed="false">📚 Explorar</button>
@@ -296,13 +297,21 @@ const C=window.CONFIG||{};
 const COL={"Medicina Interna":"#4CC2B7","Cirugía":"#F08A5D","Pediatría":"#93A4FF","Gineco-Obstetricia":"#E879A6","Salud Pública":"#E2B24A"};
 const SEC={CONAREM:{t:"Flashcards <em>CONAREM</em>",s:"Las preguntas de los exámenes CONAREM 2016–2026, con la respuesta y la perla para recordar.",need:"conarem"},
  UNA:{t:"Flashcards <em>Examen Único UNA</em>",s:"Las preguntas del Examen Único de Residencias de la FCM-UNA, con la respuesta y la perla.",need:"una"},
- Carrera:{t:"Flashcards <em>Carrera</em>",s:"Mazos por tema para estudiar en la facultad: preguntas, verdadero o falso y completá.",soon:1},
+ Carrera:{t:"Flashcards <em>Carrera</em>",s:"Toda la carrera por tema: Medicina Interna, Cirugía, GO y Pediatría, con repetición espaciada.",need:"carrera"},
  Residencia:{t:"Flashcards <em>Residencia</em>",s:"Manejo práctico para el residente: metas, fármacos, urgencias y emergencias.",soon:1}};
 const STEPS=[1,3,7,14,30,60];
 const $=id=>document.getElementById(id);
 const st=k=>{try{return localStorage.getItem(k)}catch(e){return null}},ss=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const norm=s=>s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+
+const CSSA='<style>.a b{color:var(--amber)}.a.al{font-family:var(--f-body);font-weight:500;font-size:calc(var(--k,1)*1.04rem);line-height:1.5;letter-spacing:0}.a.al p{margin:0 0 6px;text-align:justify;hyphens:auto;-webkit-hyphens:auto}.a.al ol{margin:0;padding-left:1.4em;text-align:justify;text-justify:inter-word;hyphens:auto;-webkit-hyphens:auto}.a.al li{margin:4px 0}.a.al li::marker{color:var(--amber);font-weight:700}</style>';
+document.head.insertAdjacentHTML('beforeend',CSSA);
+function fmtA(a){let t=esc(a).replace(/&lt;(\/?)b&gt;/g,'<$1b>');const i=t.search(/(^|\s)1\.\s/);
+ if(i<0||!/;\s*2\.\s/.test(t))return `<div class="a">${t}</div>`;
+ const pre=t.slice(0,i).replace(/[:\s]+$/,'');const items=t.slice(i).trim().split(/;\s*(?=\d+\.\s)/).map(x=>x.replace(/^\d+\.\s*/,''));
+ return `<div class="a al">${pre?`<p><b>${pre}</b></p>`:''}<ol>${items.map(x=>`<li>${x}</li>`).join('')}</ol></div>`}
+
 const TAP='<svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>';
 const BOOK='<svg viewBox="0 0 24 24"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v15H5.5A1.5 1.5 0 0 0 4 20.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v15h5.5a1.5 1.5 0 0 1 1.5 1.5z"/></svg>';
 const glo=g=>g&&g.length?`<div class="gl"><div class="gh">Siglas y términos</div>${g.map(([t,e])=>`<p><b>${esc(t)}</b>: ${esc(e)}</p>`).join('')}</div>`:'';
@@ -313,7 +322,7 @@ function fmtD(n){if(n===1)return'mañana';if(n<30)return n+' días';const m=Math
 function srsIdx(pi,r){if(r===0)return 0;const k=r-1;if(pi<0)return [1,3,4][k];return Math.min(STEPS.length-1,[Math.max(pi,1),Math.max(pi+1,2),Math.max(pi+2,3)][k])}
 function prevIdx(id){const o=P.srs[id];if(!o)return -1;return o.last===todayKey()?o.pi:o.i}
 
-let sb=null,uid=null,ACC={},CARDS={},P={srs:{}},bank=st('am_flash_bank')||'CONAREM',mode='due',area='Todas',tema='',q='',onlyRep=false,onlyNew=false,mixed=false,list=[],i=0,flipped=false,saveT=null;
+let enf=st('am_flash_enf')||'all',sb=null,uid=null,ACC={},CARDS={},P={srs:{}},bank=st('am_flash_bank')||'CONAREM',mode='due',area='Todas',tema='',q='',onlyRep=false,onlyNew=false,mixed=false,list=[],i=0,flipped=false,saveT=null;
 if(!SEC[bank])bank='CONAREM';
 
 function paintBank(){$('bank').innerHTML=Object.keys(SEC).map(b=>{const S=SEC[b];const lk=uid&&S.need&&!ACC[S.need]&&!ACC.admin;const lab=b==='UNA'?'Examen UNA':b;return `<button type="button" data-b="${b}" aria-pressed="${b===bank}">${lab}${lk?'<span class="lk" aria-label="bloqueado">🔒</span>':''}${S.soon?'<span class="pr">Pronto</span>':''}</button>`}).join('');
@@ -324,15 +333,19 @@ async function setBank(b){bank=b;ss('am_flash_bank',b);area='Todas';tema='';docu
  if(!uid){gate(`<div class="lock"><div class="ic">📇</div><h2>Iniciá sesión para usar tus flashcards</h2><p>Las flashcards de la CONAREM y del Examen Único UNA vienen incluidas en los planes del banco de preguntas, con el método Mandú’a para repasar.</p><a class="btn" href="./#acceso">Iniciar sesión</a><a class="btn gh" href="./#planes">Ver los planes</a></div>`);return}
  let src=b;
  if(SEC[b].soon){if(!ACC.admin){gate(`<div class="lock"><div class="ic">🛠️</div><h2>Próximamente</h2><p>${b==='Carrera'?'Estamos armando mazos por tema para la facultad. El primero: Hipertensión arterial.':'Estamos armando mazos de manejo práctico para residentes. El primero: Hipertensión arterial.'}</p><a class="btn gh" href="./">Volver a la app</a></div>`);return}src='MAZO'}
+ else if(b==='Carrera'&&!ACC.carrera&&!ACC.admin){gate(`<div class="lock"><div class="ic">📇</div><h2>Flashcards de la Carrera</h2><p>Medicina Interna, Cirugía, GO y Pediatría, cada tema completo y con repetición espaciada. Planes: mensual Gs 40.000 · semestral Gs 150.000 · vitalicio Gs 600.000.</p><a class="btn" href="https://wa.me/595994314870?text=Hola%2C%20quiero%20las%20flashcards%20de%20la%20Carrera" target="_blank" rel="noopener">Pedir acceso por WhatsApp</a><a class="btn gh" href="./">Volver a la app</a></div>`);return}
  else if(!ACC[SEC[b].need]&&!ACC.admin){gate(`<div class="lock"><div class="ic">🔒</div><h2>Incluidas en el plan del banco ${b==='UNA'?'del Examen Único UNA':'de la CONAREM'}</h2><p>Las flashcards ${b==='UNA'?'del Examen Único de Residencias de la FCM-UNA':'de la CONAREM'} se activan con el plan de ese banco de preguntas.</p><a class="btn" href="./${b==='UNA'?'#una':'#planes'}">Ver los planes</a></div>`);return}
  $('gateBox').hidden=true;$('study').hidden=false;$('dock').hidden=false;
  if(src==='MAZO'){$('gateBox').hidden=false;$('gateBox').innerHTML='<p class="adm">Vista de administrador: esta sección todavía no está publicada para los alumnos.</p>'}
  if(!CARDS[src]){$('front').innerHTML='<div class="empty">Cargando tarjetas…</div>';$('back').innerHTML='';
   try{CARDS[src]=await loadCards(src)}catch(e){$('front').innerHTML='<div class="empty">No se pudieron cargar las tarjetas. Recargá la página.</div>';return}}
- mode=dueList().length?'due':'all';paintFilters();rebuild()}
+ mode=dueList().length?'due':'all';paintEnf();paintFilters();rebuild()}
 async function loadCards(b){let out=[],from=0;for(;;){const {data,error}=await sb.from('flashcards').select('data').eq('bank',b).order('ord').range(from,from+999);if(error)throw error;out=out.concat(data.map(r=>r.data));if(data.length<1000)break;from+=1000}
  if(b==='MAZO')out=out.filter(c=>(c.s||[]).includes(bank));return out}
-function pool(){return CARDS[SEC[bank].soon?'MAZO':bank]||[]}
+function isEx(c,b){if(c.ex)return c.ex.includes(b);if(c.y&&c.y.length)return b==='UNA'?c.b==='UNA':c.b!=='UNA';return false}
+function pool0(){return CARDS[SEC[bank].soon?'MAZO':bank]||[]}
+function pool(){const p=pool0();return enf==='all'?p:p.filter(c=>isEx(c,enf))}
+function paintEnf(){document.querySelectorAll('#enf button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.e===enf));const p=pool0(),n=enf==='all'?p.length:p.filter(c=>isEx(c,enf)).length;$('enfN').textContent=enf==='all'?`${n} tarjetas: base y preguntas de examen`:`${n} tarjetas que salieron en el examen ${enf==='UNA'?'de la UNA':'CONAREM'}`}
 function dueList(){const t=todayKey();return pool().filter(c=>{const o=P.srs[c.id];return o&&o.due<=t&&o.last!==t}).sort((a,b)=>P.srs[a.id].due.localeCompare(P.srs[b.id].due))}
 function areas(){return ["Todas",...Object.keys(COL).filter(a=>pool().some(c=>c.ar===a))]}
 function paintFilters(){
@@ -349,11 +362,11 @@ function rebuild(){
 function show(){const card=$('card');card.classList.remove('flip');flipped=false;stats();
  if(!list.length){$('front').innerHTML=mode==='due'?`<div class="done"><div class="ic">🎉</div><b>No tenés repasos pendientes</b><span>${Object.keys(P.srs).length?'Volvé mañana o seguí con tarjetas nuevas.':'Empezá con tarjetas nuevas: las que califiques vuelven acá justo antes de que las olvides.'}</span><button class="btn" type="button" onclick="event.stopPropagation();goNew()">Estudiar tarjetas nuevas</button></div>`:'<div class="empty">No hay tarjetas con estos filtros.</div>';$('back').innerHTML='';$('n').textContent='0 tarjetas';rates();return}
  const c=list[i],col=c.ar==='Medicina Interna'?(getComputedStyle(document.body).getPropertyValue('--mi').trim()||'#4CC2B7'):(COL[c.ar]||'#4CC2B7');card.style.setProperty('--c',col);
- const yrs=c.y&&c.y.length?(c.b==="UNA"?'FCM-UNA ':'CONAREM ')+c.y.join(' · '):(c.mz==='HTA'?'Mazo Hipertensión':'Pregunta de práctica');
+ const yrs=c.y&&c.y.length?(c.b==="UNA"?'FCM-UNA ':'CONAREM ')+c.y.join(' · '):(c.sub?c.sub:(c.mzn?'Mazo '+c.mzn:(c.mz==='HTA'?'Mazo Hipertensión':'Pregunta de práctica')));
  const o=P.srs[c.id];const st0=o?(o.ok?'<span class="kd">Repaso</span>':'<span class="rep">Vuelve a repasar</span>'):'';
- const tags=st0+(c.k?`<span class="kd">${esc(c.k)}</span>`:'')+(c.n>1?`<span class="rep">Salió ${c.n} veces</span>`:'')+(c.x?'<span class="exc">Ojo: pide la excepción</span>':'');
+ const tags=st0+(c.ex?`<span class="exa">Salió en ${esc(c.ex)}</span>`:'')+(c.k?`<span class="kd">${esc(c.k)}</span>`:'')+(c.n>1?`<span class="rep">Salió ${c.n} veces</span>`:'')+(c.x?'<span class="exc">Ojo: pide la excepción</span>':'');
  $('front').innerHTML=`<div class="band"></div><div class="fin"><div class="wm">?</div><div class="top"><span class="tema">${esc(c.ar)}<small>${esc(c.t||'')}</small></span><span class="yr">${yrs}</span></div>${tags?`<div class="tags">${tags}</div>`:''}<p class="q">${esc(c.q)}</p>${glo(c.g)}<div class="tap">${TAP}Tocá para ver la respuesta</div></div>`;
- $('back').innerHTML=`<div class="band"></div><div class="bin"><span class="lab">${c.x?'Es la excepción (la que no corresponde)':'Respuesta'}</span><div class="a">${esc(c.a)}</div>${c.d?`<p class="d" lang="es">${c.d}</p>`:''}${glo(c.gb)}${c.f?`<div class="src">${BOOK}<span>${esc(c.f)}</span></div>`:''}</div>`;
+ $('back').innerHTML=`<div class="band"></div><div class="bin"><span class="lab">${c.x?'Es la excepción (la que no corresponde)':'Respuesta'}</span>${fmtA(c.a)}${c.d?`<p class="d" lang="es">${c.d}</p>`:''}${glo(c.gb)}${c.f?`<div class="src">${BOOK}<span>${esc(c.f)}</span></div>`:''}</div>`;
  $('n').textContent=`Tarjeta ${i+1} de ${list.length}`+(mode==='due'?' · repaso de hoy':'');rates()}
 function rates(){requestAnimationFrame(fitCard);const c=list[i];const lab=['No la sabía','Difícil','Bien','Fácil'],em=['😵','😓','🙂','😎'];
  const pi=c?prevIdx(c.id):-1;
@@ -386,10 +399,11 @@ $('mDue').onclick=()=>{mode='due';rebuild()};$('mAll').onclick=()=>{mode='all';p
 $('tema').onchange=e=>{tema=e.target.value;rebuild()};
 let tq;$('buscar').oninput=e=>{clearTimeout(tq);tq=setTimeout(()=>{q=e.target.value.trim();rebuild()},200)};
 const tog=(id,f)=>$(id).onclick=()=>{const v=$(id).getAttribute('aria-pressed')!=="true";$(id).setAttribute('aria-pressed',v);f(v);rebuild()};
+document.querySelectorAll('#enf button').forEach(b=>b.onclick=()=>{enf=b.dataset.e;ss('am_flash_enf',enf);area='Todas';tema='';paintEnf();paintFilters();rebuild()});paintEnf();
 tog('rep',v=>onlyRep=v);tog('nue',v=>onlyNew=v);tog('mix',v=>mixed=v);
 document.addEventListener('keydown',e=>{if(document.body.classList.contains('cfg'))return;if(/BUTTON|INPUT|SELECT/.test(e.target.tagName))return;if(e.key==='ArrowRight')go(1);if(e.key==='ArrowLeft')go(-1);if(flipped&&/^[1-4]$/.test(e.key))rate(+e.key-1)});
 
-function paintCtx(){const lab=bank==='UNA'?'Examen UNA':bank;let det=mode==='due'?'Repaso de hoy':(tema||(area==='Todas'?'Explorar':area));
+function paintCtx(){const lab=bank==='UNA'?'Examen UNA':bank;let det=(enf!=='all'?'Solo examen · ':'')+mode==='due'?'Repaso de hoy':(tema||(area==='Todas'?'Explorar':area));
  $('ctxDot').style.background=mode==='all'&&area!=='Todas'&&COL[area]?COL[area]:'';$('ctxTxt').innerHTML=`<b>${esc(lab)}</b> · ${esc(det)}`}
 function openCfg(){document.body.classList.add('cfg');setTimeout(()=>$('shX').focus(),60)}
 function closeCfg(){document.body.classList.remove('cfg');requestAnimationFrame(fitCard)}
@@ -406,6 +420,7 @@ $('fm').onclick=()=>{if(fk>0){fk--;fsz()}};$('fp').onclick=()=>{if(fk<FS.length-
    const {data}=await sb.from('flash_progress').select('data').eq('user_id',uid).maybeSingle();if(data&&data.data)P=merge(P,data.data)}
  }catch(e){}
  setBank(bank)})();
+
 </script>
 </body>
 </html>

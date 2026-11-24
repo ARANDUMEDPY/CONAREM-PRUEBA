@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Cargar mazos · Arandú Med</title>
+<style>
+body{margin:0;background:#121212;color:#EFEFEF;font-family:Inter,system-ui,sans-serif;display:flex;justify-content:center;padding:32px 16px}
+.box{max-width:520px;width:100%;display:flex;flex-direction:column;gap:16px}
+h1{margin:0;font-size:1.6rem}
+p{margin:0;color:#A6A6A6;line-height:1.5}
+label{display:block;border:2px dashed #2C2C2C;border-radius:16px;padding:22px;text-align:center;cursor:pointer}
+input[type=file]{display:none}
+button{font:inherit;font-weight:700;border:0;border-radius:999px;padding:14px;background:#D97757;color:#121212;cursor:pointer}
+button:disabled{opacity:.4;cursor:default}
+#log{white-space:pre-wrap;background:#1A1A1A;border-radius:12px;padding:14px;min-height:60px;font-size:.9rem}
+</style>
+</head>
+<body>
+<div class="box">
+  <h1>Cargar mazos de flashcards</h1>
+  <p>Solo para administradores. Entrá primero con tu cuenta en la app y después volvé a esta página. Elegí el archivo de tarjetas (.json) y tocá «Cargar».</p>
+  <label for="f" id="fl">Elegir archivo de tarjetas</label>
+  <input type="file" id="f" accept=".json,application/json">
+  <button type="button" id="go" disabled>Cargar</button>
+  <div id="log"></div>
+</div>
+<script src="config.js"></script>
+<script src="vendor/supabase-2.45.4.min.js"></script>
+<script>
+const C=window.CONFIG||{};
+const sb=window.supabase.createClient(C.SUPABASE_URL,C.SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true,lock:async(n,t,fn)=>await fn()}});
+const $=id=>document.getElementById(id);
+const log=t=>{$('log').textContent+=t+'\n'};
+let cards=null;
+$('f').addEventListener('change',async e=>{
+  const file=e.target.files[0];if(!file)return;
+  try{
+    cards=JSON.parse(await file.text());
+    if(!Array.isArray(cards)||!cards.length||!cards.every(c=>c&&c.id&&c.b))throw new Error('formato');
+    const banks=[...new Set(cards.map(c=>c.b))];
+    $('fl').textContent=file.name+' · '+cards.length+' tarjetas · sección '+banks.join(', ');
+    $('go').disabled=false;
+  }catch(_){cards=null;$('go').disabled=true;log('El archivo no tiene el formato esperado.')}
+});
+$('go').onclick=async()=>{
+  if(!cards)return;
+  $('go').disabled=true;$('log').textContent='';
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session){log('No hay sesión iniciada. Entrá con tu cuenta de administrador en la app y volvé.');$('go').disabled=false;return}
+  const {data:adm}=await sb.rpc('is_admin');
+  if(!adm){log('Esta cuenta no es de administrador.');$('go').disabled=false;return}
+  const banks=[...new Set(cards.map(c=>c.b))];
+  for(const b of banks){
+    const {error}=await sb.from('flashcards').delete().eq('bank',b);
+    if(error){log('Error al limpiar '+b+': '+error.message);$('go').disabled=false;return}
+    log('Sección '+b+' vaciada.');
+  }
+  const rows=cards.map((c,i)=>({id:c.id,bank:c.b,ord:i+1,data:c}));
+  for(let i=0;i<rows.length;i+=400){
+    const {error}=await sb.from('flashcards').upsert(rows.slice(i,i+400));
+    if(error){log('Error en el lote '+(i/400+1)+': '+error.message);$('go').disabled=false;return}
+    log('Cargadas '+Math.min(i+400,rows.length)+' de '+rows.length);
+  }
+  log('Listo. Ya podés abrir las flashcards.');
+};
+</script>
+</body>
+</html>
