@@ -215,12 +215,12 @@ function heroHTML(){return `<div class="card hero">
 let authMode='signup';
 function showAuth(){
   view(heroHTML()+`<div class="card">
-    <div class="tabs"><button id="tSign" class="${authMode==='signup'?'on':''}">Crear cuenta</button><button id="tLog" class="${authMode==='login'?'on':''}">Ya tengo cuenta</button></div>
+    <div class="tabs"><button id="tSign" class="${authMode==='signup'?'on':''}">Registrarme</button><button id="tLog" class="${authMode==='login'?'on':''}">Ya tengo cuenta</button></div>
     <p class="small mut">${authMode==='signup'?'Para participar necesitás una cuenta gratuita de AranduMed.':'Ingresá con el correo y la contraseña de tu cuenta de AranduMed.'}</p>
     <label for="em">Correo</label><input id="em" type="email" autocomplete="email" inputmode="email">
     <label for="pw">Contraseña</label><input id="pw" type="password" autocomplete="${authMode==='signup'?'new-password':'current-password'}">
     ${authMode==='signup'?'<p class="small mut" style="margin-top:10px">Al crear tu cuenta aceptás los <a href="legal.html#terminos" target="_blank" rel="noopener" style="color:var(--teal)">Términos</a> y la <a href="legal.html#privacidad" target="_blank" rel="noopener" style="color:var(--teal)">Política de privacidad</a>.</p>':''}
-    <button class="btn" id="bAuth">${authMode==='signup'?'Crear cuenta y seguir':'Ingresar'}</button>
+    <button class="btn" id="bAuth">${authMode==='signup'?'Registrate gratis':'Ingresar'}</button>
     ${authMode==='login'?'<button class="link" id="bReset">Olvidé mi contraseña</button>':''}
     <div class="msg" id="aMsg"></div></div>`);
   $('tSign').onclick=()=>{authMode='signup';showAuth()};
