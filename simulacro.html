@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Simulacro Nacional · Arandú Med</title>
+<meta name="description" content="Simulacro nacional en vivo para la CONAREM: 70 preguntas en 2 bloques, ranking a nivel país.">
+<meta name="theme-color" content="#0B1318">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+:root{
+  --bg:#0B1318;--panel:#121D24;--panel2:#0F181E;--line:#24323B;--fg:#E7EEF1;--mut:#8EA0AA;
+  --teal:#4CC2B7;--orange:#F08A5D;--amber:#F7B731;--ok:#3FBF7F;--bad:#E5605A;
+  --f-body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-head:"Space Grotesk","Inter",system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:radial-gradient(900px 600px at 100% -10%,#123A3A55,transparent 70%),radial-gradient(700px 500px at -10% 110%,#5a2a1533,transparent 70%),var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16px;line-height:1.5;min-height:100vh}
+.wrap{max-width:620px;margin:0 auto;padding:18px max(16px,env(safe-area-inset-right)) 120px max(16px,env(safe-area-inset-left));display:flex;flex-direction:column;gap:14px}
+.head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.brand{font-family:var(--f-head);font-weight:700;font-size:1.15rem;color:var(--fg);text-decoration:none}.brand span{color:var(--teal)}
+.chip:empty{display:none}
+.chip{font-size:.78rem;font-weight:600;border-radius:999px;padding:5px 10px;background:var(--panel);border:1px solid var(--line);color:var(--mut)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px}
+h1,h2,h3{font-family:var(--f-head);margin:0 0 8px;line-height:1.2}
+h1{font-size:1.55rem}h2{font-size:1.2rem}h3{font-size:1rem}
+p{margin:0 0 10px}.mut{color:var(--mut)}.small{font-size:.86rem}
+.hero{background:linear-gradient(135deg,#12323a,#121D24 60%);border-color:#2a4a50}
+.kicker{font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);margin-bottom:6px}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.fact{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:10px}
+.fact b{display:block;font-family:var(--f-head);font-size:1.05rem}.fact span{font-size:.8rem;color:var(--mut)}
+.prize{margin-top:12px;border-left:3px solid var(--amber);padding:6px 0 6px 12px;font-size:.92rem}
+label{display:block;font-size:.85rem;font-weight:600;margin:12px 0 6px}
+input{width:100%;font:inherit;color:var(--fg);background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;outline:none}
+input:focus{border-color:var(--teal)}
+.btn{display:block;width:100%;font:inherit;font-weight:700;border:0;border-radius:14px;padding:14px 16px;margin-top:14px;cursor:pointer;background:var(--teal);color:#06201d}
+.btn.sec{background:transparent;color:var(--fg);border:1px solid var(--line)}
+.btn.warn{background:var(--orange);color:#2a1206}
+.btn:disabled{opacity:.55;cursor:default}
+.row{display:flex;gap:8px}.row .btn{margin-top:10px}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:4px;margin-bottom:6px}
+.tabs button{font:inherit;font-weight:700;font-size:.9rem;color:var(--mut);background:transparent;border:0;border-radius:10px;padding:9px;cursor:pointer}
+.tabs button.on{background:var(--panel);color:var(--fg)}
+.link{background:none;border:0;color:var(--teal);font:inherit;font-size:.85rem;cursor:pointer;padding:0;margin-top:10px}
+.msg{font-size:.88rem;margin-top:10px;color:var(--bad)}.msg.ok{color:var(--ok)}
+.big{font-family:var(--f-head);font-size:2.4rem;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.center{text-align:center}
+/* Examen */
+.bar{position:sticky;top:0;z-index:5;margin:0 -16px;padding:10px 16px;background:#0B1318ee;backdrop-filter:blur(8px);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px}
+.timer{font-family:var(--f-head);font-weight:700;font-size:1.25rem;font-variant-numeric:tabular-nums}
+.timer.low{color:var(--orange)}.timer.crit{color:var(--bad)}
+.prog{font-size:.85rem;color:var(--mut)}
+.qarea{font-size:.75rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--teal)}
+.qtext{font-size:1.05rem;margin:8px 0 14px}
+.opt{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;font:inherit;color:var(--fg);background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:8px;cursor:pointer}
+.opt .l{flex:none;width:26px;height:26px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-weight:700;font-size:.85rem;color:var(--mut)}
+.opt.on{border-color:var(--teal);background:#12323a}.opt.on .l{background:var(--teal);color:#06201d;border-color:var(--teal)}
+.grid{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}
+.grid button{font:inherit;font-size:.82rem;font-weight:600;padding:8px 0;border-radius:9px;border:1px solid var(--line);background:var(--panel2);color:var(--mut);cursor:pointer}
+.grid button.ans{background:#1b3a3a;color:var(--fg);border-color:#2f5a58}
+.grid button.cur{outline:2px solid var(--teal)}
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:6;background:#0B1318f2;border-top:1px solid var(--line);padding:10px max(16px,env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
+.nav .in{max-width:620px;margin:0 auto;display:flex;gap:8px}
+.nav .btn{margin:0}
+/* Resultados */
+.score{font-family:var(--f-head);font-size:3rem;font-weight:700}
+.areas{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.ar{display:grid;grid-template-columns:120px 1fr 54px;gap:10px;align-items:center;font-size:.88rem}
+.track{height:8px;border-radius:99px;background:var(--panel2);overflow:hidden}.track i{display:block;height:100%;background:var(--teal)}
+.rk{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);font-size:.92rem}
+.rk:last-child{border-bottom:0}.rk.me{color:var(--teal);font-weight:700}
+.rv{border-top:1px solid var(--line);padding-top:12px;margin-top:12px}
+.rv .o{font-size:.9rem;padding:6px 10px;border-radius:10px;margin:4px 0;background:var(--panel2)}
+.rv .o.c{background:#163a2a;color:#bff0d6}.rv .o.x{background:#3d1a1a;color:#f6c6c3}
+.src{font-size:.82rem;color:var(--mut);margin-top:8px}.src b{color:var(--fg)}
+.hidden{display:none!important}
+.overlay{position:fixed;inset:0;z-index:20;background:#000a;display:grid;place-items:center;padding:16px}
+.overlay .card{max-width:420px;width:100%}
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+  <div class="head">
+    <a class="brand" href="index.html">Arandú <span>Med</span></a>
+    <span class="chip" id="who"></span>
+  </div>
+  <div id="view"><div class="card center mut">Cargando…</div></div>
+</div>
+<div class="nav hidden" id="nav"><div class="in">
+  <button class="btn sec" id="bPrev">← Anterior</button>
+  <button class="btn" id="bNext">Siguiente →</button>
+</div></div>
+
+<script src="config.js"></script>
+<script src="vendor/supabase-2.45.4.min.js"></script>
+<script>
+const SIM='sim1-2026';
+const AREAS={MI:'Medicina Interna',CIR:'Cirugía',SP:'Salud Pública',PED:'Pediatría',GO:'Gineco-Obstetricia'};
+const C=window.CONFIG;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let sb,user=null,st=null,off=0,tick=null,exam=null;
+
+const fmtDate=d=>new Date(d).toLocaleString('es-PY',{weekday:'long',day:'numeric',month:'long',hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'America/Asuncion'})+' hs';
+const now=()=>Date.now()+off;
+const hhmm=d=>new Date(d).toLocaleTimeString('es-PY',{hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'America/Asuncion'})+' hs';
+const mmss=ms=>{ms=Math.max(0,ms);const s=Math.floor(ms/1000),h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return (h?h+':'+String(m).padStart(2,'0'):m)+':'+String(x).padStart(2,'0')};
+const dhm=ms=>{ms=Math.max(0,ms);const d=Math.floor(ms/864e5),h=Math.floor(ms%864e5/36e5),m=Math.floor(ms%36e5/6e4),s=Math.floor(ms%6e4/1e3);return (d?d+'d ':'')+String(h).padStart(2,'0')+'h '+String(m).padStart(2,'0')+'m '+String(s).padStart(2,'0')+'s'};
+function stopTick(){if(tick){clearInterval(tick);tick=null}}
+function view(html){stopTick();$('nav').classList.add('hidden');$('view').innerHTML=html;window.scrollTo(0,0)}
+function errText(e){const m=(e&&e.message)||String(e);
+  if(/Invalid login/i.test(m))return 'Correo o contraseña incorrectos.';
+  if(/already registered/i.test(m))return 'Ese correo ya tiene cuenta. Ingresá con tu contraseña.';
+  if(/Password should be/i.test(m))return 'La contraseña debe tener al menos 6 caracteres.';
+  if(/Failed to fetch|NetworkError|timeout/i.test(m))return 'Se cortó la conexión. Revisá tu internet y probá de nuevo.';
+  return m.replace(/^.*?ERROR:\s*/,'')}
+async function rpc(fn,args){const {data,error}=await sb.rpc(fn,args);if(error)throw error;return data}
+
+/* ---------- Inicio ---------- */
+async function boot(){
+  sb=window.supabase.createClient(C.SUPABASE_URL,C.SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true,lock:async(n,t,fn)=>await fn()}});
+  const {data:{session}}=await sb.auth.getSession();
+  user=session&&session.user||null;
+  sb.auth.onAuthStateChange((ev,s)=>{const u=s&&s.user||null;if((u&&u.id)!==(user&&user.id)){user=u;route()}});
+  route();
+}
+async function route(){
+  $('who').textContent=user?user.email:'';
+  if(!user){return showAuth()}
+  try{st=await rpc('sim_status',{p_sim:SIM});off=new Date(st.server_now).getTime()-Date.now()}
+  catch(e){return view('<div class="card"><h2>No pudimos cargar el simulacro</h2><p class="mut">'+esc(errText(e))+'</p><button class="btn" onclick="route()">Reintentar</button></div>')}
+  const t=now(),starts=+new Date(st.starts_at),last=+new Date(st.last_start),regUntil=+new Date(st.reg_until);
+  if(st.finished)return showResults();
+  if(st.b1_submitted_at)return st.b2_started_at?startBlock(2):showBreak();
+  if(st.b1_started_at)return startBlock(1);
+  if(!st.registered)return t>regUntil?showClosed('Las inscripciones cerraron el '+fmtDate(st.reg_until)+'.'):showRegister();
+  if(t<starts)return showWaiting();
+  if(t<=last)return showReady();
+  return showClosed('El ingreso cerró a las '+hhmm(st.last_start)+'. ¡Te esperamos en el próximo simulacro!');
+}
+
+function heroHTML(){return `<div class="card hero">
+  <div class="kicker">Simulacro Nacional #1 · En vivo</div>
+  <h1>Medite con todo el país antes de la CONAREM</h1>
+  <p class="mut">70 preguntas en 2 bloques, como el examen real. Al terminar ves tu puntaje, tu puesto a nivel país y tu rendimiento por materia.</p>
+  <div class="facts">
+    <div class="fact"><b>Domingo 29/11</b><span>17:00 hs (ingreso hasta 17:20)</span></div>
+    <div class="fact"><b>Gratis</b><span>Inscripción hasta el sábado 28</span></div>
+    <div class="fact"><b>Bloque I · 40</b><span>Cirugía, Medicina Interna y Salud Pública · 40 min</span></div>
+    <div class="fact"><b>Bloque II · 30</b><span>Pediatría y Gineco-Obstetricia · 30 min</span></div>
+  </div>
+  <div class="prize">🏆 Los 3 primeros puestos: acceso a la plataforma hasta el día del examen.<br>💸 Si el 1.er puesto ya es suscriptor: Gs. 100.000 en efectivo.</div>
+</div>`}
+
+/* ---------- Cuenta ---------- */
+let authMode='signup';
+function showAuth(){
+  view(heroHTML()+`<div class="card">
+    <div class="tabs"><button id="tSign" class="${authMode==='signup'?'on':''}">Crear cuenta</button><button id="tLog" class="${authMode==='login'?'on':''}">Ya tengo cuenta</button></div>
+    <p class="small mut">${authMode==='signup'?'Para participar necesitás una cuenta gratuita de Arandú Med.':'Ingresá con el correo y la contraseña de tu cuenta de Arandú Med.'}</p>
+    <label for="em">Correo</label><input id="em" type="email" autocomplete="email" inputmode="email">
+    <label for="pw">Contraseña</label><input id="pw" type="password" autocomplete="${authMode==='signup'?'new-password':'current-password'}">
+    ${authMode==='signup'?'<p class="small mut" style="margin-top:10px">Al crear tu cuenta aceptás los <a href="legal.html#terminos" target="_blank" rel="noopener" style="color:var(--teal)">Términos</a> y la <a href="legal.html#privacidad" target="_blank" rel="noopener" style="color:var(--teal)">Política de privacidad</a>.</p>':''}
+    <button class="btn" id="bAuth">${authMode==='signup'?'Crear cuenta y seguir':'Ingresar'}</button>
+    ${authMode==='login'?'<button class="link" id="bReset">Olvidé mi contraseña</button>':''}
+    <div class="msg" id="aMsg"></div></div>`);
+  $('tSign').onclick=()=>{authMode='signup';showAuth()};
+  $('tLog').onclick=()=>{authMode='login';showAuth()};
+  if($('bReset'))$('bReset').onclick=async()=>{const em=$('em').value.trim();if(!em){$('aMsg').textContent='Escribí tu correo primero.';return}
+    try{const {error}=await sb.auth.resetPasswordForEmail(em,{redirectTo:location.origin+location.pathname});if(error)throw error;$('aMsg').className='msg ok';$('aMsg').textContent='Si el correo existe, te llegó un enlace para crear una contraseña nueva.'}catch(e){$('aMsg').textContent=errText(e)}};
+  $('bAuth').onclick=async()=>{
+    const em=$('em').value.trim(),pw=$('pw').value;const m=$('aMsg');m.className='msg';m.textContent='';
+    if(!em||!pw){m.textContent='Completá correo y contraseña.';return}
+    $('bAuth').disabled=true;
+    try{
+      if(authMode==='login'){const {error}=await sb.auth.signInWithPassword({email:em,password:pw});if(error)throw error}
+      else{const {data,error}=await sb.auth.signUp({email:em,password:pw,options:{emailRedirectTo:location.origin+location.pathname,data:{terms_version:'1.1',terms_accepted_at:new Date().toISOString(),source:'simulacro'}}});if(error)throw error;
+        if(!data.session){m.className='msg ok';m.textContent='Cuenta creada. Confirmá tu correo y después ingresá desde "Ya tengo cuenta".'}}
+      const {data:{session}}=await sb.auth.getSession();if(session){user=session.user;route()}
+    }catch(e){m.textContent=errText(e)}finally{if($('bAuth'))$('bAuth').disabled=false}
+  };
+}
+
+/* ---------- Inscripción ---------- */
+function showRegister(){
+  view(heroHTML()+`<div class="card"><h2>Inscribite</h2>
+    <label for="al">Nombre para el ranking</label><input id="al" maxlength="40" placeholder="Ej.: María G." autocomplete="nickname">
+    <p class="small mut" style="margin-top:6px">En el ranking se muestran solo las 3 primeras letras.</p>
+    <label for="wa">WhatsApp <span class="mut">(obligatorio)</span></label><input id="wa" type="tel" inputmode="tel" placeholder="0981 123 456" autocomplete="tel">
+    <p class="small mut" style="margin-top:6px">Te enviaremos tu resultado y novedades de Arandú Med por WhatsApp.</p>
+    <button class="btn" id="bReg">Inscribirme gratis</button><div class="msg" id="rMsg"></div></div>`);
+  $('bReg').onclick=async()=>{const m=$('rMsg');m.textContent='';const wa=$('wa').value.trim();
+    if(wa.replace(/\D/g,'').length<9){m.textContent='Escribí tu número de WhatsApp, por ejemplo 0981 123 456.';return}
+    $('bReg').disabled=true;
+    try{await rpc('sim_register',{p_sim:SIM,p_alias:$('al').value.trim(),p_whatsapp:wa});route()}
+    catch(e){m.textContent=errText(e);$('bReg').disabled=false}};
+}
+function showWaiting(){
+  view(`<div class="card center"><div class="kicker">Ya estás inscripto ✅</div><h2>El simulacro empieza el<br>${esc(fmtDate(st.starts_at))}</h2>
+    <div class="big" id="cd" style="margin:14px 0"></div>
+    <p class="mut small">Entrá desde este mismo link unos minutos antes. Usá una conexión estable y tené el celular cargado.</p>
+    <p class="mut small">Bloque I: 40 preguntas en 40 min · descanso opcional de hasta 10 min · Bloque II: 30 preguntas en 30 min.</p></div>`+heroHTML());
+  const starts=+new Date(st.starts_at);
+  const f=()=>{const r=starts-now();if(r<=0){stopTick();route();return}$('cd').textContent=dhm(r)};f();tick=setInterval(f,1000);
+}
+function showReady(){
+  const last=+new Date(st.last_start);
+  view(`<div class="card center"><div class="kicker">¡Ya empezó!</div><h2>Bloque I</h2>
+    <p>40 preguntas · 40 minutos<br><span class="mut small">Cirugía, Medicina Interna y Salud Pública</span></p>
+    <p class="mut small">El reloj arranca cuando tocás el botón. Si se te corta internet, volvé a entrar: tus respuestas quedan guardadas en este celular y el reloj sigue corriendo.</p>
+    <button class="btn" id="bGo">Empezar el Bloque I</button>
+    <p class="small mut" style="margin-top:12px">Podés empezar hasta dentro de <b id="cl"></b></p></div>`);
+  const f=()=>{const r=last-now();if(r<=0){stopTick();route();return}$('cl').textContent=mmss(r)};f();tick=setInterval(f,1000);
+  $('bGo').onclick=()=>{$('bGo').disabled=true;startBlock(1)};
+}
+function showClosed(t){view(`<div class="card center"><h2>Simulacro cerrado</h2><p class="mut">${esc(t)}</p><a class="btn" style="text-decoration:none" href="index.html">Ir a Arandú Med</a></div>`)}
+
+/* ---------- Bloques ---------- */
+const lsKey=b=>'sim:'+SIM+':'+(user&&user.id)+':b'+b;
+async function startBlock(b){
+  view('<div class="card center mut">Preparando el Bloque '+(b===1?'I':'II')+'…</div>');
+  let r;
+  try{r=await rpc('sim_start_block',{p_sim:SIM,p_block:b})}
+  catch(e){return view('<div class="card"><h2>No se pudo abrir el bloque</h2><p class="mut">'+esc(errText(e))+'</p><button class="btn" onclick="route()">Reintentar</button></div>')}
+  off=new Date(r.server_now).getTime()-Date.now();
+  let ans={};try{ans=JSON.parse(localStorage.getItem(lsKey(b))||'{}')}catch(_){}
+  exam={b,qs:r.questions,deadline:+new Date(r.deadline),ans,i:0,sending:false};
+  renderQ();
+  $('nav').classList.remove('hidden');
+  $('bPrev').onclick=()=>{if(exam.i>0){exam.i--;renderQ()}};
+  $('bNext').onclick=()=>{if(exam.i<exam.qs.length-1){exam.i++;renderQ()}else confirmSubmit()};
+  const f=()=>{const left=exam.deadline-now();const el=$('tm');if(el){el.textContent=mmss(left);el.className='timer'+(left<60e3?' crit':left<5*60e3?' low':'')}
+    if(left<=0){stopTick();submit(true)}};
+  f();tick=setInterval(f,500);
+}
+function renderQ(){
+  const {b,qs,ans,i}=exam,q=qs[i],n=Object.keys(ans).length;
+  const opts=(q.o||[]).map((t,k)=>t==null?'':`<button class="opt${ans[q.pos]===k?' on':''}" data-k="${k}"><span class="l">${'ABCDE'[k]}</span><span>${esc(t)}</span></button>`).join('');
+  $('view').innerHTML=`<div class="bar"><div><b>Bloque ${b===1?'I':'II'}</b> <span class="prog">· ${n}/${qs.length} respondidas</span></div><div class="timer" id="tm"></div></div>
+   <div class="card"><div class="qarea">${esc(AREAS[q.area]||q.area)} · Pregunta ${i+1} de ${qs.length}</div>
+   <div class="qtext">${esc(q.q)}</div>${opts}</div>
+   <div class="card"><div class="small mut" style="margin-bottom:8px">Ir a la pregunta</div><div class="grid">${qs.map((x,k)=>`<button class="${ans[x.pos]!=null?'ans':''}${k===i?' cur':''}" data-g="${k}">${k+1}</button>`).join('')}</div>
+   <button class="btn warn" id="bSub">Entregar el Bloque ${b===1?'I':'II'}</button></div>`;
+  $('view').querySelectorAll('.opt').forEach(el=>el.onclick=()=>{const k=+el.dataset.k;if(ans[q.pos]===k)delete ans[q.pos];else ans[q.pos]=k;
+    try{localStorage.setItem(lsKey(b),JSON.stringify(ans))}catch(_){}renderQ()});
+  $('view').querySelectorAll('[data-g]').forEach(el=>el.onclick=()=>{exam.i=+el.dataset.g;renderQ();window.scrollTo(0,0)});
+  $('bSub').onclick=confirmSubmit;
+  $('bPrev').disabled=i===0;$('bNext').textContent=i===qs.length-1?'Entregar':'Siguiente →';
+  const left=exam.deadline-now();$('tm').textContent=mmss(left);
+}
+function confirmSubmit(){
+  const falt=exam.qs.length-Object.keys(exam.ans).length;
+  const o=document.createElement('div');o.className='overlay';
+  o.innerHTML=`<div class="card"><h2>¿Entregar el Bloque ${exam.b===1?'I':'II'}?</h2><p class="mut">${falt?'Te faltan <b>'+falt+'</b> preguntas sin responder. ':''}Después de entregar ya no podés volver a este bloque.</p>
+   <div class="row"><button class="btn sec" id="oNo">Seguir revisando</button><button class="btn warn" id="oSi">Entregar</button></div></div>`;
+  document.body.appendChild(o);$('oNo').onclick=()=>o.remove();$('oSi').onclick=()=>{o.remove();submit(false)};
+}
+async function submit(auto){
+  if(exam.sending)return;exam.sending=true;stopTick();$('nav').classList.add('hidden');
+  const b=exam.b;
+  $('view').innerHTML='<div class="card center"><h2>'+(auto?'¡Se terminó el tiempo!':'Entregando…')+'</h2><p class="mut">Guardando tus respuestas del Bloque '+(b===1?'I':'II')+'. No cierres la página.</p></div>';
+  for(let t=0;t<8;t++){
+    try{await rpc('sim_submit_block',{p_sim:SIM,p_block:b,p_answers:exam.ans});try{localStorage.removeItem(lsKey(b))}catch(_){}exam=null;return route()}
+    catch(e){const m=errText(e);if(/ya entregado|entrega invalida/i.test(m)){exam=null;return route()}
+      $('view').innerHTML='<div class="card center"><h2>Reintentando…</h2><p class="mut">'+esc(m)+'</p><p class="small mut">Tus respuestas siguen guardadas en este celular.</p></div>';
+      await new Promise(r=>setTimeout(r,4000))}
+  }
+  exam.sending=false;
+  $('view').innerHTML='<div class="card center"><h2>No pudimos enviar tus respuestas</h2><p class="mut">Revisá tu conexión y tocá el botón. Tenés unos minutos de tolerancia.</p><button class="btn" id="bRe">Enviar de nuevo</button></div>';
+  $('bRe').onclick=()=>submit(auto);
+}
+function showBreak(){
+  const ends=+new Date(st.break_ends_at);
+  view(`<div class="card center"><div class="kicker">Bloque I entregado ✅</div><h2>Descanso opcional</h2>
+    <p class="mut">Podés empezar el Bloque II cuando quieras. Si no lo iniciás, el reloj del Bloque II arranca solo en:</p>
+    <div class="big" id="cd" style="margin:10px 0"></div>
+    <p>Bloque II: 30 preguntas · 30 minutos<br><span class="mut small">Pediatría y Gineco-Obstetricia</span></p>
+    <button class="btn" id="bGo">Empezar el Bloque II ahora</button></div>`);
+  const f=()=>{const r=ends-now();if(r<=0){stopTick();startBlock(2);return}$('cd').textContent=mmss(r)};f();tick=setInterval(f,1000);
+  $('bGo').onclick=()=>{$('bGo').disabled=true;startBlock(2)};
+}
+
+/* ---------- Resultados ---------- */
+async function showResults(){
+  view('<div class="card center mut">Calculando tu resultado…</div>');
+  let rk=null;try{rk=await rpc('sim_ranking',{p_sim:SIM,p_limit:20})}catch(_){}
+  const me=rk&&rk.me||{},ba=me.by_area||{};
+  const areas=['CIR','MI','SP','PED','GO'].filter(a=>ba[a]).map(a=>{const x=ba[a],p=Math.round(x.ok/x.total*100);
+    return `<div class="ar"><span>${AREAS[a]}</span><div class="track"><i style="width:${p}%"></i></div><b style="text-align:right">${x.ok}/${x.total}</b></div>`}).join('');
+  const reviewAt=+new Date((st&&st.review_at)||0);
+  const top=(rk&&rk.top||[]).map(r=>`<div class="rk${me.pos===r.pos?' me':''}"><span>#${r.pos} · ${esc(r.alias)}</span><b>${r.score}</b></div>`).join('');
+  const share=`¡Hice el Simulacro Nacional de Arandú Med! Saqué ${me.score??'-'}/100 y quedé en el puesto ${me.pos??'-'} de ${rk?rk.participants:'-'} 💪 ${location.origin+location.pathname}`;
+  view(`<div class="card center"><div class="kicker">Tu resultado</div><div class="score">${me.score??st.score??'-'}<span class="mut" style="font-size:1.2rem">/100</span></div>
+     <p>${me.pos?'Puesto <b>#'+me.pos+'</b> de '+rk.participants+' participantes hasta ahora':''}</p>
+     <p class="small mut">El ranking se actualiza a medida que terminan los demás. El oficial se publica al cierre.</p></div>
+    <div class="card"><h3>Por materia</h3><div class="areas">${areas||'<span class="mut">—</span>'}</div></div>
+    <div class="card"><h3>Ranking nacional</h3>${top||'<p class="mut">Todavía no hay resultados.</p>'}</div>
+    <div class="card" id="rvBox"><h3>Corrección con explicaciones</h3>
+      ${now()>=reviewAt?'<button class="btn" id="bRv">Ver la corrección</button>':'<p class="mut small">Se habilita cuando terminan todos, a las '+hhmm(reviewAt)+'.</p><p class="big center" id="cd" style="font-size:1.6rem"></p>'}</div>
+    <a class="btn" style="text-decoration:none;text-align:center" href="https://wa.me/?text=${encodeURIComponent(share)}" target="_blank" rel="noopener">Compartir mi resultado por WhatsApp</a>
+    <a class="btn sec" style="text-decoration:none;text-align:center" href="https://wa.me/${C.WHATSAPP}?text=${encodeURIComponent('Hola, hice el Simulacro Nacional y quiero información de los planes de Arandú Med.')}" target="_blank" rel="noopener">Quiero seguir preparándome con Arandú Med</a>`);
+  if($('bRv'))$('bRv').onclick=loadReview;
+  else{const f=()=>{const r=reviewAt-now();if(r<=0){stopTick();showResults();return}if($('cd'))$('cd').textContent=mmss(r)};f();tick=setInterval(f,1000)}
+}
+async function loadReview(){
+  const box=$('rvBox');box.innerHTML='<h3>Corrección con explicaciones</h3><p class="mut">Cargando…</p>';
+  try{const list=await rpc('sim_review',{p_sim:SIM});
+    box.innerHTML='<h3>Corrección con explicaciones</h3>'+list.map((q,n)=>{
+      const mine=q.mine==null?null:+q.mine,ok=mine===q.a;
+      const os=(q.o||[]).map((t,k)=>t==null?'':`<div class="o${k===q.a?' c':(k===mine?' x':'')}">${'ABCDE'[k]}. ${esc(t)}${k===q.a?' ✓':(k===mine?' ✗ (tu respuesta)':'')}</div>`).join('');
+      return `<div class="rv"><div class="qarea">Bloque ${q.block===1?'I':'II'} · ${n+1} · ${esc(AREAS[q.area]||q.area)} · ${mine==null?'<span style="color:var(--amber)">sin responder</span>':ok?'<span style="color:var(--ok)">correcta</span>':'<span style="color:var(--bad)">incorrecta</span>'}</div>
+        <p style="margin:6px 0">${esc(q.q)}</p>${os}
+        ${q.x?'<p class="small" style="margin-top:8px">'+esc(q.x)+'</p>':''}
+        ${q.fuente_conarem?'<div class="src">📘 <b>Lo que toma la CONAREM:</b> '+esc(q.fuente_conarem)+'</div>':''}
+        ${q.guia_actual?'<div class="src">🆕 <b>Guía actual:</b> '+esc(q.guia_actual)+'</div>':''}</div>`}).join('');
+  }catch(e){box.innerHTML='<h3>Corrección con explicaciones</h3><p class="mut">'+esc(errText(e))+'</p>'}
+}
+
+window.addEventListener('beforeunload',e=>{if(exam&&!exam.sending){e.preventDefault();e.returnValue=''}});
+boot().catch(e=>view('<div class="card"><h2>Error</h2><p class="mut">'+esc(errText(e))+'</p></div>'));
+</script>
+</body>
+</html>
