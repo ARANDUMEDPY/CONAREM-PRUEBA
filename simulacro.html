@@ -23,19 +23,36 @@ html,body{margin:0}
 body{background:radial-gradient(900px 600px at 100% -10%,#123A3A55,transparent 70%),radial-gradient(700px 500px at -10% 110%,#5a2a1533,transparent 70%),var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16px;line-height:1.5;min-height:100vh}
 .wrap{max-width:620px;margin:0 auto;padding:18px max(16px,env(safe-area-inset-right)) 120px max(16px,env(safe-area-inset-left));display:flex;flex-direction:column;gap:14px}
 .head{display:flex;justify-content:space-between;align-items:center;gap:10px}
-.brand{font-family:var(--f-head);font-weight:800;font-size:1.3rem;letter-spacing:-.02em;color:#fff;text-decoration:none}.brand span{color:var(--teal)}
+.brand{font-family:var(--f-head);font-weight:800;font-size:1.3rem;letter-spacing:-.02em;color:#fff;text-decoration:none}.brand span{color:#FFC94A}
 .chip:empty{display:none}
 .chip{font-size:.78rem;font-weight:600;border-radius:999px;padding:5px 10px;background:var(--panel);border:1px solid var(--line);color:var(--mut)}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px}
 h1,h2,h3{font-family:var(--f-head);margin:0 0 8px;line-height:1.2}
 h1{font-size:1.55rem}h2{font-size:1.2rem}h3{font-size:1rem}
 p{margin:0 0 10px}.mut{color:var(--mut)}.small{font-size:.86rem}
-.hero{background:linear-gradient(135deg,#16363A,#152129 60%);border-color:#2a4a50}
+h1,h2,h3{font-weight:800;letter-spacing:-.015em}
+.hero{position:relative;overflow:hidden;border:0;border-radius:22px;padding:26px 20px;color:#fff;background:radial-gradient(900px 620px at 88% 0%,#2BB3A3 0%,#137A70 46%,#0B3B38 100%);box-shadow:0 30px 60px -34px rgba(0,0,0,.7)}
+.hero h1{font-size:clamp(1.7rem,6.4vw,2.2rem);line-height:1.15;margin:0}
+.hero .mark{color:#FFC94A}
+.hero p,.hero .mut{color:rgba(255,255,255,.86)}
+.pill{display:inline-block;background:#FFC94A;color:#0D1321;border-radius:99px;padding:5px 12px;font-weight:900;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;margin:0 0 12px}
 .kicker{font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);margin-bottom:6px}
+.hero .kicker{display:inline-block;background:#FFC94A;color:#0D1321;border-radius:99px;padding:5px 12px;font-weight:900;font-size:.72rem;margin:0 0 12px}
+.hsub{font-size:.98rem;line-height:1.6;margin:14px 0 0}
+.checks{display:flex;flex-wrap:wrap;gap:6px 18px;margin:14px 0 0;padding:0;list-style:none}
+.checks li{display:flex;align-items:center;gap:8px;font-size:.95rem;color:rgba(255,255,255,.92)}
+.checks li::before{content:"";width:8px;height:8px;border-radius:50%;background:#FFC94A}
+.hero .fact{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18)}
+.hero .fact span{color:rgba(255,255,255,.78)}
+.hero .btn.sec{color:#fff;border-color:rgba(255,255,255,.55);background:rgba(255,255,255,.08)}
+.prizes{border-radius:20px;padding:18px;color:#fff;background:linear-gradient(135deg,#0F7A66,#0B4D44);border:1.5px solid rgba(255,201,74,.55)}
+.prizes h3{color:#fff;margin:10px 0 8px;font-size:1.15rem}
+.prizes ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+.prizes li{font-size:.95rem;color:rgba(255,255,255,.92);line-height:1.45}
+.prizes li b{color:#FFC94A}
 .facts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
 .fact{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:10px}
 .fact b{display:block;font-family:var(--f-head);font-size:1.05rem}.fact span{font-size:.8rem;color:var(--mut)}
-.prize{margin-top:12px;border-left:3px solid var(--amber);padding:6px 0 6px 12px;font-size:.92rem}
 label{display:block;font-size:.85rem;font-weight:600;margin:12px 0 6px}
 input{width:100%;font:inherit;color:var(--fg);background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;outline:none}
 input:focus{border-color:var(--teal)}
@@ -79,6 +96,7 @@ input:focus{border-color:var(--teal)}
 .rv .o{font-size:.9rem;padding:6px 10px;border-radius:10px;margin:4px 0;background:var(--panel2)}
 .rv .o.c{background:#163a2a;color:#bff0d6}.rv .o.x{background:#3d1a1a;color:#f6c6c3}
 .src{font-size:.82rem;color:var(--mut);margin-top:8px}.src b{color:var(--fg)}
+#view{display:flex;flex-direction:column;gap:14px}
 .hidden{display:none!important}
 .overlay{position:fixed;inset:0;z-index:20;background:#000a;display:grid;place-items:center;padding:16px}
 .overlay .card{max-width:420px;width:100%}
@@ -146,17 +164,20 @@ async function route(){
 }
 
 function heroHTML(){return `<div class="card hero">
-  <div class="kicker">Simulacro Nacional #1 · En vivo</div>
-  <h1>Medite con todo el país antes de la CONAREM</h1>
-  <p class="mut">70 preguntas en 2 bloques, como el examen real. Al terminar ves tu puntaje, tu puesto a nivel país y tu rendimiento por materia.</p>
+  <span class="kicker">Simulacro Nacional #1 · En vivo</span>
+  <h1>Medite con <span class="mark">todo el país</span> antes de la CONAREM</h1>
+  <p class="hsub">70 preguntas en 2 bloques, como el examen real. Al terminar ves tu puntaje, tu puesto a nivel país y tu rendimiento por materia.</p>
+  <ul class="checks"><li>Gratis</li><li>Ranking nacional</li><li>Corrección explicada</li></ul>
   <div class="facts">
-    <div class="fact"><b>Domingo 29/11</b><span>17:00 hs (ingreso hasta 17:20)</span></div>
-    <div class="fact"><b>Gratis</b><span>Inscripción hasta el sábado 28</span></div>
+    <div class="fact"><b>Domingo 29/11</b><span>17:00 hs · ingreso hasta 17:20</span></div>
+    <div class="fact"><b>Inscripción</b><span>Hasta el sábado 28</span></div>
     <div class="fact"><b>Bloque I · 40</b><span>Cirugía, Medicina Interna y Salud Pública · 40 min</span></div>
     <div class="fact"><b>Bloque II · 30</b><span>Pediatría y Gineco-Obstetricia · 30 min</span></div>
   </div>
-  <div class="prize">🏆 Los 3 primeros puestos: acceso a la plataforma hasta el día del examen.<br>💸 Si el 1.er puesto ya es suscriptor: Gs. 100.000 en efectivo.</div>
-</div>`}
+</div>
+<div class="prizes"><span class="pill">🏆 Premios</span><h3>Los mejores se llevan su lugar en AranduMed</h3><ul>
+  <li><b>1.º, 2.º y 3.º puesto:</b> acceso a la plataforma hasta el día del examen.</li>
+  <li><b>1.er puesto suscriptor:</b> Gs. 100.000 en efectivo.</li></ul></div>`}
 
 /* ---------- Cuenta ---------- */
 let authMode='signup';
@@ -202,7 +223,7 @@ function showRegister(){
     catch(e){m.textContent=errText(e);$('bReg').disabled=false}};
 }
 function showWaiting(){
-  view(`<div class="card center"><div class="kicker">Ya estás inscripto ✅</div><h2>El simulacro empieza el<br>${esc(fmtDate(st.starts_at))}</h2>
+  view(`<div class="card hero center"><div class="kicker">Ya estás inscripto ✅</div><h2>El simulacro empieza el<br>${esc(fmtDate(st.starts_at))}</h2>
     <div class="big" id="cd" style="margin:14px 0"></div>
     <p class="mut small">Entrá desde este mismo link unos minutos antes. Usá una conexión estable y tené el celular cargado.</p>
     <p class="mut small">Bloque I: 40 preguntas en 40 min · descanso opcional de hasta 10 min · Bloque II: 30 preguntas en 30 min.</p></div>`+heroHTML());
@@ -296,9 +317,9 @@ async function showResults(){
   const reviewAt=+new Date((st&&st.review_at)||0);
   const top=(rk&&rk.top||[]).map(r=>`<div class="rk${me.pos===r.pos?' me':''}"><span>#${r.pos} · ${esc(r.alias)}</span><b>${r.score}</b></div>`).join('');
   const share=`¡Hice el Simulacro Nacional de AranduMed! Saqué ${me.score??'-'}/100 y quedé en el puesto ${me.pos??'-'} de ${rk?rk.participants:'-'} 💪 ${location.origin+location.pathname}`;
-  view(`<div class="card center"><div class="kicker">Tu resultado</div><div class="score">${me.score??st.score??'-'}<span class="mut" style="font-size:1.2rem">/100</span></div>
+  view(`<div class="card hero center"><div class="kicker">Tu resultado</div><div class="score">${me.score??st.score??'-'}<span style="font-size:1.2rem;color:rgba(255,255,255,.7)">/100</span></div>
      <p>${me.pos?'Puesto <b>#'+me.pos+'</b> de '+rk.participants+' participantes hasta ahora':''}</p>
-     <p class="small mut">El ranking se actualiza a medida que terminan los demás. El oficial se publica al cierre.</p></div>
+     <p class="small">El ranking se actualiza a medida que terminan los demás. El oficial se publica al cierre.</p></div>
     <div class="card"><h3>Por materia</h3><div class="areas">${areas||'<span class="mut">—</span>'}</div></div>
     <div class="card"><h3>Ranking nacional</h3>${top||'<p class="mut">Todavía no hay resultados.</p>'}</div>
     <div class="card" id="rvBox"><h3>Corrección con explicaciones</h3>
