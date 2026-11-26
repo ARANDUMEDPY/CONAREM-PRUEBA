@@ -45,11 +45,33 @@ h1,h2,h3{font-weight:800;letter-spacing:-.015em}
 .hero .fact{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18)}
 .hero .fact span{color:rgba(255,255,255,.78)}
 .hero .btn.sec{color:#fff;border-color:rgba(255,255,255,.55);background:rgba(255,255,255,.08)}
+.when{display:flex;gap:14px;align-items:center;margin-top:16px;padding:14px;border-radius:16px;background:rgba(255,201,74,.14);border:1.5px solid #FFC94A}
+.when .cal{flex:none;width:58px;border-radius:12px;overflow:hidden;text-align:center;background:#fff;color:#0D1321;box-shadow:0 6px 16px -8px rgba(0,0,0,.6)}
+.when .cal i{display:block;font-style:normal;background:#F08A5D;color:#fff;font-size:.68rem;font-weight:800;letter-spacing:.08em;padding:3px 0}
+.when .cal b{display:block;font-family:var(--f-head);font-size:1.6rem;font-weight:800;line-height:1.15;padding:2px 0 4px}
+.when .wt{font-family:var(--f-head);font-weight:800;font-size:1.15rem;color:#fff;line-height:1.2}
+.when .wt em{font-style:normal;color:#FFC94A}
+.when .ws{font-size:.85rem;color:rgba(255,255,255,.82);margin-top:3px}
+.blocks{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.blk{border-radius:16px;padding:14px;background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.16)}
+.blk .num{display:flex;align-items:baseline;gap:8px}
+.blk .num b{font-family:var(--f-head);font-size:1.9rem;font-weight:800;color:#fff;line-height:1}
+.blk .num span{font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.7)}
+.blk .q{font-family:var(--f-head);font-weight:800;font-size:1.05rem;color:#fff;margin:8px 0}
+.blk .q small{display:block;font-family:var(--f-body);font-weight:600;font-size:.8rem;color:#FFC94A}
+.tags{display:flex;flex-wrap:wrap;gap:5px}
+.tags i{font-style:normal;font-size:.7rem;font-weight:800;border-radius:99px;padding:3px 8px;color:#0D1321}
 .prizes{border-radius:20px;padding:18px;color:#fff;background:linear-gradient(135deg,#0F7A66,#0B4D44);border:1.5px solid rgba(255,201,74,.55)}
 .prizes h3{color:#fff;margin:10px 0 8px;font-size:1.15rem}
 .prizes ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
 .prizes li{font-size:.95rem;color:rgba(255,255,255,.92);line-height:1.45}
-.prizes li b{color:#FFC94A}
+.prizes{background:radial-gradient(500px 300px at 100% 0%,#1d9a84 0%,#0F7A66 40%,#0B4D44 100%);border:2px solid #FFC94A;box-shadow:0 0 0 4px rgba(255,201,74,.12),0 24px 48px -28px rgba(0,0,0,.8)}
+.pz{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
+.pz>div{border-radius:14px;padding:14px 12px;background:rgba(0,0,0,.22);border:1px solid rgba(255,201,74,.35);text-align:center}
+.pz .ic{font-size:1.7rem;line-height:1;letter-spacing:-2px}
+.pz .big{display:block;font-family:var(--f-head);font-weight:800;color:#FFC94A;font-size:1.5rem;line-height:1.1;margin:8px 0 4px}
+.pz .big.sm{font-size:1.1rem}
+.pz p{margin:0;font-size:.82rem;color:rgba(255,255,255,.88);line-height:1.35}
 .facts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
 .fact{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:10px}
 .fact b{display:block;font-family:var(--f-head);font-size:1.05rem}.fact span{font-size:.8rem;color:var(--mut)}
@@ -168,16 +190,17 @@ function heroHTML(){return `<div class="card hero">
   <h1>Medite con <span class="mark">todo el país</span> antes de la CONAREM</h1>
   <p class="hsub">70 preguntas en 2 bloques, como el examen real. Al terminar ves tu puntaje, tu puesto a nivel país y tu rendimiento por materia.</p>
   <ul class="checks"><li>Gratis</li><li>Ranking nacional</li><li>Corrección explicada</li></ul>
-  <div class="facts">
-    <div class="fact"><b>Domingo 29/11</b><span>17:00 hs · ingreso hasta 17:20</span></div>
-    <div class="fact"><b>Inscripción</b><span>Hasta el sábado 28</span></div>
-    <div class="fact"><b>Bloque I · 40</b><span>Cirugía, Medicina Interna y Salud Pública · 40 min</span></div>
-    <div class="fact"><b>Bloque II · 30</b><span>Pediatría y Gineco-Obstetricia · 30 min</span></div>
+  <div class="when"><div class="cal"><i>NOV</i><b>29</b></div><div><div class="wt">Domingo · <em>17:00 hs</em></div><div class="ws">Ingreso hasta las 17:20 · Inscripción hasta el sábado 28</div></div></div>
+  <div class="blocks">
+    <div class="blk"><div class="num"><span>Bloque</span><b>I</b></div><div class="q">40 preguntas<small>⏱ 40 minutos</small></div><div class="tags"><i style="background:var(--cir)">CIR</i><i style="background:var(--mi)">MI</i><i style="background:var(--sp)">SP</i></div></div>
+    <div class="blk"><div class="num"><span>Bloque</span><b>II</b></div><div class="q">30 preguntas<small>⏱ 30 minutos</small></div><div class="tags"><i style="background:var(--ped)">PED</i><i style="background:var(--go)">GO</i></div></div>
   </div>
 </div>
-<div class="prizes"><span class="pill">🏆 Premios</span><h3>Los mejores se llevan su lugar en AranduMed</h3><ul>
-  <li><b>1.º, 2.º y 3.º puesto:</b> acceso a la plataforma hasta el día del examen.</li>
-  <li><b>1.er puesto suscriptor:</b> Gs. 100.000 en efectivo.</li></ul></div>`}
+<div class="prizes"><span class="pill">🏆 Premios</span><h3>Los mejores se llevan su lugar en AranduMed</h3>
+  <div class="pz">
+    <div><div class="ic">🥇🥈🥉</div><span class="big sm">Acceso hasta el examen</span><p>Para los 3 primeros puestos</p></div>
+    <div><div class="ic">💸</div><span class="big">Gs. 100.000</span><p>En efectivo al 1.er puesto, si ya es suscriptor</p></div>
+  </div></div>`}
 
 /* ---------- Cuenta ---------- */
 let authMode='signup';
