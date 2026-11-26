@@ -358,7 +358,8 @@ async function showResults(){
     <div class="card"><h3>Ranking nacional</h3>${top||'<p class="mut">Todavía no hay resultados.</p>'}</div>
     <div class="card" id="rvBox"><h3>Corrección con explicaciones</h3>
       ${now()>=reviewAt?'<button class="btn" id="bRv">Ver la corrección</button>':'<p class="mut small">Se habilita cuando terminan todos, a las '+hhmm(reviewAt)+'.</p><p class="big center" id="cd" style="font-size:1.6rem"></p>'}</div>
-    <a class="btn" style="text-decoration:none;text-align:center" href="https://wa.me/?text=${encodeURIComponent(share)}" target="_blank" rel="noopener">Compartir mi resultado por WhatsApp</a>
+    <div class="card" style="border:1.5px solid #FFC94A;background:linear-gradient(135deg,#0F7A66,#0B4D44)"><span class="pill">Banco de preguntas</span><h3 style="margin:10px 0 6px">Seguí practicando con la CONAREM</h3><p class="small" style="color:rgba(255,255,255,.9)">Ya tenés tu cuenta. Probá 3 días gratis los exámenes 2025 y 2026 completos y comentados, los simulacros y tu puesto estimado. Sin tarjeta.</p><a class="btn" style="text-decoration:none;text-align:center;display:block;margin-top:12px" href="index.html" onclick="try{localStorage.setItem('from_sim','1')}catch(e){}">Probar el banco 3 días gratis →</a></div>
+    <a class="btn sec" style="text-decoration:none;text-align:center" href="https://wa.me/?text=${encodeURIComponent(share)}" target="_blank" rel="noopener">Compartir mi resultado por WhatsApp</a>
     <a class="btn sec" style="text-decoration:none;text-align:center" href="https://wa.me/${C.WHATSAPP}?text=${encodeURIComponent('Hola, hice el Simulacro Nacional y quiero información de los planes de AranduMed.')}" target="_blank" rel="noopener">Quiero seguir preparándome con AranduMed</a>`);
   if($('bRv'))$('bRv').onclick=loadReview;
   else{const f=()=>{const r=reviewAt-now();if(r<=0){stopTick();showResults();return}if($('cd'))$('cd').textContent=mmss(r)};f();tick=setInterval(f,1000)}
