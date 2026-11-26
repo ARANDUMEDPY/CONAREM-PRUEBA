@@ -3,18 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Simulacro Nacional · Arandú Med</title>
+<title>Simulacro Nacional · AranduMed</title>
 <meta name="description" content="Simulacro nacional en vivo para la CONAREM: 70 preguntas en 2 bloques, ranking a nivel país.">
-<meta name="theme-color" content="#0B1318">
+<meta name="theme-color" content="#0E161B">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap">
 <style>
 :root{
-  --bg:#0B1318;--panel:#121D24;--panel2:#0F181E;--line:#24323B;--fg:#E7EEF1;--mut:#8EA0AA;
-  --teal:#4CC2B7;--orange:#F08A5D;--amber:#F7B731;--ok:#3FBF7F;--bad:#E5605A;
+  --bg:#0E161B;--panel:#152129;--panel2:#101A20;--line:#26353F;--fg:#E3EAEE;--mut:#93A4AE;
+  --teal:#4CC2B7;--orange:#F08A5D;--amber:#E5B04A;--ok:#5CC98A;--bad:#F07F6C;--cta:#F08A5D;--cta-fg:#0E161B;
+  --mi:#86A9E0;--cir:#E0A07E;--ped:#7BCDB8;--go:#E59BC2;--sp:#D8C46A;
   --f-body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --f-head:"Space Grotesk","Inter",system-ui,sans-serif;
+  --f-head:"Plus Jakarta Sans","Segoe UI",system-ui,sans-serif;
   color-scheme:dark;
 }
 *{box-sizing:border-box}
@@ -22,14 +23,14 @@ html,body{margin:0}
 body{background:radial-gradient(900px 600px at 100% -10%,#123A3A55,transparent 70%),radial-gradient(700px 500px at -10% 110%,#5a2a1533,transparent 70%),var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16px;line-height:1.5;min-height:100vh}
 .wrap{max-width:620px;margin:0 auto;padding:18px max(16px,env(safe-area-inset-right)) 120px max(16px,env(safe-area-inset-left));display:flex;flex-direction:column;gap:14px}
 .head{display:flex;justify-content:space-between;align-items:center;gap:10px}
-.brand{font-family:var(--f-head);font-weight:700;font-size:1.15rem;color:var(--fg);text-decoration:none}.brand span{color:var(--teal)}
+.brand{font-family:var(--f-head);font-weight:800;font-size:1.3rem;letter-spacing:-.02em;color:#fff;text-decoration:none}.brand span{color:var(--teal)}
 .chip:empty{display:none}
 .chip{font-size:.78rem;font-weight:600;border-radius:999px;padding:5px 10px;background:var(--panel);border:1px solid var(--line);color:var(--mut)}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px}
 h1,h2,h3{font-family:var(--f-head);margin:0 0 8px;line-height:1.2}
 h1{font-size:1.55rem}h2{font-size:1.2rem}h3{font-size:1rem}
 p{margin:0 0 10px}.mut{color:var(--mut)}.small{font-size:.86rem}
-.hero{background:linear-gradient(135deg,#12323a,#121D24 60%);border-color:#2a4a50}
+.hero{background:linear-gradient(135deg,#16363A,#152129 60%);border-color:#2a4a50}
 .kicker{font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);margin-bottom:6px}
 .facts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
 .fact{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:10px}
@@ -38,9 +39,9 @@ p{margin:0 0 10px}.mut{color:var(--mut)}.small{font-size:.86rem}
 label{display:block;font-size:.85rem;font-weight:600;margin:12px 0 6px}
 input{width:100%;font:inherit;color:var(--fg);background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;outline:none}
 input:focus{border-color:var(--teal)}
-.btn{display:block;width:100%;font:inherit;font-weight:700;border:0;border-radius:14px;padding:14px 16px;margin-top:14px;cursor:pointer;background:var(--teal);color:#06201d}
+.btn{display:block;width:100%;font:inherit;font-weight:700;border:0;border-radius:14px;padding:14px 16px;margin-top:14px;cursor:pointer;background:var(--cta);color:var(--cta-fg)}
 .btn.sec{background:transparent;color:var(--fg);border:1px solid var(--line)}
-.btn.warn{background:var(--orange);color:#2a1206}
+.btn.warn{background:transparent;color:var(--cta);border:1px solid var(--cta)}
 .btn:disabled{opacity:.55;cursor:default}
 .row{display:flex;gap:8px}.row .btn{margin-top:10px}
 .tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:4px;margin-bottom:6px}
@@ -51,7 +52,7 @@ input:focus{border-color:var(--teal)}
 .big{font-family:var(--f-head);font-size:2.4rem;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:.02em}
 .center{text-align:center}
 /* Examen */
-.bar{position:sticky;top:0;z-index:5;margin:0 -16px;padding:10px 16px;background:#0B1318ee;backdrop-filter:blur(8px);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px}
+.bar{position:sticky;top:0;z-index:5;margin:0 -16px;padding:10px 16px;background:#0E161Bee;backdrop-filter:blur(8px);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px}
 .timer{font-family:var(--f-head);font-weight:700;font-size:1.25rem;font-variant-numeric:tabular-nums}
 .timer.low{color:var(--orange)}.timer.crit{color:var(--bad)}
 .prog{font-size:.85rem;color:var(--mut)}
@@ -59,12 +60,12 @@ input:focus{border-color:var(--teal)}
 .qtext{font-size:1.05rem;margin:8px 0 14px}
 .opt{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;font:inherit;color:var(--fg);background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:8px;cursor:pointer}
 .opt .l{flex:none;width:26px;height:26px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-weight:700;font-size:.85rem;color:var(--mut)}
-.opt.on{border-color:var(--teal);background:#12323a}.opt.on .l{background:var(--teal);color:#06201d;border-color:var(--teal)}
+.opt.on{border-color:var(--teal);background:#16363A}.opt.on .l{background:var(--teal);color:#06201d;border-color:var(--teal)}
 .grid{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}
 .grid button{font:inherit;font-size:.82rem;font-weight:600;padding:8px 0;border-radius:9px;border:1px solid var(--line);background:var(--panel2);color:var(--mut);cursor:pointer}
 .grid button.ans{background:#1b3a3a;color:var(--fg);border-color:#2f5a58}
 .grid button.cur{outline:2px solid var(--teal)}
-.nav{position:fixed;left:0;right:0;bottom:0;z-index:6;background:#0B1318f2;border-top:1px solid var(--line);padding:10px max(16px,env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:6;background:#0E161Bf2;border-top:1px solid var(--line);padding:10px max(16px,env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
 .nav .in{max-width:620px;margin:0 auto;display:flex;gap:8px}
 .nav .btn{margin:0}
 /* Resultados */
@@ -86,7 +87,7 @@ input:focus{border-color:var(--teal)}
 <body>
 <div class="wrap" id="app">
   <div class="head">
-    <a class="brand" href="index.html">Arandú <span>Med</span></a>
+    <a class="brand" href="index.html">Arandu<span>Med</span></a>
     <span class="chip" id="who"></span>
   </div>
   <div id="view"><div class="card center mut">Cargando…</div></div>
@@ -162,7 +163,7 @@ let authMode='signup';
 function showAuth(){
   view(heroHTML()+`<div class="card">
     <div class="tabs"><button id="tSign" class="${authMode==='signup'?'on':''}">Crear cuenta</button><button id="tLog" class="${authMode==='login'?'on':''}">Ya tengo cuenta</button></div>
-    <p class="small mut">${authMode==='signup'?'Para participar necesitás una cuenta gratuita de Arandú Med.':'Ingresá con el correo y la contraseña de tu cuenta de Arandú Med.'}</p>
+    <p class="small mut">${authMode==='signup'?'Para participar necesitás una cuenta gratuita de AranduMed.':'Ingresá con el correo y la contraseña de tu cuenta de AranduMed.'}</p>
     <label for="em">Correo</label><input id="em" type="email" autocomplete="email" inputmode="email">
     <label for="pw">Contraseña</label><input id="pw" type="password" autocomplete="${authMode==='signup'?'new-password':'current-password'}">
     ${authMode==='signup'?'<p class="small mut" style="margin-top:10px">Al crear tu cuenta aceptás los <a href="legal.html#terminos" target="_blank" rel="noopener" style="color:var(--teal)">Términos</a> y la <a href="legal.html#privacidad" target="_blank" rel="noopener" style="color:var(--teal)">Política de privacidad</a>.</p>':''}
@@ -192,7 +193,7 @@ function showRegister(){
     <label for="al">Nombre para el ranking</label><input id="al" maxlength="40" placeholder="Ej.: María G." autocomplete="nickname">
     <p class="small mut" style="margin-top:6px">En el ranking se muestran solo las 3 primeras letras.</p>
     <label for="wa">WhatsApp <span class="mut">(obligatorio)</span></label><input id="wa" type="tel" inputmode="tel" placeholder="0981 123 456" autocomplete="tel">
-    <p class="small mut" style="margin-top:6px">Te enviaremos tu resultado y novedades de Arandú Med por WhatsApp.</p>
+    <p class="small mut" style="margin-top:6px">Te enviaremos tu resultado y novedades de AranduMed por WhatsApp.</p>
     <button class="btn" id="bReg">Inscribirme gratis</button><div class="msg" id="rMsg"></div></div>`);
   $('bReg').onclick=async()=>{const m=$('rMsg');m.textContent='';const wa=$('wa').value.trim();
     if(wa.replace(/\D/g,'').length<9){m.textContent='Escribí tu número de WhatsApp, por ejemplo 0981 123 456.';return}
@@ -218,7 +219,7 @@ function showReady(){
   const f=()=>{const r=last-now();if(r<=0){stopTick();route();return}$('cl').textContent=mmss(r)};f();tick=setInterval(f,1000);
   $('bGo').onclick=()=>{$('bGo').disabled=true;startBlock(1)};
 }
-function showClosed(t){view(`<div class="card center"><h2>Simulacro cerrado</h2><p class="mut">${esc(t)}</p><a class="btn" style="text-decoration:none" href="index.html">Ir a Arandú Med</a></div>`)}
+function showClosed(t){view(`<div class="card center"><h2>Simulacro cerrado</h2><p class="mut">${esc(t)}</p><a class="btn" style="text-decoration:none" href="index.html">Ir a AranduMed</a></div>`)}
 
 /* ---------- Bloques ---------- */
 const lsKey=b=>'sim:'+SIM+':'+(user&&user.id)+':b'+b;
@@ -242,7 +243,7 @@ function renderQ(){
   const {b,qs,ans,i}=exam,q=qs[i],n=Object.keys(ans).length;
   const opts=(q.o||[]).map((t,k)=>t==null?'':`<button class="opt${ans[q.pos]===k?' on':''}" data-k="${k}"><span class="l">${'ABCDE'[k]}</span><span>${esc(t)}</span></button>`).join('');
   $('view').innerHTML=`<div class="bar"><div><b>Bloque ${b===1?'I':'II'}</b> <span class="prog">· ${n}/${qs.length} respondidas</span></div><div class="timer" id="tm"></div></div>
-   <div class="card"><div class="qarea">${esc(AREAS[q.area]||q.area)} · Pregunta ${i+1} de ${qs.length}</div>
+   <div class="card"><div class="qarea" style="color:var(--${String(q.area).toLowerCase()})">${esc(AREAS[q.area]||q.area)} · Pregunta ${i+1} de ${qs.length}</div>
    <div class="qtext">${esc(q.q)}</div>${opts}</div>
    <div class="card"><div class="small mut" style="margin-bottom:8px">Ir a la pregunta</div><div class="grid">${qs.map((x,k)=>`<button class="${ans[x.pos]!=null?'ans':''}${k===i?' cur':''}" data-g="${k}">${k+1}</button>`).join('')}</div>
    <button class="btn warn" id="bSub">Entregar el Bloque ${b===1?'I':'II'}</button></div>`;
@@ -291,10 +292,10 @@ async function showResults(){
   let rk=null;try{rk=await rpc('sim_ranking',{p_sim:SIM,p_limit:20})}catch(_){}
   const me=rk&&rk.me||{},ba=me.by_area||{};
   const areas=['CIR','MI','SP','PED','GO'].filter(a=>ba[a]).map(a=>{const x=ba[a],p=Math.round(x.ok/x.total*100);
-    return `<div class="ar"><span>${AREAS[a]}</span><div class="track"><i style="width:${p}%"></i></div><b style="text-align:right">${x.ok}/${x.total}</b></div>`}).join('');
+    return `<div class="ar"><span>${AREAS[a]}</span><div class="track"><i style="width:${p}%;background:var(--${a.toLowerCase()})"></i></div><b style="text-align:right">${x.ok}/${x.total}</b></div>`}).join('');
   const reviewAt=+new Date((st&&st.review_at)||0);
   const top=(rk&&rk.top||[]).map(r=>`<div class="rk${me.pos===r.pos?' me':''}"><span>#${r.pos} · ${esc(r.alias)}</span><b>${r.score}</b></div>`).join('');
-  const share=`¡Hice el Simulacro Nacional de Arandú Med! Saqué ${me.score??'-'}/100 y quedé en el puesto ${me.pos??'-'} de ${rk?rk.participants:'-'} 💪 ${location.origin+location.pathname}`;
+  const share=`¡Hice el Simulacro Nacional de AranduMed! Saqué ${me.score??'-'}/100 y quedé en el puesto ${me.pos??'-'} de ${rk?rk.participants:'-'} 💪 ${location.origin+location.pathname}`;
   view(`<div class="card center"><div class="kicker">Tu resultado</div><div class="score">${me.score??st.score??'-'}<span class="mut" style="font-size:1.2rem">/100</span></div>
      <p>${me.pos?'Puesto <b>#'+me.pos+'</b> de '+rk.participants+' participantes hasta ahora':''}</p>
      <p class="small mut">El ranking se actualiza a medida que terminan los demás. El oficial se publica al cierre.</p></div>
@@ -303,7 +304,7 @@ async function showResults(){
     <div class="card" id="rvBox"><h3>Corrección con explicaciones</h3>
       ${now()>=reviewAt?'<button class="btn" id="bRv">Ver la corrección</button>':'<p class="mut small">Se habilita cuando terminan todos, a las '+hhmm(reviewAt)+'.</p><p class="big center" id="cd" style="font-size:1.6rem"></p>'}</div>
     <a class="btn" style="text-decoration:none;text-align:center" href="https://wa.me/?text=${encodeURIComponent(share)}" target="_blank" rel="noopener">Compartir mi resultado por WhatsApp</a>
-    <a class="btn sec" style="text-decoration:none;text-align:center" href="https://wa.me/${C.WHATSAPP}?text=${encodeURIComponent('Hola, hice el Simulacro Nacional y quiero información de los planes de Arandú Med.')}" target="_blank" rel="noopener">Quiero seguir preparándome con Arandú Med</a>`);
+    <a class="btn sec" style="text-decoration:none;text-align:center" href="https://wa.me/${C.WHATSAPP}?text=${encodeURIComponent('Hola, hice el Simulacro Nacional y quiero información de los planes de AranduMed.')}" target="_blank" rel="noopener">Quiero seguir preparándome con AranduMed</a>`);
   if($('bRv'))$('bRv').onclick=loadReview;
   else{const f=()=>{const r=reviewAt-now();if(r<=0){stopTick();showResults();return}if($('cd'))$('cd').textContent=mmss(r)};f();tick=setInterval(f,1000)}
 }
