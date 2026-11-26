@@ -256,11 +256,19 @@ function showRegister(){
     try{await rpc('sim_register',{p_sim:SIM,p_alias:$('al').value.trim(),p_whatsapp:wa});route()}
     catch(e){m.textContent=errText(e);$('bReg').disabled=false}};
 }
+function trialCard(){return `<div class="card" style="border:1.5px solid #FFC94A;background:linear-gradient(135deg,#0F7A66,#0B4D44)"><span class="pill">Banco de preguntas</span><h3 style="margin:10px 0 6px">Seguí practicando con la CONAREM</h3><p class="small" style="color:rgba(255,255,255,.9)">Ya tenés tu cuenta: tocá y activamos tu prueba de 3 días con los exámenes 2025 y 2026 completos y comentados, los simulacros y tu puesto estimado. Sin tarjeta.</p><a class="btn" style="text-decoration:none;text-align:center;display:block;margin-top:12px" href="index.html" id="bTrialSim">Probar el banco 3 días gratis →</a><p class="small" id="trSimMsg" style="margin-top:8px"></p></div>`}
+function bindTrial(){
+  const bt=$('bTrialSim');if(bt)bt.onclick=async e=>{e.preventDefault();bt.style.opacity='.6';bt.style.pointerEvents='none';bt.textContent='Activando tu prueba…';
+    let d=null;try{d=localStorage.getItem('am_device');if(!d){d=crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2);localStorage.setItem('am_device',d)}}catch(_){}
+    try{await sb.rpc('start_trial',{p_device:d||'sim'})}catch(_){}
+    location.href='index.html'};
+}
 function showWaiting(){
   view(`<div class="card hero center"><div class="kicker">Ya estás inscripto <svg class="ico" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div><h2>El simulacro empieza el<br>${esc(fmtDate(st.starts_at))}</h2>
     <div class="big" id="cd" style="margin:14px 0"></div>
     <p class="mut small">Entrá desde este mismo link unos minutos antes. Usá una conexión estable y tené el celular cargado.</p>
-    <p class="mut small">Bloque I: 40 preguntas en 40 min · descanso opcional de hasta 10 min · Bloque II: 30 preguntas en 30 min.</p></div>`+heroHTML());
+    <p class="mut small">Bloque I: 40 preguntas en 40 min · descanso opcional de hasta 10 min · Bloque II: 30 preguntas en 30 min.</p></div>${trialCard()}`+heroHTML());
+  bindTrial();
   const starts=+new Date(st.starts_at);
   const f=()=>{const r=starts-now();if(r<=0){stopTick();route();return}$('cd').textContent=dhm(r)};f();tick=setInterval(f,1000);
 }
@@ -358,14 +366,11 @@ async function showResults(){
     <div class="card"><h3>Ranking nacional</h3>${top||'<p class="mut">Todavía no hay resultados.</p>'}</div>
     <div class="card" id="rvBox"><h3>Corrección con explicaciones</h3>
       ${now()>=reviewAt?'<button class="btn" id="bRv">Ver la corrección</button>':'<p class="mut small">Se habilita cuando terminan todos, a las '+hhmm(reviewAt)+'.</p><p class="big center" id="cd" style="font-size:1.6rem"></p>'}</div>
-    <div class="card" style="border:1.5px solid #FFC94A;background:linear-gradient(135deg,#0F7A66,#0B4D44)"><span class="pill">Banco de preguntas</span><h3 style="margin:10px 0 6px">Seguí practicando con la CONAREM</h3><p class="small" style="color:rgba(255,255,255,.9)">Ya tenés tu cuenta: tocá y activamos tu prueba de 3 días con los exámenes 2025 y 2026 completos y comentados, los simulacros y tu puesto estimado. Sin tarjeta.</p><a class="btn" style="text-decoration:none;text-align:center;display:block;margin-top:12px" href="index.html" id="bTrialSim">Probar el banco 3 días gratis →</a><p class="small" id="trSimMsg" style="margin-top:8px"></p></div>
+    ${trialCard()}
     <a class="btn sec" style="text-decoration:none;text-align:center" href="https://wa.me/?text=${encodeURIComponent(share)}" target="_blank" rel="noopener">Compartir mi resultado por WhatsApp</a>
     <a class="btn sec" style="text-decoration:none;text-align:center" href="https://wa.me/${C.WHATSAPP}?text=${encodeURIComponent('Hola, hice el Simulacro Nacional y quiero información de los planes de AranduMed.')}" target="_blank" rel="noopener">Quiero seguir preparándome con AranduMed</a>`);
+  bindTrial();
   if($('bRv'))$('bRv').onclick=loadReview;
-  const bt=$('bTrialSim');if(bt)bt.onclick=async e=>{e.preventDefault();bt.style.opacity='.6';bt.style.pointerEvents='none';bt.textContent='Activando tu prueba…';
-    let d=null;try{d=localStorage.getItem('am_device');if(!d){d=crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2);localStorage.setItem('am_device',d)}}catch(_){}
-    try{await sb.rpc('start_trial',{p_device:d||'sim'})}catch(_){}
-    location.href='index.html'};
   else{const f=()=>{const r=reviewAt-now();if(r<=0){stopTick();showResults();return}if($('cd'))$('cd').textContent=mmss(r)};f();tick=setInterval(f,1000)}
 }
 async function loadReview(){
