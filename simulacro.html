@@ -132,6 +132,43 @@ input:focus{border-color:var(--teal)}
 .hidden{display:none!important}
 .overlay{position:fixed;inset:0;z-index:20;background:#000a;display:grid;place-items:center;padding:16px}
 .overlay .card{max-width:420px;width:100%}
+/* Invitación al banco después de inscribirse */
+.inv{position:fixed;inset:0;z-index:60;display:grid;place-items:end center;background:rgba(5,10,14,.62);padding:16px 14px calc(16px + env(safe-area-inset-bottom,0px))}
+@media (min-width:560px){.inv{place-items:center}}
+.inv-c{position:relative;width:min(420px,100%);background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:22px 18px 16px;box-shadow:0 30px 70px -20px rgba(0,0,0,.7);overflow:hidden}
+.inv-x{position:absolute;top:8px;right:8px;width:40px;height:40px;border:0;border-radius:50%;background:transparent;color:var(--mut);font-size:1.5rem;cursor:pointer}
+.inv-ok{display:flex;align-items:center;gap:12px}
+.inv-ok i{flex:none;width:44px;height:44px;border-radius:50%;background:var(--ok);display:grid;place-items:center}
+.inv-ok svg{width:24px;height:24px;fill:none;stroke:#0E161B;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.inv-ok b{display:block;font-size:1.15rem}.inv-ok small{color:var(--mut)}
+.inv-box{position:relative;margin-top:16px;border-radius:16px;padding:16px;background:linear-gradient(135deg,#0F7A66,#0B4D44);border:1.5px solid #FFC94A;color:#fff}
+.inv-box h3{margin:8px 0 6px;font-size:1.2rem;min-height:1.4em}
+.inv-box h3 .cur{display:inline-block;width:2px;height:1em;margin-left:2px;background:#FFC94A;vertical-align:-2px}
+.inv-box ul{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:6px;font-size:.92rem;color:rgba(255,255,255,.92)}
+.inv-box li{display:flex;gap:8px;align-items:flex-start}.inv-box li svg{flex:none;width:18px;height:18px;margin-top:2px;fill:none;stroke:#FFC94A;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.inv-box .btn{position:relative;overflow:hidden;isolation:isolate}
+.inv-no{display:block;width:100%;margin-top:6px;padding:12px;border:0;background:transparent;color:var(--mut);font:inherit;font-size:.9rem;cursor:pointer}
+.inv-sp{position:fixed;z-index:61;width:8px;height:8px;border-radius:2px;pointer-events:none}
+@media (prefers-reduced-motion:no-preference){
+.inv{animation:invFade .25s ease}
+.inv-c{animation:invUp .45s cubic-bezier(.2,.8,.2,1)}
+.inv-ok i{animation:invPop .5s .15s cubic-bezier(.2,1.5,.4,1) both}
+.inv-ok path{stroke-dasharray:1;stroke-dashoffset:1;animation:invDraw .35s .45s ease forwards}
+.inv-box{opacity:0;animation:invUp .5s .7s cubic-bezier(.2,.8,.2,1) forwards}
+.inv-box h3 .cur{animation:invBlink .8s steps(1) infinite}
+.inv-box li{opacity:0;transform:translateX(-8px);animation:invIn .35s ease forwards}
+.inv-box li svg path{stroke-dasharray:1;stroke-dashoffset:1;animation:invDraw .35s ease forwards;animation-delay:inherit}
+.inv-box .btn{animation:invBreath 2.4s 3s ease-in-out infinite}
+.inv-box .btn::after,.trialsh .btn::after{content:"";position:absolute;top:0;bottom:0;left:-60%;width:45%;z-index:-1;background:linear-gradient(100deg,transparent,rgba(255,255,255,.5),transparent);transform:skewX(-20deg);animation:invSweep 4s 2.2s ease-in-out infinite}
+.inv-sp{animation:invBurst .9s ease-out forwards}
+.trialsh{animation:invUp .5s .3s cubic-bezier(.2,.8,.2,1) both}
+.trialsh .btn{position:relative;overflow:hidden;isolation:isolate}
+}
+@keyframes invFade{from{opacity:0}}@keyframes invUp{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+@keyframes invPop{from{opacity:0;transform:scale(.3)}}@keyframes invDraw{to{stroke-dashoffset:0}}@keyframes invBlink{50%{opacity:0}}
+@keyframes invIn{to{opacity:1;transform:none}}@keyframes invBreath{50%{transform:scale(1.03)}}
+@keyframes invSweep{0%{left:-60%}25%,100%{left:130%}}
+@keyframes invBurst{from{opacity:1;transform:translate(0,0) rotate(0)}to{opacity:0;transform:translate(var(--x),var(--y)) rotate(240deg)}}
 </style>
 </head>
 <body>
@@ -253,22 +290,53 @@ function showRegister(){
   $('bReg').onclick=async()=>{const m=$('rMsg');m.textContent='';const wa=$('wa').value.trim();
     if(wa.replace(/\D/g,'').length<9){m.textContent='Escribí tu número de WhatsApp, por ejemplo 0981 123 456.';return}
     $('bReg').disabled=true;
-    try{await rpc('sim_register',{p_sim:SIM,p_alias:$('al').value.trim(),p_whatsapp:wa});route()}
+    try{await rpc('sim_register',{p_sim:SIM,p_alias:$('al').value.trim(),p_whatsapp:wa});justReg=true;route()}
     catch(e){m.textContent=errText(e);$('bReg').disabled=false}};
 }
-function trialCard(){return `<div class="card" style="border:1.5px solid #FFC94A;background:linear-gradient(135deg,#0F7A66,#0B4D44)"><span class="pill">Banco de preguntas</span><h3 style="margin:10px 0 6px">Seguí practicando con la CONAREM</h3><p class="small" style="color:rgba(255,255,255,.9)">Ya tenés tu cuenta: tocá y activamos tu prueba de 3 días con los exámenes 2025 y 2026 completos y comentados, los simulacros y tu puesto estimado. Sin tarjeta.</p><a class="btn" style="text-decoration:none;text-align:center;display:block;margin-top:12px" href="index.html" id="bTrialSim">Probar el banco 3 días gratis →</a><p class="small" id="trSimMsg" style="margin-top:8px"></p></div>`}
+function trialCard(){return `<div class="card trialsh" style="border:1.5px solid #FFC94A;background:linear-gradient(135deg,#0F7A66,#0B4D44)"><span class="pill">Banco de preguntas</span><h3 style="margin:10px 0 6px">Seguí practicando con la CONAREM</h3><p class="small" style="color:rgba(255,255,255,.9)">Ya tenés tu cuenta: tocá y activamos tu prueba de 3 días con los exámenes 2025 y 2026 completos y comentados, los simulacros y tu puesto estimado. Sin tarjeta.</p><a class="btn" style="text-decoration:none;text-align:center;display:block;margin-top:12px" href="index.html" id="bTrialSim">Probar el banco 3 días gratis →</a><p class="small" id="trSimMsg" style="margin-top:8px"></p></div>`}
+let justReg=false;
 function bindTrial(){
-  const bt=$('bTrialSim');if(bt)bt.onclick=async e=>{e.preventDefault();bt.style.opacity='.6';bt.style.pointerEvents='none';bt.textContent='Activando tu prueba…';
+  const bt=$('bTrialSim');if(bt)bt.onclick=e=>{e.preventDefault();startTrial(bt)};
+}
+async function startTrial(bt){bt.style.opacity='.6';bt.style.pointerEvents='none';bt.textContent='Activando tu prueba…';
     let d=null;try{d=localStorage.getItem('am_device');if(!d){d=crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2);localStorage.setItem('am_device',d)}}catch(_){}
     try{await sb.rpc('start_trial',{p_device:d||'sim'})}catch(_){}
-    location.href='index.html'};
+    location.href='index.html'}
+/* Invitación animada a probar el banco: aparece al terminar la inscripción (y una vez a quien ya estaba inscripto) */
+function invite(){
+  const K='am_inv_'+SIM+'_'+((user&&user.id)||'');let seen=false;try{seen=!!localStorage.getItem(K)}catch(_){}
+  if(!justReg&&seen)return;justReg=false;try{localStorage.setItem(K,'1')}catch(_){}
+  if(document.querySelector('.inv'))return;
+  const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const ck='<svg viewBox="0 0 24 24" aria-hidden="true"><path pathLength="1" d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+  const items=['Los exámenes 2025 y 2026 completos y comentados','Simulacros ilimitados y tu puesto estimado','Sin pagar nada ni dejar tarjeta'];
+  const d=document.createElement('div');d.className='inv';d.setAttribute('role','dialog');d.setAttribute('aria-modal','true');d.setAttribute('aria-labelledby','invT');
+  d.innerHTML='<div class="inv-c"><button type="button" class="inv-x" aria-label="Cerrar">×</button>'
+   +'<div class="inv-ok"><i>'+ck+'</i><div><b>¡Listo, estás inscripto!</b><small>'+esc((x=>x.charAt(0).toUpperCase()+x.slice(1))(fmtDate(st.starts_at)))+'. Te esperamos.</small></div></div>'
+   +'<div class="inv-box"><span class="pill" style="margin:0">Mientras esperás el domingo</span><h3 id="invT" aria-label="Probá el banco 3 días gratis"><span class="tx"></span><span class="cur" aria-hidden="true"></span></h3>'
+   +'<p class="small" style="margin:0;color:rgba(255,255,255,.9)">Llegá al simulacro con ritmo de examen. Ya tenés tu cuenta: activamos la prueba con un toque.</p>'
+   +'<ul>'+items.map((t,i)=>'<li style="animation-delay:'+(1.9+i*.18)+'s">'+ck+'<span>'+t+'</span></li>').join('')+'</ul>'
+   +'<a class="btn" href="index.html" id="bInvTrial" style="text-decoration:none;text-align:center">Activar mi prueba gratis →</a></div>'
+   +'<button type="button" class="inv-no">Ahora no</button></div>';
+  document.body.appendChild(d);
+  const close=()=>{d.remove();document.removeEventListener('keydown',esc_)};const esc_=e=>{if(e.key==='Escape')close()};
+  d.querySelector('.inv-x').onclick=close;d.querySelector('.inv-no').onclick=close;d.addEventListener('click',e=>{if(e.target===d)close()});document.addEventListener('keydown',esc_);
+  const b=$('bInvTrial');b.onclick=e=>{e.preventDefault();startTrial(b)};
+  /* título que se escribe solo */
+  const T='Probá el banco 3 días gratis',tx=d.querySelector('.tx');
+  if(RM){tx.textContent=T}else{let i=0;setTimeout(function w(){tx.textContent=T.slice(0,++i);if(i<T.length)setTimeout(w,38)},1100)}
+  try{const c=d.querySelector('.inv-c');c.tabIndex=-1;c.style.outline='none';c.focus({preventScroll:true})}catch(_){}
+  /* chispas desde el check */
+  if(!RM)setTimeout(()=>{const r=d.querySelector('.inv-ok i').getBoundingClientRect();const cs=['#5CC98A','#FFC94A','#4CC2B7','#F08A5D'];
+    for(let k=0;k<22;k++){const s=document.createElement('i');s.className='inv-sp';const a=Math.random()*Math.PI*2,dd=50+Math.random()*80;
+      s.style.cssText='left:'+(r.left+r.width/2)+'px;top:'+(r.top+r.height/2)+'px;background:'+cs[k%4]+';--x:'+Math.cos(a)*dd+'px;--y:'+(Math.sin(a)*dd-20)+'px';document.body.appendChild(s);setTimeout(()=>s.remove(),950)}},420);
 }
 function showWaiting(){
   view(`<div class="card hero center"><div class="kicker">Ya estás inscripto <svg class="ico" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div><h2>El simulacro empieza el<br>${esc(fmtDate(st.starts_at))}</h2>
     <div class="big" id="cd" style="margin:14px 0"></div>
     <p class="mut small">Entrá desde este mismo link unos minutos antes. Usá una conexión estable y tené el celular cargado.</p>
     <p class="mut small">Bloque I: 40 preguntas en 40 min · descanso opcional de hasta 10 min · Bloque II: 30 preguntas en 30 min.</p></div>${trialCard()}`+heroHTML());
-  bindTrial();
+  bindTrial();setTimeout(invite,350);
   const starts=+new Date(st.starts_at);
   const f=()=>{const r=starts-now();if(r<=0){stopTick();route();return}$('cd').textContent=dhm(r)};f();tick=setInterval(f,1000);
 }
