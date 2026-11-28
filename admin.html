@@ -117,6 +117,8 @@ td.nw{white-space:nowrap}.num{font-variant-numeric:tabular-nums}
 .rep{display:flex;flex-direction:column;gap:8px;padding:14px;background:var(--bg2);border:1px solid var(--line);border-radius:14px}
 .rep q{quotes:none;font-style:italic;color:var(--fg)}
 .rep .sub{font-size:.8rem;color:var(--muted)}
+.rep details summary{cursor:pointer;font-size:.85rem;color:var(--accent)}.qfull{display:flex;flex-direction:column;gap:8px;margin-top:8px;padding:12px;border-radius:12px;background:var(--surface2)}.qfull .qst{margin:0;white-space:pre-wrap}.qop{margin:0;padding-left:0;list-style:none;display:flex;flex-direction:column;gap:6px}.qop li{padding:6px 10px;border:1px solid var(--line);border-radius:10px}.qop li.ok{border-color:var(--ok)}
+.rbox{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding-top:10px}.rbox textarea{min-height:110px}.rsent{padding:10px 12px;border-radius:12px;background:var(--surface2);display:flex;flex-direction:column;gap:4px}.rped{padding:12px;border:1px dashed var(--line);border-radius:12px}
 .ed{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:18px;align-items:start}
 .qlist{display:flex;flex-direction:column;gap:6px;max-height:640px;overflow:auto;padding-right:4px}
 .qlist button{text-align:left;font:500 .84rem/1.4 var(--body);color:var(--fg);background:var(--bg2);border:1px solid var(--line);border-radius:11px;padding:9px 11px;cursor:pointer}
@@ -186,16 +188,24 @@ td.nw{white-space:nowrap}.num{font-variant-numeric:tabular-nums}
         <div><div class="step"><i>1</i>¿Quién compró?</div>
         <label>Correo de la cuenta<input id="sEmail" type="email" list="emList" placeholder="correo@ejemplo.com"><datalist id="emList"></datalist></label></div>
         <div><div class="step"><i>2</i>¿Qué compró?</div>
-          <div class="tgrp">Banco de preguntas</div>
+          <div class="tgrp">📚 Banco CONAREM</div>
           <div class="tiles"><button type="button" class="tile" data-pv="month"><b>Mensual</b><small data-pr="month"></small></button><button type="button" class="tile" data-pv="full"><b>Completo</b><small data-pr="full"></small></button><button type="button" class="tile" data-pv="two"><b>2 exámenes</b><small data-pr="two"></small></button><button type="button" class="tile" data-pv="year"><b>Combo Anual</b><small data-pr="year"></small></button></div>
-          <div class="tgrp">Banco FCM-UNA (examen de la UNA)</div>
-          <div class="tiles"><button type="button" class="tile" data-pv="fcm"><b>FCM-UNA</b><small data-pr="fcm"></small></button><button type="button" class="tile" data-pv="fcombo"><b>Combo + UNA</b><small data-pr="fcombo"></small></button><button type="button" class="tile" data-pv="fadd"><b>Sumar UNA</b><small>Gs. 80.000</small></button></div>
+          <div class="tgrp">🏥 Banco FCM-UNA (examen de la UNA)</div>
+          <div class="tiles"><button type="button" class="tile" data-pv="fcm"><b>Solo FCM-UNA</b><small data-pr="fcm"></small></button><button type="button" class="tile" data-pv="fcombo"><b>Combo CONAREM + UNA</b><small data-pr="fcombo"></small></button><button type="button" class="tile" data-pv="fadd"><b>Sumar UNA</b><small data-pr="fadd"></small></button></div>
+          <div class="tgrp">📇 Flashcards de la Carrera</div>
           <div class="tiles"><button type="button" class="tile" data-pv="c1"><b>Carrera mensual</b><small data-pr="c1"></small></button><button type="button" class="tile" data-pv="c6"><b>Carrera semestral</b><small data-pr="c6"></small></button><button type="button" class="tile" data-pv="cv"><b>Carrera vitalicio</b><small data-pr="cv"></small></button></div>
-          <div class="tgrp">Black Friday</div>
-          <div class="tiles"><button type="button" class="tile bf" data-pv="res"><b>🔒 Reserva</b><small>Gs. 100.000 · 1 mes</small></button><button type="button" class="tile" data-pv="week"><b>🎁 Regalo</b><small>+1 semana</small></button></div>
+          <div class="tgrp">📘 Resúmenes de Medicina Interna (PDF)</div>
+          <div class="tiles"><button type="button" class="tile" data-pv="r1"><b>Individual</b><small data-pr="r1"></small></button><button type="button" class="tile" data-pv="r3"><b>Elegí 3</b><small data-pr="r3"></small></button><button type="button" class="tile" data-pv="rpack"><b>Colección (los 10)</b><small data-pr="rpack"></small></button><button type="button" class="tile" data-pv="rcombo"><b>Completo + Colección</b><small data-pr="rcombo"></small></button></div>
+          <div id="sRW" hidden><div class="tgrp">¿Qué resúmenes? <span id="sRCnt"></span></div>
+            <div class="rgrid" id="sRChk"><label class="rck"><input type="checkbox" value="cardio"> Cardiología</label><label class="rck"><input type="checkbox" value="endo"> Endocrinología</label><label class="rck"><input type="checkbox" value="infecto"> Infectología</label><label class="rck"><input type="checkbox" value="neuro"> Neurología</label><label class="rck"><input type="checkbox" value="neumo"> Neumología</label><label class="rck"><input type="checkbox" value="gastro"> Gastroenterología</label><label class="rck"><input type="checkbox" value="nefro"> Nefrología</label><label class="rck"><input type="checkbox" value="hemato"> Hematología</label><label class="rck"><input type="checkbox" value="reuma"> Reumatología</label><label class="rck"><input type="checkbox" value="onco"> Oncología</label></div>
+            <label style="margin-top:8px">Nombre y apellido (sale como marca de agua en cada página)<input id="sRName" placeholder="Ej.: María González"></label></div>
+          <div id="bfW"><div class="tgrp">🔒 Black Friday</div>
+          <div class="tiles"><button type="button" class="tile bf" data-pv="res"><b>Reserva</b><small>Gs. 100.000 · 1 mes</small></button></div></div>
+          <div class="tgrp">🎁 Sin cobro</div>
+          <div class="tiles"><button type="button" class="tile" data-pv="week"><b>Regalo</b><small>+1 semana de banco</small></button></div>
           <div id="sResW" hidden><div class="tgrp">Plan que reserva (se congela el precio)</div>
           <div class="tiles"><button type="button" class="tile" data-rv="full"><b>Completo</b><small>Gs. 240.000</small></button><button type="button" class="tile" data-rv="two"><b>2 exámenes</b><small>Gs. 380.000</small></button><button type="button" class="tile" data-rv="combo"><b>Combo</b><small>Gs. 550.000</small></button></div></div>
-          <select id="sPlan" hidden><option value="full">Completo</option><option value="month">Mensual</option><option value="two">2 exámenes</option><option value="year">Combo Anual</option><option value="week">Regalo</option><option value="res">Reserva</option><option value="fcm">FCM-UNA</option><option value="fcombo">Combo + UNA</option><option value="fmonth">Mensual los dos</option><option value="fadd">Sumar UNA</option><option value="c1">Carrera mensual</option><option value="c6">Carrera semestral</option><option value="cv">Carrera vitalicio</option></select>
+          <select id="sPlan" hidden><option value="full">Completo</option><option value="month">Mensual</option><option value="two">2 exámenes</option><option value="year">Combo Anual</option><option value="week">Regalo</option><option value="res">Reserva</option><option value="fcm">FCM-UNA</option><option value="fcombo">Combo + UNA</option><option value="fmonth">Mensual los dos</option><option value="fadd">Sumar UNA</option><option value="c1">Carrera mensual</option><option value="c6">Carrera semestral</option><option value="cv">Carrera vitalicio</option><option value="r1">Resumen individual</option><option value="r3">Elegí 3 resúmenes</option><option value="rpack">Colección MI</option><option value="rcombo">Completo + Colección</option></select>
           <select id="sRes" hidden><option value="full">Completo</option><option value="two">2 exámenes</option><option value="combo">Combo</option></select>
         </div>
         <div><div class="step"><i>3</i>¿Cómo pagó?</div>
@@ -214,16 +224,6 @@ td.nw{white-space:nowrap}.num{font-variant-numeric:tabular-nums}
     <div class="ahead"><h2>🔒 Reservas Black Friday pendientes</h2><span class="cnt" id="cRes"></span></div>
     <p class="hint">Pagaron Gs. 100.000 y tienen hasta el 31/12 para completar la diferencia al precio de Black Friday. Al tocar «Completar» se registra el saldo y se extiende el acceso hasta el examen.</p>
     <div class="att" id="resList"></div>
-  </div>
-  <div class="card" id="pdfCard">
-    <h2>📘 Vender resúmenes en PDF</h2>
-    <p class="hint">Registrá la venta y el comprador ve sus resúmenes en la app (pestaña Resúmenes → «Mis resúmenes»). Al descargar, cada PDF sale con su nombre y su correo en todas las páginas. Tiene que entrar con el <b>mismo correo</b>.</p>
-    <div class="row"><label>Correo del comprador<input id="rEmail" type="email" list="emList" placeholder="correo@ejemplo.com"></label><label>Nombre y apellido (para la marca de agua)<input id="rName" placeholder="Ej.: María González"></label></div>
-    <div class="row" style="flex-wrap:wrap;gap:6px"><button class="btn gh sm" type="button" id="rAll">Colección completa</button><button class="btn gh sm" type="button" id="rNone">Limpiar</button></div>
-    <div class="rgrid" id="rChk"><label class="rck"><input type="checkbox" value="cardio"> Cardiología</label><label class="rck"><input type="checkbox" value="endo"> Endocrinología</label><label class="rck"><input type="checkbox" value="infecto"> Infectología</label><label class="rck"><input type="checkbox" value="neuro"> Neurología</label><label class="rck"><input type="checkbox" value="neumo"> Neumología</label><label class="rck"><input type="checkbox" value="gastro"> Gastroenterología</label><label class="rck"><input type="checkbox" value="nefro"> Nefrología</label><label class="rck"><input type="checkbox" value="hemato"> Hematología</label><label class="rck"><input type="checkbox" value="reuma"> Reumatología</label><label class="rck"><input type="checkbox" value="onco"> Oncología</label></div>
-    <div class="row"><label>Monto (Gs.)<input id="rAmt" type="number" min="0" step="1000"></label><label>Medio de pago<select id="rMet"><option>Transferencia</option><option>Giro</option><option>Efectivo</option><option>Billetera (Tigo/Personal)</option><option>Otro</option></select></label><label>Nota (opcional)<input id="rNote"></label></div>
-    <button class="btn cta" type="button" id="rGo">Registrar venta de resúmenes</button>
-    <p class="msg" id="rMsg"></p><pre id="rTxt" hidden></pre>
   </div>
   <div class="card">
     <h2>⬆️ Subir los PDF originales (una sola vez por edición)</h2>
@@ -260,7 +260,7 @@ td.nw{white-space:nowrap}.num{font-variant-numeric:tabular-nums}
 <section class="view" id="v-reps">
   <div class="card">
     <div class="ahead"><h2>Reportes de errores</h2><div class="pills" id="rpF"><button aria-pressed="true" data-s="abierto">Abiertos</button><button data-s="resuelto">Resueltos</button><button data-s="descartado">Descartados</button></div></div>
-    <p class="hint">Lo que los alumnos marcan con "Reportar un error" debajo de cada pregunta.</p>
+    <p class="hint">Lo que los alumnos marcan con "Reportar un error" debajo de cada pregunta. Corregí la pregunta acá mismo y respondele: el alumno ve tu respuesta en la app la próxima vez que entra.</p>
     <div class="att" id="rpList"></div>
   </div>
 </section>
@@ -340,22 +340,17 @@ function twice(b,lab,fn){if(!b.dataset.ok){b.dataset.ok=1;const o=b.textContent;
 let TAB='res';
 document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{TAB=b.dataset.t;document.querySelectorAll('.tabs button').forEach(x=>x.setAttribute('aria-selected',String(x===b)));document.querySelectorAll('section.view').forEach(s=>s.classList.toggle('on',s.id==='v-'+TAB));if(TAB==='qs')loadQs();if(TAB==='codes')loadCodes();window.scrollTo({top:0})});
 
-// ---------- Venta de resúmenes en PDF ----------
-const RPRICE={n:100000,bf:75000,tres:240000,tresbf:180000,pack:490000,packbf:390000,until:'2026-12-01T00:00:00-03:00'};
-function rSel(){return [...document.querySelectorAll('#rChk input:checked')].map(x=>x.value)}
-function rAuto(){if($('rAmt').dataset.touched)return;const n=rSel().filter(x=>x!=='cardio').length;const bf=Date.now()<new Date(RPRICE.until).getTime();let a=0;
-  if(n>=9)a=bf?RPRICE.packbf:RPRICE.pack;else if(n===3)a=bf?RPRICE.tresbf:RPRICE.tres;else a=n*(bf?RPRICE.bf:RPRICE.n);$('rAmt').value=a}
-document.querySelectorAll('#rChk input').forEach(x=>x.addEventListener('change',rAuto));
-$('rAmt').addEventListener('input',()=>{$('rAmt').dataset.touched=1});
-$('rAll').onclick=()=>{document.querySelectorAll('#rChk input').forEach(x=>x.checked=true);delete $('rAmt').dataset.touched;rAuto()};
-$('rNone').onclick=()=>{document.querySelectorAll('#rChk input').forEach(x=>x.checked=false);delete $('rAmt').dataset.touched;rAuto()};
-$('rGo').onclick=async()=>{const em=$('rEmail').value.trim();const sl=rSel();if(!em||!sl.length){msg('rMsg','Falta el correo o elegir resúmenes.');return}
-  const n=sl.filter(x=>x!=='cardio').length;const label=n>=9?'Colección Medicina Interna':(n===3?'Elegí 3':'')+' '+sl.join(', ');
-  const b=$('rGo');b.disabled=true;const {error}=await sb.rpc('admin_sell_resumen',{p_email:em,p_name:$('rName').value||null,p_slugs:sl,p_label:label.trim(),p_amount:+$('rAmt').value||0,p_method:$('rMet').value,p_note:$('rNote').value||null});b.disabled=false;
-  if(error){msg('rMsg','Error: '+error.message);return}
-  msg('rMsg','Listo: '+sl.length+' resumen(es) para '+em+'.',true);
-  const t='¡Listo! ✅ Ya tenés tus resúmenes de AranduMed (Edición 2027).\n\nEntrá con este correo ('+em+') en '+SITE+' → pestaña Resúmenes → «Mis resúmenes» y tocá Descargar. Cada PDF sale a tu nombre, en versión para leer y para imprimir.\n\n¡Éxitos con el estudio! 💚\nEquipo AranduMed';
-  const pre=$('rTxt');pre.hidden=false;pre.textContent=t;$('rNote').value='';delete $('rAmt').dataset.touched;try{loadAll()}catch(e){}};
+// ---------- Resúmenes en PDF (se venden desde «Registrar venta») ----------
+const RPRICE={n:100000,bf:75000,tres:240000,tresbf:180000,pack:490000,packbf:390000,combo:650000,combobf:550000,until:'2026-12-01T00:00:00-03:00'};
+const RNM={cardio:'Cardiología',endo:'Endocrinología',infecto:'Infectología',neuro:'Neurología',neumo:'Neumología',gastro:'Gastroenterología',nefro:'Nefrología',hemato:'Hematología',reuma:'Reumatología',onco:'Oncología'};
+const isR=pl=>/^r(1|3|pack|combo)$/.test(pl);
+const rBF=()=>Date.now()<new Date(RPRICE.until).getTime();
+function rSel(){return [...document.querySelectorAll('#sRChk input:checked')].map(x=>x.value)}
+const rPaid=sl=>sl.filter(x=>x!=='cardio').length;
+function rPrice(pl,n){const bf=rBF();return pl==='rcombo'?(bf?RPRICE.combobf:RPRICE.combo):pl==='rpack'?(bf?RPRICE.packbf:RPRICE.pack):pl==='r3'?(bf?RPRICE.tresbf:RPRICE.tres):Math.max(1,n==null?1:n)*(bf?RPRICE.bf:RPRICE.n)}
+function rLabel(pl,sl){return pl==='rpack'||pl==='rcombo'?'Colección Medicina Interna'+(pl==='rcombo'?' (combo)':''):(pl==='r3'?'Elegí 3: ':'')+sl.map(x=>RNM[x]||x).join(', ')}
+function rMsg(em,combo,u){return '¡Listo! ✅ '+(combo?'Ya tenés activo el plan Completo + Colección Medicina Interna de AranduMed.\n\n📚 Banco CONAREM hasta el '+fdl(u)+'.\n📘 Tus 10 resúmenes de Medicina Interna (Edición 2027).':'Ya tenés tus resúmenes de AranduMed (Edición 2027).')+'\n\nEntrá con este correo ('+em+') en '+SITE+' → pestaña Resúmenes → «Mis resúmenes» y tocá Descargar. Cada PDF sale a tu nombre, en versión para leer y para imprimir.\n\n¡Éxitos con el estudio! 💚\nEquipo AranduMed'}
+document.querySelectorAll('#sRChk input').forEach(x=>x.addEventListener('change',()=>{delete $('sAmt').dataset.touched;renderSellPrev()}));
 $('upGo').onclick=async()=>{const fs=[...$('upFiles').files];if(!fs.length){msg('upMsg','Elegí los archivos.');return}const out=[];$('upGo').disabled=true;
   for(const f of fs){const m=f.name.match(/^([a-z]+)-(lectura|imprimir)\.pdf$/);if(!m){out.push('⚠️ '+esc(f.name)+': nombre no reconocido');continue}
     const {error}=await sb.storage.from('resumenes').upload(m[1]+'/'+m[2]+'.pdf',f,{upsert:true,contentType:'application/pdf'});out.push((error?'❌ ':'✅ ')+esc(f.name)+(error?' — '+esc(error.message):''));$('upList').innerHTML=out.join('<br>')}
@@ -463,13 +458,13 @@ function renderReservas(){const L=pendRes();$('cRes').textContent=L.length;
       const {error}=await sb.rpc('admin_sell',{p_email:em,p_plan:doneName(k),p_until:u.toISOString(),p_amount:amt,p_method:'Transferencia',p_note:'Saldo de la reserva Black Friday'});
       if(error){b.disabled=false;b.textContent='Error: '+error.message;return}
       await copy(doneMsg(k,u));b.textContent='Completado ✓ · mensaje copiado';b.classList.add('done');
-      if(k==='combo'){$('rEmail').value=em;document.querySelectorAll('#rChk input').forEach(c=>c.checked=true);$('rAmt').value=0;$('rNote').value='Incluido en el combo (reserva Black Friday)';$('pdfCard').scrollIntoView({behavior:'smooth',block:'start'});msg('rMsg','Falta activar los resúmenes del combo: completá su nombre (para la marca de agua) y tocá «Registrar venta de resúmenes».',true)}
+      if(k==='combo'){$('sEmail').value=em;$('sPlan').value='rpack';document.querySelectorAll('#sRChk input').forEach(c=>c.checked=true);$('sAmt').value=0;$('sAmt').dataset.touched=1;$('sNote').value='Incluido en el combo (reserva Black Friday)';renderSellPrev();$('v-sell').scrollIntoView({behavior:'smooth',block:'start'});msg('sMsg','Falta activar los resúmenes del combo: completá su nombre (para la marca de agua) y tocá «Registrar venta y activar».',true)}
       setTimeout(loadAll,1500)})});
 }
 /* ---------- Vender ---------- */
 function untilFor(plan,cur){const base=cur&&new Date(cur)>new Date()?new Date(cur):new Date();let u;
   if(plan==='year'){u=new Date(base.getTime()+365*864e5);const e2=new Date(EXAM_END2);if(u<e2)u=e2}else if(plan==='full'){u=new Date(EXAM_END);if(base>u)u=new Date(base.getTime()+30*864e5)}else if(plan==='two'){u=new Date(EXAM_END2);if(base>u)u=new Date(base.getTime()+30*864e5)}else if(plan==='week')u=new Date(base.getTime()+7*864e5);else u=new Date(base.getTime()+30*864e5);return u}
-const PLN={year:'Combo Anual',full:'Completo',month:'Mensual',two:'2 exámenes',week:'Regalo +1 semana',res:'Reserva Black Friday',fcm:'FCM-UNA',fcombo:'Combo CONAREM + FCM-UNA',fmonth:'Mensual CONAREM + FCM-UNA',fadd:'Sumar banco FCM-UNA',c1:'Flashcards Carrera mensual',c6:'Flashcards Carrera semestral',cv:'Flashcards Carrera vitalicio'};
+const PLN={year:'Combo Anual',full:'Completo',month:'Mensual',two:'2 exámenes',week:'Regalo +1 semana',res:'Reserva Black Friday',fcm:'FCM-UNA',fcombo:'Combo CONAREM + FCM-UNA',fmonth:'Mensual CONAREM + FCM-UNA',fadd:'Sumar banco FCM-UNA',c1:'Flashcards Carrera mensual',c6:'Flashcards Carrera semestral',cv:'Flashcards Carrera vitalicio',r1:'Resumen individual',r3:'Elegí 3 resúmenes',rpack:'Colección Medicina Interna',rcombo:'Completo + Colección Medicina Interna'};
 const FCM_END='2027-02-28T23:59:59-03:00';const isF=pl=>/^f(cm|combo|month|add)$/.test(pl);
 const isC=pl=>/^c(1|6|v)$/.test(pl);
 function cPrice(pl){return pl==='c1'?40000:pl==='c6'?150000:600000}
@@ -487,8 +482,15 @@ function sellMsg(plan,u){return '¡Listo! ✅ Ya tenés activo el plan '+PLN[pla
 function renderSellPrev(){const em=$('sEmail').value.trim().toLowerCase();const plan=$('sPlan').value;const p=P.find(x=>(x.email||'').toLowerCase()===em);
   $('sResW').hidden=plan!=='res';
   document.querySelectorAll('[data-pv]').forEach(b=>b.classList.toggle('on',b.dataset.pv===plan));document.querySelectorAll('[data-rv]').forEach(b=>b.classList.toggle('on',b.dataset.rv===$('sRes').value));
-  {const pr0=priceNow();document.querySelectorAll('[data-pr]').forEach(e=>e.textContent=gs(/^c[16v]$/.test(e.dataset.pr)?cPrice(e.dataset.pr):isF(e.dataset.pr)?fPrice(e.dataset.pr):pr0[e.dataset.pr]))}
-  const pr=priceNow();if(!$('sAmt').dataset.touched)$('sAmt').value=plan==='week'?0:plan==='res'?RES_AMT:isC(plan)?cPrice(plan):isF(plan)?fPrice(plan):pr[plan];
+  {const pr0=priceNow();document.querySelectorAll('[data-pr]').forEach(e=>{const k=e.dataset.pr;e.textContent=gs(isC(k)?cPrice(k):isF(k)?fPrice(k):isR(k)?rPrice(k,1):pr0[k])+(k==='month'?' /mes':k==='r1'?' c/u':'')});$('bfW').hidden=Date.now()>=new Date(RPRICE.until).getTime()&&plan!=='res'}
+  $('sRW').hidden=!isR(plan);
+  if(isR(plan)&&(plan==='rpack'||plan==='rcombo'))document.querySelectorAll('#sRChk input').forEach(c=>c.checked=true);
+  const pr=priceNow();if(!$('sAmt').dataset.touched)$('sAmt').value=plan==='week'?0:isR(plan)?rPrice(plan,rPaid(rSel())):plan==='res'?RES_AMT:isC(plan)?cPrice(plan):isF(plan)?fPrice(plan):pr[plan];
+  if(isR(plan)){const sl=rSel(),n=rPaid(sl),u=untilFor('full',p&&p.access_until);
+    $('sRCnt').textContent=plan==='r3'?'('+n+' de 3)':plan==='r1'?'(elegí uno o más)':'';
+    const warn=plan==='r3'&&n!==3?'<div class="msg err">Para «Elegí 3» marcá exactamente 3 (Cardiología es gratis y no cuenta).</div>':!sl.length?'<div class="hint">Marcá los resúmenes que compró.</div>':'';
+    $('sPrev').innerHTML='<span class="lab">Vista previa</span>'+(p?'<div>'+tag(status(p))+' <span class="hint" style="display:inline">'+esc(p.email)+'</span></div>':em?'<div class="'+(plan==='rcombo'?'msg err':'hint')+'">'+(plan==='rcombo'?'No hay ninguna cuenta con ese correo. Pedile que se registre primero.':'Todavía no tiene cuenta: va a ver sus resúmenes cuando se registre con este correo.')+'</div>':'<div class="hint">Escribí el correo del comprador.</div>')+
+      '<div class="big">'+PLN[plan]+' · '+gs($('sAmt').value)+'</div><div class="hint">'+(plan==='rcombo'?'CONAREM hasta el <b style="color:var(--fg)">'+fdl(u)+'</b><br>':'')+(sl.length?esc(sl.map(x=>RNM[x]).join(', ')):'')+'</div>'+warn+'<span class="lab" style="margin-top:6px">Mensaje para enviarle</span><pre id="sTxt">'+esc(rMsg(em||'tu correo',plan==='rcombo',u))+'</pre>';return}
   if(isC(plan)){const u=cUntil(plan,p);$('sResW').hidden=true;$('sPrev').innerHTML='<span class="lab">Vista previa</span>'+(p?'<div>'+tag(status(p))+' <span class="hint" style="display:inline">'+esc(p.email)+'</span></div>':em?'<div class="msg err">No hay ninguna cuenta con ese correo. Pedile que se registre primero.</div>':'<div class="hint">Escribí el correo de la cuenta.</div>')+'<div class="big">'+PLN[plan]+' · '+gs($('sAmt').value)+'</div><div class="hint">Flashcards Carrera hasta el <b style="color:var(--fg)">'+(plan==='cv'?'vitalicio':fdl(u))+'</b></div><span class="lab" style="margin-top:6px">Mensaje para enviarle</span><pre id="sTxt">'+esc(cMsg(plan,u))+'</pre>';return}
   if(isF(plan)){const u=fUntil(plan,p);$('sResW').hidden=true;$('sPrev').innerHTML='<span class="lab">Vista previa</span>'+(p?'<div>'+tag(status(p))+' <span class="hint" style="display:inline">'+esc(p.email)+'</span></div>':em?'<div class="msg err">No hay ninguna cuenta con ese correo. Pedile que se registre primero.</div>':'<div class="hint">Escribí el correo de la cuenta.</div>')+'<div class="big">'+PLN[plan]+' · '+gs($('sAmt').value)+'</div><div class="hint">'+(u.c?'CONAREM hasta el <b style="color:var(--fg)">'+fdl(u.c)+'</b><br>':'')+'FCM-UNA hasta el <b style="color:var(--fg)">'+fdl(u.f)+'</b></div><span class="lab" style="margin-top:6px">Mensaje para enviarle</span><pre id="sTxt">'+esc(fMsg(plan,u))+'</pre>';return}
   if(plan==='res'){const k=$('sRes').value,r=RES_PL[k],u=untilFor('month',p&&p.access_until);$('sPrev').innerHTML='<span class="lab">Vista previa</span>'+(p?'<div>'+tag(status(p))+' <span class="hint" style="display:inline">'+esc(p.email)+'</span></div>':em?'<div class="msg err">No hay ninguna cuenta con ese correo. Pedile que se registre primero.</div>':'<div class="hint">Escribí el correo de la cuenta.</div>')+'<div class="big">Reserva · '+esc(r.n)+'</div><div class="hint">Paga '+gs($('sAmt').value)+' ahora · saldo <b style="color:var(--fg)">'+gs(r.t-(+$('sAmt').value||0))+'</b> hasta el 31/12<br>Acceso hasta el <b style="color:var(--fg)">'+fdl(u)+'</b></div><span class="lab" style="margin-top:6px">Mensaje para enviarle</span><pre id="sTxt">'+esc(resMsg(k,u))+'</pre>';return}
@@ -496,11 +498,23 @@ function renderSellPrev(){const em=$('sEmail').value.trim().toLowerCase();const 
   $('sPrev').innerHTML='<span class="lab">Vista previa</span>'+(p?'<div>'+tag(status(p))+' <span class="hint" style="display:inline">'+esc(p.email)+'</span></div>':em?'<div class="msg err">No hay ninguna cuenta con ese correo. Pedile que se registre primero.</div>':'<div class="hint">Escribí el correo de la cuenta.</div>')+
     '<div class="big">'+PLN[plan]+' · '+gs($('sAmt').value)+'</div><div class="hint">Acceso hasta el <b style="color:var(--fg)">'+fdl(u)+'</b></div><span class="lab" style="margin-top:6px">Mensaje para enviarle</span><pre id="sTxt">'+esc(sellMsg(plan,u))+'</pre>';
 }
-['sEmail','sPlan','sRes'].forEach(id=>$(id).addEventListener('input',()=>{if(id!=='sEmail')delete $('sAmt').dataset.touched;renderSellPrev()}));
-document.querySelectorAll('[data-pv]').forEach(b=>b.onclick=()=>{$('sPlan').value=b.dataset.pv;delete $('sAmt').dataset.touched;renderSellPrev()});
+['sEmail','sPlan','sRes','sRName'].forEach(id=>$(id).addEventListener('input',()=>{if(id!=='sEmail')delete $('sAmt').dataset.touched;renderSellPrev()}));
+document.querySelectorAll('[data-pv]').forEach(b=>b.onclick=()=>{const was=$('sPlan').value;if(/^r(1|3)$/.test(b.dataset.pv)&&/^r(pack|combo)$/.test(was))document.querySelectorAll('#sRChk input').forEach(c=>c.checked=false);$('sPlan').value=b.dataset.pv;delete $('sAmt').dataset.touched;renderSellPrev()});
 document.querySelectorAll('[data-rv]').forEach(b=>b.onclick=()=>{$('sRes').value=b.dataset.rv;delete $('sAmt').dataset.touched;renderSellPrev()});
 $('sAmt').addEventListener('input',()=>{$('sAmt').dataset.touched=1;renderSellPrev()});
 $('sGo').onclick=async()=>{const em=$('sEmail').value.trim();const plan=$('sPlan').value;const p=P.find(x=>(x.email||'').toLowerCase()===em.toLowerCase());
+  if(isR(plan)){const sl=rSel(),n=rPaid(sl),b=$('sGo'),amt=+$('sAmt').value||0;
+    if(!em){msg('sMsg','Falta el correo.');return}if(!sl.length){msg('sMsg','Marcá los resúmenes que compró.');return}
+    if(plan==='r3'&&n!==3){msg('sMsg','Para «Elegí 3» marcá exactamente 3 resúmenes.');return}
+    if(plan==='rcombo'&&!p){msg('sMsg','No hay ninguna cuenta con ese correo. Pedile que se registre primero.');return}
+    const u=untilFor('full',p&&p.access_until);
+    twice(b,'¿'+PLN[plan]+' para '+em+'? Tocá de nuevo',async()=>{b.disabled=true;
+      if(plan==='rcombo'){const r1=await sb.rpc('admin_sell',{p_email:em,p_plan:PLN.rcombo,p_until:u.toISOString(),p_amount:amt,p_method:$('sMet').value,p_note:$('sNote').value||null});
+        if(r1.error){b.disabled=false;msg('sMsg','Error: '+r1.error.message);return}}
+      const {error}=await sb.rpc('admin_sell_resumen',{p_email:em,p_name:$('sRName').value.trim()||null,p_slugs:sl,p_label:rLabel(plan,sl),p_amount:plan==='rcombo'?0:amt,p_method:$('sMet').value,p_note:plan==='rcombo'?'Incluido en el combo Completo + Colección':($('sNote').value||null)});
+      b.disabled=false;if(error){msg('sMsg','Error: '+error.message);return}
+      await copy(rMsg(em,plan==='rcombo',u));msg('sMsg','Venta registrada: '+sl.length+' resumen(es)'+(plan==='rcombo'?' y banco hasta el '+fd(u):'')+'. Te copié el mensaje de confirmación.',true);
+      $('sNote').value='';$('sRName').value='';delete $('sAmt').dataset.touched;loadAll()});return}
   if(!p){msg('sMsg','No hay ninguna cuenta con ese correo.');return}
   if(plan==='res'){const k=$('sRes').value,r=RES_PL[k],u=untilFor('month',p.access_until),amt=+$('sAmt').value||0,b=$('sGo');
     twice(b,'¿Reserva de '+r.n+' para '+em+'? Tocá de nuevo',async()=>{b.disabled=true;
@@ -615,12 +629,40 @@ $('slCsv').onclick=()=>{const m=$('slM').value;const rows=SALES.filter(s=>m==='a
 /* ---------- Reportes ---------- */
 let RPS='abierto';let QMAP=null;
 async function ensureQ(){if(QMAP)return;const all=[];for(let i=0;;i+=1000){const {data,error}=await sb.from('questions').select('id,area,data').range(i,i+999);if(error||!data||!data.length)break;all.push(...data);if(data.length<1000)break}QMAP={};all.forEach(r=>QMAP[r.id]=r)}
+const VERD={corregida:{l:'✅ Tenía razón: la corregimos',t:'Tenía razón'},correcta:{l:'📌 La pregunta está bien',t:'La pregunta está bien'},otro:{l:'💬 Otra respuesta',t:'Respuesta'}};
+function qFull(q){if(!q)return '<div class="hint">No encontré esta pregunta en el banco.</div>';const d=q.data,L='ABCDE';
+  return '<div class="qfull"><p class="qst">'+esc(d.q||'')+'</p><ol class="qop">'+(d.o||[]).map((o,i)=>'<li class="'+(i===d.a?'ok':'')+'"><b>'+L[i]+'</b> '+esc(o)+(i===d.a?' <span class="tag t-pago">correcta</span>':'')+(d.w&&d.w[i]?'<div class="sub">'+esc(d.w[i])+'</div>':'')+'</li>').join('')+'</ol>'+((d.x||d.e)?'<div class="sub"><b>Explicación:</b> '+esc(d.x||d.e)+'</div>':'')+(d.f?'<div class="sub"><b>Fuente:</b> '+esc(d.f)+'</div>':'')+'</div>'}
+function rTpl(v,q){const d=q&&q.data,L='ABCDE';const ok=d&&d.o?'la '+L[d.a]+' («'+d.o[d.a]+'»)':'la marcada';
+  if(v==='corregida')return '¡Gracias por avisar! Tenías razón: '+'\n\nYa la corregimos en el banco; la vas a ver actualizada la próxima vez que entres. 🙌';
+  if(v==='correcta')return '¡Gracias por tomarte el tiempo de reportarla! La revisamos y la respuesta correcta es '+ok+' porque '+'\n\n';
+  return '¡Gracias por tu reporte! '}
+function waReply(p,r,q){const v=VERD[r.verdict]||VERD.otro;return 'Hola 👋 Te respondemos el reporte que hiciste en AranduMed sobre la pregunta '+r.qid+(q&&q.data&&q.data.q?' («'+q.data.q.slice(0,90)+'…»)':'')+'.\n\n'+v.t+'.\n'+(r.reply||'')}
 async function renderReps(){$('bdRep').textContent=REPS.filter(r=>r.status==='abierto').length||'';
   $('rpF').querySelectorAll('button').forEach(b=>{b.setAttribute('aria-pressed',String(b.dataset.s===RPS));b.onclick=()=>{RPS=b.dataset.s;renderReps()}});
   const rows=REPS.filter(r=>r.status===RPS);if(rows.length)await ensureQ();
-  const em=id=>{const p=P.find(x=>x.id===id);return p?p.email:'—'};
-  $('rpList').innerHTML=rows.map(r=>{const q=QMAP&&QMAP[r.qid];return '<div class="rep"><div class="ahead"><span class="mono" style="color:var(--accent)">'+esc(r.qid)+'</span><span class="sub">'+fd(r.at)+' · '+esc(em(r.user_id))+'</span></div>'+(q?'<div class="sub">'+esc((q.data.q||'').slice(0,160))+'…</div>':'')+'<q>'+esc(r.msg)+'</q><div class="pills"><button class="btn sm" data-open="'+esc(r.qid)+'">Abrir la pregunta</button>'+(r.status!=='resuelto'?'<button class="btn gh sm" data-st="resuelto" data-id="'+r.id+'">Marcar resuelto</button>':'')+(r.status!=='descartado'?'<button class="btn gh sm" data-st="descartado" data-id="'+r.id+'">Descartar</button>':'')+(r.status!=='abierto'?'<button class="btn gh sm" data-st="abierto" data-id="'+r.id+'">Reabrir</button>':'')+'</div></div>'}).join('')||'<div class="empty">'+(RPS==='abierto'?'No hay reportes abiertos 🎉':'Nada por acá.')+'</div>';
-  $('rpList').querySelectorAll('[data-open]').forEach(b=>b.onclick=async()=>{goTab('qs');await loadQs();openQ(b.dataset.open)});
+  const pOf=id=>P.find(x=>x.id===id);const cnt={};REPS.filter(r=>r.status==='abierto').forEach(r=>cnt[r.qid]=(cnt[r.qid]||0)+1);
+  $('rpList').innerHTML=rows.map(r=>{const q=QMAP&&QMAP[r.qid],p=pOf(r.user_id),v=r.verdict||'';
+    const sent=r.reply?'<div class="rsent"><span class="lab">Respuesta enviada · '+fd(r.replied_at)+' · '+(r.reply_seen_at?'<b style="color:var(--ok)">la leyó el '+fd(r.reply_seen_at)+'</b>':'todavía no la vio')+'</span><div><b>'+esc((VERD[v]||VERD.otro).t)+'.</b> '+esc(r.reply).replace(/\n/g,'<br>')+'</div></div>':'';
+    return '<div class="rep" data-rid="'+r.id+'"><div class="ahead"><span><span class="mono" style="color:var(--accent)">'+esc(r.qid)+'</span>'+(q?' <span class="sub">· '+esc(ANM[q.area]||q.area)+(q.data.y?' · CONAREM '+q.data.y:'')+'</span>':'')+(cnt[r.qid]>1&&r.status==='abierto'?' <span class="tag t-vencido">'+cnt[r.qid]+' reportes</span>':'')+'</span><span class="sub">'+fd(r.at)+' · '+esc(p?p.email:'—')+'</span></div>'+
+      '<q>'+esc(r.msg)+'</q>'+
+      '<details'+(r.status==='abierto'?' open':'')+'><summary>Ver la pregunta completa</summary>'+qFull(q)+'</details>'+
+      '<div class="pills"><button class="btn gh sm" data-edit="'+esc(r.qid)+'" type="button">✏️ Corregir la pregunta acá</button>'+(r.status!=='descartado'?'<button class="btn gh sm" data-st="descartado" data-id="'+r.id+'">Descartar sin responder</button>':'')+(r.status!=='abierto'?'<button class="btn gh sm" data-st="abierto" data-id="'+r.id+'">Reabrir</button>':'')+'</div>'+
+      '<div class="ef rped" hidden></div>'+sent+
+      '<div class="rbox"><span class="lab">'+(r.reply?'Editar la respuesta':'Responderle')+'</span><div class="pills">'+Object.entries(VERD).map(([k,o])=>'<button type="button" data-v="'+k+'" aria-pressed="'+(v===k)+'">'+o.l+'</button>').join('')+'</div>'+
+      '<textarea data-rtxt maxlength="3000" placeholder="Elegí una opción de arriba y explicale por qué está bien o qué corregiste. Lo va a ver en la app al entrar.">'+esc(r.reply||'')+'</textarea>'+
+      '<div class="row" style="gap:6px;flex-wrap:wrap"><button class="btn cta sm" type="button" data-send>'+(r.reply?'Actualizar respuesta':'Enviar respuesta y marcar resuelto')+'</button>'+(p&&p.whatsapp?'<a class="btn sm wa" target="_blank" rel="noopener" data-wa href="#">También por WhatsApp</a>':'')+'<button class="btn gh sm" type="button" data-cp>Copiar texto</button></div><p class="msg" data-rm></p></div></div>'}).join('')||'<div class="empty">'+(RPS==='abierto'?'No hay reportes abiertos 🎉':'Nada por acá.')+'</div>';
+  $('rpList').querySelectorAll('.rep').forEach(el=>{const r=REPS.find(x=>x.id===+el.dataset.rid);const q=QMAP&&QMAP[r.qid];const p=pOf(r.user_id);const ta=el.querySelector('[data-rtxt]');let v=r.verdict||'';
+    const M=(t,ok)=>{const m=el.querySelector('[data-rm]');m.textContent=t||'';m.className='msg'+(t?(ok?' ok':' err'):'')};
+    const cur=()=>Object.assign({},r,{verdict:v||'otro',reply:ta.value.trim()});
+    const wa=el.querySelector('[data-wa]');const upWa=()=>{if(wa)wa.href='https://wa.me/'+p.whatsapp+'?text='+encodeURIComponent(waReply(p,cur(),q))};upWa();ta.addEventListener('input',upWa);
+    el.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>{v=b.dataset.v;el.querySelectorAll('[data-v]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));if(!ta.value.trim()||Object.keys(VERD).some(k=>ta.value===rTpl(k,q))){ta.value=rTpl(v,q)}ta.focus();upWa()});
+    el.querySelector('[data-cp]').onclick=e=>copy(waReply(p,cur(),q),e.target);
+    el.querySelector('[data-edit]').onclick=e=>{const box=el.querySelector('.rped');if(!box.hidden){box.hidden=true;return}box.hidden=false;openQ(r.qid,box,()=>{const d=el.querySelector('details');d.innerHTML='<summary>Ver la pregunta completa</summary>'+qFull(QMAP[r.qid]);d.open=true;if(!v){v='corregida';el.querySelector('[data-v="corregida"]').click()}})};
+    el.querySelector('[data-send]').onclick=async e=>{const b=e.target,t=ta.value.trim();if(!v){M('Elegí si tenía razón o si la pregunta está bien.');return}if(t.length<5){M('Escribí la explicación.');return}
+      b.disabled=true;const me=(await sb.auth.getUser()).data.user;const upd={reply:t,verdict:v,replied_at:new Date().toISOString(),replied_by:me&&me.id,status:'resuelto'};if(r.reply!==t)upd.reply_seen_at=null;
+      const {error}=await sb.from('question_reports').update(upd).eq('id',r.id);b.disabled=false;if(error){M('Error: '+error.message);return}
+      Object.assign(r,upd);M('Enviada ✓ La va a ver cuando abra la app.',true);setTimeout(renderReps,1200)};
+  });
   $('rpList').querySelectorAll('[data-st]').forEach(b=>b.onclick=async()=>{b.disabled=true;const {error}=await sb.from('question_reports').update({status:b.dataset.st}).eq('id',+b.dataset.id);if(error){b.disabled=false;b.textContent='Error: '+error.message;return}const r=REPS.find(x=>x.id===+b.dataset.id);if(r)r.status=b.dataset.st;renderReps()});
 }
 
@@ -634,23 +676,23 @@ function renderQList(){const n=s=>(s||'').toLowerCase().normalize('NFD').replace
   $('qList').innerHTML=rows.map(r=>'<button data-id="'+esc(r.id)+'"'+(QCUR===r.id?' class="on"':'')+'><b>'+esc(r.id)+' · '+esc(r.data.t||'')+'</b>'+esc((r.data.q||'').slice(0,110))+'</button>').join('')||'<div class="empty">Sin resultados.</div>';
   $('qList').querySelectorAll('button').forEach(b=>b.onclick=()=>openQ(b.dataset.id))}
 $('qQ').addEventListener('input',e=>{QQ=e.target.value.trim();if(QMAP)renderQList()});
-function openQ(id){const r=QMAP[id];if(!r){$('qEd').innerHTML='<div class="empty">No encontré la pregunta '+esc(id)+'.</div>';return}QCUR=id;renderQList();const d=r.data;const L='ABCDE';
+function openQ(id,box,onSaved){const E=box||$('qEd');const r=QMAP[id];if(!r){E.innerHTML='<div class="empty">No encontré la pregunta '+esc(id)+'.</div>';return}if(!box){QCUR=id;renderQList()}const d=r.data;const L='ABCDE';
   const ta=(k,lab,v,h)=>'<label>'+lab+'<textarea data-k="'+k+'" style="min-height:'+(h||70)+'px">'+esc(v||'')+'</textarea></label>';
-  $('qEd').innerHTML='<div class="ahead"><h3><span class="mono" style="color:var(--accent)">'+esc(id)+'</span> · '+esc(ANM[r.area]||r.area)+'</h3><span class="hint">'+esc(d.y?'CONAREM '+d.y:'Propia')+'</span></div>'+
+  E.innerHTML='<div class="ahead"><h3><span class="mono" style="color:var(--accent)">'+esc(id)+'</span> · '+esc(ANM[r.area]||r.area)+'</h3><span class="hint">'+esc(d.y?'CONAREM '+d.y:'Propia')+'</span></div>'+
     ta('q','Enunciado',d.q,90)+
     '<label>Opciones (una por línea, en orden A, B, C…)<textarea data-k="o" style="min-height:110px">'+esc((d.o||[]).join('\n'))+'</textarea></label>'+
     '<div class="two"><label>Respuesta correcta<select data-k="a">'+(d.o||[]).map((o,i)=>'<option value="'+i+'"'+(i===d.a?' selected':'')+'>'+L[i]+'</option>').join('')+'</select></label><label>Tema<input data-k="t" value="'+esc(d.t||'')+'"></label><label>Dificultad<select data-k="d"><option value="">—</option>'+[1,2,3].map(k=>'<option value="'+k+'"'+(d.d===k?' selected':'')+'>'+['','Básica','Intermedia','Difícil'][k]+'</option>').join('')+'</select></label></div>'+
     ta('x','Explicación',d.x||d.e,90)+ta('r','Idea central (en negrita arriba de "Para recordar")',d.r,50)+ta('k','Para recordar (una idea por oración)',d.k,90)+ta('tip','Truco para recordar',d.tip,50)+
     '<label>Por qué no las otras (una línea por opción, en orden; dejá vacía la de la correcta)<textarea data-k="w" style="min-height:110px">'+esc((d.w||[]).map(x=>x||'').join('\n'))+'</textarea></label>'+
     ta('f','Fuente',d.f,44)+
-    '<div class="row"><button class="btn cta" id="qSave" type="button">Guardar cambios</button><span class="hint">Los alumnos lo ven la próxima vez que abren la app.</span></div><p class="msg" id="qEdMsg"></p>';
-  $('qSave').onclick=async()=>{const nd=Object.assign({},d);const get=k=>$('qEd').querySelector('[data-k="'+k+'"]').value;
+    '<div class="row"><button class="btn cta" data-qsave type="button">Guardar cambios</button><span class="hint">Los alumnos lo ven la próxima vez que abren la app.</span></div><p class="msg" data-qmsg></p>';
+  const SV=E.querySelector('[data-qsave]'),MS=E.querySelector('[data-qmsg]');const m2=(t,ok)=>{MS.textContent=t||'';MS.className='msg'+(t?(ok?' ok':' err'):'')};SV.onclick=async()=>{const nd=Object.assign({},d);const get=k=>E.querySelector('[data-k="'+k+'"]').value;
     nd.q=get('q').trim();nd.o=get('o').split('\n').map(s=>s.trim()).filter(Boolean);nd.a=+get('a');nd.t=get('t').trim();const dd=get('d');if(dd)nd.d=+dd;else delete nd.d;
     nd.x=get('x').trim();if(d.e!==undefined)nd.e=nd.x;['r','k','tip','f'].forEach(k=>{const v=get(k).trim();if(v)nd[k]=v;else delete nd[k]});
     const w=get('w').split('\n').map(s=>s.trim());while(w.length<nd.o.length)w.push('');nd.w=w.slice(0,nd.o.length).map((s,i)=>i===nd.a||!s?null:s);
-    if(nd.o.length<2){msg('qEdMsg','Tiene que haber al menos 2 opciones.');return}if(nd.a>=nd.o.length){msg('qEdMsg','La respuesta correcta no existe en las opciones.');return}
-    $('qSave').disabled=true;const {error}=await sb.from('questions').update({data:nd}).eq('id',id);$('qSave').disabled=false;
-    if(error){msg('qEdMsg',error.message);return}r.data=nd;msg('qEdMsg','Guardado ✓',true);renderQList()};
+    if(nd.o.length<2){m2('Tiene que haber al menos 2 opciones.');return}if(nd.a>=nd.o.length){m2('La respuesta correcta no existe en las opciones.');return}
+    SV.disabled=true;const {error}=await sb.from('questions').update({data:nd}).eq('id',id);SV.disabled=false;
+    if(error){m2(error.message);return}r.data=nd;m2('Guardado ✓',true);renderQList();if(onSaved)onSaved(nd)};
 }
 $('qGo').onclick=async()=>{const f=$('qFile').files[0];if(!f){msg('qMsg','Elegí el archivo.');return}
   let arr;try{arr=JSON.parse(await f.text())}catch(e){msg('qMsg','El archivo no es un JSON válido.');return}

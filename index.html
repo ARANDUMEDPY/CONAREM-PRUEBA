@@ -208,7 +208,8 @@ nav{box-shadow:none!important}
 .bs-in{position:relative;width:100%;max-width:460px;background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:22px 20px 18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 20px 60px rgba(0,0,0,.45)}
 @media (min-width:700px){.bsheet{align-items:center}}
 .bs-in h3{margin:0;font-size:1.3rem}.bs-k{font-size:.75rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#F08A5D}
-.bs-s{margin:0;color:var(--muted);font-size:.92rem;line-height:1.45}.bs-s b{color:var(--fg)}
+.bs-s{margin:0;color:var(--muted);font-size:.92rem;line-height:1.45}
+.rpr-l{display:flex;flex-direction:column;gap:10px;max-height:52vh;overflow:auto;text-align:left;margin:4px 0}.rpr{padding:12px;border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column;gap:6px;font-size:.9rem;line-height:1.45}.rpr-h{font-weight:800}.rpr-q,.rpr-m{color:var(--muted);font-size:.85rem}.rpr-m{font-style:italic}.rpr-a{font-size:.85rem}.rpr-r{white-space:normal}.bs-s b{color:var(--fg)}
 .bs-msg{background:var(--bg);border:1px dashed var(--accent);border-radius:14px;padding:14px;font-size:1rem;line-height:1.45;user-select:text;-webkit-user-select:text}
 .bs-in .btn{width:100%;display:flex;align-items:center;justify-content:center;text-align:center;text-decoration:none}.bs-in .btn.done{background:#5CC98A;border-color:#5CC98A}
 .bs-x{position:absolute;top:10px;right:12px;border:0;background:transparent;color:var(--muted);font-size:1.6rem;line-height:1;cursor:pointer;padding:4px 8px}
@@ -1679,7 +1680,7 @@ setSync('Progreso guardado en este dispositivo.');
 const $=id=>document.getElementById(id);
 const C=window.CONFIG||{};
 // ---------- Registro de errores (para diagnosticar cuelgues en celulares) ----------
-const VER='2026.11.23-c';let nlog=0;
+const VER='2026.11.28-a';let nlog=0;
 function tok(){try{const k=Object.keys(localStorage).find(k=>/^sb-.*-auth-token$/.test(k));const v=k&&JSON.parse(localStorage.getItem(k));return v&&v.access_token}catch(e){return null}}
 function clog(kind,msg){try{if(!C.SUPABASE_URL||nlog++>25)return;const t=tok();
   fetch(C.SUPABASE_URL+'/rest/v1/client_logs',{method:'POST',keepalive:true,headers:{apikey:C.SUPABASE_ANON_KEY,Authorization:'Bearer '+(t||C.SUPABASE_ANON_KEY),'Content-Type':'application/json',Prefer:'return=minimal'},
@@ -1816,6 +1817,16 @@ document.addEventListener('click',e=>{if(e.target.closest('[data-trk-temas]')){t
 function pedCard(){return '<div class="pedf"><img src="resumenes/ped/portada.webp" alt="Portada del resumen de Pediatría" width="120" height="170" loading="lazy"><div><span class="pk">🎁 GRATIS CON TU CUENTA</span><h3>Pediatría · Crecimiento y desarrollo</h3><p>Las 31 preguntas de la CONAREM 2016–2026, hito por hito, en 24 páginas.</p><div class="row"><a class="btn pg1" href="'+PED_URL+'" download target="_blank" rel="noopener" onclick="try{trk(\'pdf\',\'ped\')}catch(e){}">Descargar</a><a class="btn pg2" href="'+PED_PRINT+'" download target="_blank" rel="noopener" onclick="try{trk(\'pdf\',\'ped-print\')}catch(e){}">Versión para imprimir</a></div></div></div>'}
 function pedModal(){try{if(localStorage.getItem('am_ped')==='1'||document.getElementById('amModal'))return;localStorage.setItem('am_ped','1')}catch(_){return}
   const m=modal('<button type="button" class="bs-x" data-x aria-label="Cerrar">×</button><div class="wel-e">👶</div><span class="bs-k">Nuevo · Gratis</span><h3>Pediatría: Crecimiento y desarrollo</h3><p class="bs-s">Tu primer resumen de Pediatría, de regalo. Las 31 preguntas de la CONAREM 2016–2026, hito por hito.</p><a class="btn buy big" href="'+PED_URL+'" download target="_blank" rel="noopener" onclick="trk(\'pdf\',\'ped-modal\')">Descargar gratis</a><a class="btn try big" href="'+PED_PRINT+'" download target="_blank" rel="noopener">Versión para imprimir</a><button type="button" class="btn try big" data-x>Más tarde</button>');}
+// Respuestas del equipo a los reportes de preguntas
+async function repReplies(bank,tries){try{if(document.getElementById('amModal')){if((tries||0)<4)setTimeout(()=>repReplies(bank,(tries||0)+1),8000);return}
+  const {data,error}=await sb.from('question_reports').select('id,qid,msg,reply,verdict,replied_at').not('reply','is',null).is('reply_seen_at',null).order('replied_at',{ascending:true}).limit(10);
+  if(error||!data||!data.length)return;const E=t=>{const d=document.createElement('div');d.textContent=t==null?'':String(t);return d.innerHTML};
+  const VT={corregida:'✅ Tenías razón: la corregimos',correcta:'📌 Revisamos y la pregunta está bien',otro:'💬 Te respondimos'};const L='ABCDE';
+  const items=data.map(r=>{const q=(bank||[]).find(x=>x.id===r.qid);const d=q&&(q.data||q);
+    return '<div class="rpr"><div class="rpr-h">'+(VT[r.verdict]||VT.otro)+'</div>'+(d&&d.q?'<div class="rpr-q">'+E(d.q.length>180?d.q.slice(0,180)+'…':d.q)+'</div>':'<div class="rpr-q">Pregunta '+E(r.qid)+'</div>')+(d&&d.o&&d.o[d.a]!=null?'<div class="rpr-a">Respuesta correcta: <b>'+L[d.a]+'</b> '+E(d.o[d.a])+'</div>':'')+'<div class="rpr-m">Tu reporte: «'+E(r.msg)+'»</div><div class="rpr-r">'+E(r.reply).replace(/\n/g,'<br>')+'</div></div>'}).join('');
+  const m=modal('<button type="button" class="bs-x" data-x aria-label="Cerrar">×</button><div class="wel-e">📬</div><span class="bs-k">Respuesta del equipo</span><h3>'+(data.length>1?'Respondimos tus '+data.length+' reportes':'Respondimos tu reporte')+'</h3><p class="bs-s">Gracias por ayudarnos a mejorar el banco. 💚</p><div class="rpr-l">'+items+'</div><button type="button" class="btn buy big" id="rprOk">Entendido</button>');
+  const done=()=>{sb.rpc('mark_reports_seen',{p_ids:data.map(r=>r.id)}).then(()=>{},()=>{})};
+  m.querySelector('#rprOk').onclick=()=>{done();m.remove()};m.addEventListener('click',e=>{if(e.target===m||e.target.closest('[data-x]'))done()})}catch(e){}}
 const CUAD_URL='cuadernillo/AranduMed-Cuadernillo-MI-Vol1.pdf',CUAD_PRINT='cuadernillo/AranduMed-Cuadernillo-MI-Vol1-imprimir.pdf';
 function cuadPending(){try{return localStorage.getItem('am_cuad')==='mi'&&localStorage.getItem('am_cuad_off')!=='1'}catch(_){return false}}
 function cuadModal(canTrial){if(!cuadPending())return;const m=modal('<button type="button" class="bs-x" data-x aria-label="Cerrar">×</button><div class="wel-e">📘</div><span class="bs-k">Tu resumen gratis</span><h3>Cardiología: lo que más pregunta la CONAREM</h3><p class="bs-s">Las 46 preguntas de 2016 a 2026 en 32 páginas: qué se pregunta, cómo lo pregunta el examen, guías actuales y preguntas para practicar.</p><a class="btn buy big" id="cuDl" href="'+CUAD_URL+'" download target="_blank" rel="noopener">Descargar (versión para leer)</a><a class="btn try big" href="'+CUAD_PRINT+'" download target="_blank" rel="noopener" onclick="trk(\'pdf\',\'print\')">Versión para imprimir</a>'+(canTrial?'<button type="button" class="btn try big" id="cuTr">Y de paso, empezar mis 3 días gratis</button>':'<button type="button" class="btn try big" data-x>Cerrar</button>')+'<button type="button" class="linkbtn cu-off" id="cuOff">No mostrar más</button>','lock');m.querySelector('#cuDl').onclick=()=>{trk('pdf','mi');try{localStorage.removeItem('am_cuad')}catch(_){}setTimeout(()=>m.remove(),400)};const o=m.querySelector('#cuOff');if(o)o.onclick=()=>{try{localStorage.setItem('am_cuad_off','1');localStorage.removeItem('am_cuad')}catch(_){}m.remove()};const t=m.querySelector('#cuTr');if(t)t.onclick=()=>{trk('pdf','mi');try{localStorage.removeItem('am_cuad')}catch(_){}window.open(CUAD_URL,'_blank');m.remove();const b=$('bTrial');if(b)b.click()}}
@@ -2063,7 +2074,7 @@ async function route(depth){depth=depth||0;
     const ib=document.getElementById('installBtn');if(ib)ib.onclick=async()=>{if(!installEvt)return;installEvt.prompt();await installEvt.userChoice;installEvt=null;ib.hidden=true};
     $('logout').onclick=logout;
     if(!prof.is_admin||/[?&]wel/.test(location.search))purchaseUI(prof);
-    setTimeout(()=>cuadModal(false),500);setTimeout(()=>{try{if(!document.getElementById('amModal'))pedModal()}catch(_){}},1400);
+    setTimeout(()=>cuadModal(false),500);setTimeout(()=>{try{if(!document.getElementById('amModal'))pedModal()}catch(_){}},1400);setTimeout(()=>repReplies(bank0),3000);
   }catch(e){clearTimeout(slowT);started=false;clog('load_fail',(e&&e.message)||e);show('fLogin');msg('lMsg',e&&e.message==='timeout'?'La conexión está muy lenta y no se pudieron descargar las preguntas. Revisá tu internet y volvé a entrar.':'No se pudieron cargar las preguntas: '+tr(e))}
 }
 sb.auth.onAuthStateChange((ev)=>{

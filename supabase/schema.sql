@@ -152,3 +152,24 @@ grant execute on function public.is_admin() to authenticated;
 --
 -- update public.profiles set is_admin = true where email = 'tu-correo@ejemplo.com';
 -- ============================================================
+
+-- ---------- Respuestas a los reportes de preguntas (2026-11-28) ----------
+alter table public.question_reports
+  add column if not exists reply text check (reply is null or char_length(reply) <= 3000),
+  add column if not exists verdict text check (verdict is null or verdict in ('corregida','correcta','otro')),
+  add column if not exists replied_at timestamptz,
+  add column if not exists replied_by uuid,
+  add column if not exists reply_seen_at timestamptz;
+drop policy if exists "ver mis reportes" on public.question_reports;
+create policy "ver mis reportes" on public.question_reports for select using (user_id = (select auth.uid()));
+create or replace function public.mark_reports_seen(p_ids bigint[])
+returns integer language plpgsql security definer set search_path = public as $$
+declare n int;
+begin
+  update public.question_reports set reply_seen_at = now()
+   where id = any(p_ids) and user_id = auth.uid() and reply is not null and reply_seen_at is null;
+  get diagnostics n = row_count;
+  return n;
+end $$;
+revoke all on function public.mark_reports_seen(bigint[]) from public, anon;
+grant execute on function public.mark_reports_seen(bigint[]) to authenticated;
