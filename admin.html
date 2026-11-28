@@ -367,7 +367,7 @@ function goTab(t){document.querySelector('.tabs button[data-t="'+t+'"]').click()
 let P=[],ST={},DS={},SALES=[],REPS=[],PROMO_LEFT=null;
 function isTrial(p){return !!(p&&p.trial_started&&p.access_until&&(new Date(p.access_until)-new Date(p.trial_started))<=7*864e5+36e5)}
 function paidBy(p){const e=(p.email||'').toLowerCase();return SALES.some(s=>s.email.toLowerCase()===e&&s.plan!=='Regalo +1 semana'&&!/^Resumen/.test(s.plan||''))}
-function status(p){if(p.is_admin)return'admin';const now=new Date();if(!p.access_until&&!p.trial_started)return'sin';const on=p.access_until&&new Date(p.access_until)>now;const paid=paidBy(p);
+function status(p){if(p.is_admin)return'admin';const now=new Date();if(!p.access_until&&p.smi_until&&new Date(p.smi_until)>now)return'pago';if(!p.access_until&&!p.trial_started)return'sin';const on=p.access_until&&new Date(p.access_until)>now;const paid=paidBy(p);
   if(on)return paid?'pago':isTrial(p)?'prueba':'regalo';if(p.revoked_reason)return'bloq';return paid?'expago':isTrial(p)?'pvencida':'rvencido'}
 const SLAB={pago:'💳 Pago',prueba:'⏳ En prueba',regalo:'🎁 Regalo o código',expago:'Ex cliente',pvencida:'Prueba terminada',rvencido:'Regalo vencido',bloq:'🚫 Bloqueado',sin:'📝 Sin activar',admin:'Admin'};
 const SCLS={pago:'t-pago',prueba:'t-prueba',regalo:'t-manual',expago:'t-vencido',pvencida:'t-vencido',rvencido:'t-vencido',bloq:'t-vencido',sin:'t-sin',admin:'t-admin'};
