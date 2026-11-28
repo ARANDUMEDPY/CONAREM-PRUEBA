@@ -173,3 +173,17 @@ begin
 end $$;
 revoke all on function public.mark_reports_seen(bigint[]) from public, anon;
 grant execute on function public.mark_reports_seen(bigint[]) to authenticated;
+
+-- ---------- Venta del banco de Subespecialidad MI (2026-11-28) ----------
+create or replace function public.admin_sell_smi(p_email text, p_plan text, p_until timestamptz, p_amount integer, p_method text, p_note text default null)
+returns timestamptz language plpgsql security definer set search_path = public as $$
+declare em text;
+begin
+  if not public.is_admin() then raise exception 'Solo administradores'; end if;
+  update public.profiles set smi_until = p_until where lower(email) = lower(trim(p_email)) returning email into em;
+  if em is null then raise exception 'No existe una cuenta con ese correo. Pedile que se registre primero.'; end if;
+  insert into public.sales(email, plan, amount, method, until, note) values (em, p_plan, coalesce(p_amount,0), p_method, p_until, p_note);
+  return p_until;
+end $$;
+revoke all on function public.admin_sell_smi(text,text,timestamptz,integer,text,text) from public, anon;
+grant execute on function public.admin_sell_smi(text,text,timestamptz,integer,text,text) to authenticated;
